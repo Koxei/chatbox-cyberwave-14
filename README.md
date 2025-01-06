@@ -1,3 +1,4 @@
+# Just small change
 # Welcome to your Lovable project
 
 ## Project info
