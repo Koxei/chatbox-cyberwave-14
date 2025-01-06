@@ -10,7 +10,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
     <div className={`message ${isAI ? "message-ai" : "message-user"}`}>
       <div className="flex items-start gap-2">
         <span className="font-arcade text-sm">
-          {isAI ? "😛" : "<"}
+          {isAI ? "(●'◡'●)" : "<"}
         </span>
         <p className="font-sans">{message}</p>
       </div>

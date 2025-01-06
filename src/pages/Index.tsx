@@ -32,7 +32,7 @@ const Index = () => {
         </main>
         <form 
           onSubmit={handleSubmit}
-          className="p-4 bg-black/50 backdrop-blur-sm border-t border-userMessage"
+          className="p-4 bg-black/50 backdrop-blur-sm border-t border-userMessage rounded-sm"
         >
           <div className="max-w-3xl mx-auto flex gap-2">
             <input
