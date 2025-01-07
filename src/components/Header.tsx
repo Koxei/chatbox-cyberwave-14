@@ -28,9 +28,9 @@ const Header = () => {
             <img 
               src="/lovable-uploads/98d01e29-167d-4e94-9a5f-f3a5ecca26d7.png" 
               alt="X Logo" 
-              width={38} 
-              height={38}
-              className="w-[38px] h-[38px]"
+              width={48} 
+              height={30}
+              className="w-[48px] h-[30px]"
             />
           </a>
         </div>
