@@ -67,7 +67,7 @@
     border-color: #7FDBFF;
     transform: translate(2px, 1px);
     filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); /* Top and Right are smaller */
   }
   95.5% {
     border-color: #ff00ea;
@@ -84,7 +84,7 @@
     border-color: #7FDBFF;
     transform: translate(-2px, 1px);
     filter: drop-shadow(-2px 0 #00ffff) drop-shadow(2px 0 #ff00ea);
-    clip-path: polygon(0 0, 100% 0, 98% 2%, 98% 98%, 100% 100%, 0 100%, 2% 98%, 2% 2%);
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); /* Top and Right are smaller */
   }
   97% {
     border-color: #ff00ea;
@@ -100,7 +100,7 @@
   98% {
     border-color: #7FDBFF;
     transform: translate(2px, -2px);
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); /* Top and Right are smaller */
   }
   98.5% {
     border-color: #ff00ea;
@@ -121,6 +121,7 @@
     clip-path: none;
   }
 }
+
 
 .message {
   @apply w-full p-4 mb-4 bg-container animate-fade-in relative z-10;
