@@ -2,7 +2,7 @@ import Header from "@/components/Header";
 import ChatMessage from "@/components/ChatMessage";
 import MatrixRain from "@/components/MatrixRain";
 import { useState, useRef, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -38,16 +38,39 @@ const Index = () => {
     // Debug log - Starting API request
     console.log('Starting chat completion request...');
 
+    const requestBody = {
+      model: "gpt-4",
+      messages: [
+        {
+          role: "system",
+          content: "You are a friendly and creative assistant who loves to help people."
+        },
+        ...messages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
+        { role: "user", content: userMessage }
+      ],
+      max_tokens: 200,
+      temperature: 0.7
+    };
+
+    // Debug log - Request configuration (excluding sensitive data)
+    console.log('Request configuration:', {
+      model: requestBody.model,
+      messageCount: requestBody.messages.length,
+      max_tokens: requestBody.max_tokens,
+      temperature: requestBody.temperature
+    });
+
     try {
-      const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYyNTM5MjYsImV4cCI6MjA1MTgyOTkyNn0.uqk5bXd-TqBcHKGMFlBDRpu2ox0e5GwaC1bNFHklaM4'
+          'Authorization': `Bearer ${import.meta.env.OPENAI_API_KEY}`,
         },
-        body: JSON.stringify({
-          prompt: userMessage
-        })
+        body: JSON.stringify(requestBody)
       });
 
       // Debug log - Response status
@@ -62,15 +85,18 @@ const Index = () => {
       const data = await response.json();
       console.log('API Response received successfully');
 
-      // Add AI response to chat
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      const aiResponse = data.choices[0].message.content;
+      setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
     } catch (error) {
       console.error('Detailed chat error:', error);
       
       let errorMessage = "The chatbot is currently unavailable. Please try again later.";
       
       if (error instanceof Error) {
-        if (error.message.includes('Failed to fetch')) {
+        // If it's an API error with a specific message
+        if (error.message.includes('API Error')) {
+          errorMessage = `API Error: ${error.message}`;
+        } else if (error.message.includes('Failed to fetch')) {
           errorMessage = "Network error: Please check your internet connection.";
         } else {
           errorMessage = `Error: ${error.message}`;
