@@ -6,7 +6,7 @@ const Header = () => {
       <div className="flex justify-between items-center">
         <div className="flex gap-4">
           <a
-            href="https://x.com/home"
+            href="https://pump.fun/board"
             target="_blank"
             rel="noopener noreferrer"
             className="text-heading hover:opacity-80 transition-opacity"
@@ -14,9 +14,9 @@ const Header = () => {
             <img 
               src="/lovable-uploads/354a3ed6-b88c-45d5-a696-6eb3bc0db0e9.png" 
               alt="X Logo" 
-              margin-top={10}
               width={40} 
               height={40}
+              padding-top={20}
               className="w-[40px] h-[40px]"
             />
           </a>
