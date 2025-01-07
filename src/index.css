@@ -49,9 +49,9 @@
   right: -2px;
   bottom: -2px;
   background: transparent;
-  border: 0, 0, 2px, 2px solid transparent;
+  border: 2px solid transparent;
   border-radius: 12px;
-  animation: glitchBorder 5s infinite;
+  animation: glitchBorder 10s infinite;
   pointer-events: none;
   z-index: 0;
 }
