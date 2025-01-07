@@ -57,51 +57,68 @@
 }
 
 @keyframes glitchBorder {
-  0%, 100% {
+  0%, 94.9% {
     border-color: transparent;
     transform: none;
     filter: none;
+    clip-path: none;
   }
   95% {
-    border-color: transparent;
-    transform: none;
-    filter: none;
-  }
-  95.5% {
     border-color: #7FDBFF;
     transform: translate(2px, 1px);
     filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  95.5% {
+    border-color: #ff00ea;
+    transform: translate(-3px, 2px);
+    clip-path: polygon(5% 0, 95% 0, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0 95%, 0 5%);
   }
   96% {
-    border-color: #ff00ea;
-    transform: translate(-2px, -1px);
+    border-color: #00ffff;
+    transform: translate(3px, -2px);
+    filter: drop-shadow(3px 0 #ff00ea) drop-shadow(-3px 0 #7FDBFF);
+    clip-path: polygon(2% 0, 98% 0, 100% 2%, 100% 98%, 98% 100%, 2% 100%, 0 98%, 0 2%);
   }
   96.5% {
-    border-color: #00ffff;
-    transform: translate(1px, 2px);
+    border-color: #7FDBFF;
+    transform: translate(-2px, 1px);
+    filter: drop-shadow(-2px 0 #00ffff) drop-shadow(2px 0 #ff00ea);
+    clip-path: polygon(0 0, 100% 0, 98% 2%, 98% 98%, 100% 100%, 0 100%, 2% 98%, 2% 2%);
   }
   97% {
-    border-color: #7FDBFF;
-    transform: translate(-1px, -1px);
-    filter: drop-shadow(2px 0 #00ffff) drop-shadow(-2px 0 #ff00ea);
+    border-color: #ff00ea;
+    transform: translate(1px, -1px) skew(1deg);
+    clip-path: polygon(3% 0, 97% 0, 100% 3%, 100% 97%, 97% 100%, 3% 100%, 0 97%, 0 3%);
   }
   97.5% {
-    border-color: #ff00ea;
-    transform: translate(1px, -1px);
+    border-color: #00ffff;
+    transform: translate(-1px, 2px) skew(-1deg);
+    filter: drop-shadow(2px 0 #7FDBFF) drop-shadow(-2px 0 #ff00ea);
+    clip-path: polygon(1% 1%, 99% 1%, 99% 99%, 1% 99%);
   }
   98% {
-    border-color: #00ffff;
-    transform: translate(-1px, 1px);
+    border-color: #7FDBFF;
+    transform: translate(2px, -2px);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
   }
   98.5% {
-    border-color: #7FDBFF;
-    transform: none;
-    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
+    border-color: #ff00ea;
+    transform: translate(-2px, 1px) skew(2deg);
+    filter: drop-shadow(3px 0 #00ffff) drop-shadow(-3px 0 #7FDBFF);
+    clip-path: inset(1% 1% 1% 1%);
   }
   99% {
+    border-color: #00ffff;
+    transform: translate(1px, -1px) skew(-2deg);
+    filter: drop-shadow(-1px 0 #ff00ea) drop-shadow(1px 0 #7FDBFF);
+    clip-path: none;
+  }
+  99.5% {
     border-color: transparent;
     transform: none;
     filter: none;
+    clip-path: none;
   }
 }
 
