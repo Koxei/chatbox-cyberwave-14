@@ -26,7 +26,7 @@ const Header = () => {
             className="text-heading hover:opacity-80 transition-opacity"
           >
             <img 
-              src="/nexx.png" 
+              src="/lovable-uploads/nexx.png" 
               alt="X Logo" 
               width={48} 
               height={30}
