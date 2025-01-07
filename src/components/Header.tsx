@@ -14,9 +14,9 @@ const Header = () => {
             <img 
               src="/lovable-uploads/newdex.png" 
               alt="X Logo" 
-              width={40} 
-              height={40}
-              className="w-[40px] h-[40px]"
+              width={35} 
+              height={35}
+              className="w-[35px] h-[35px]"
             />
           </a>
           <a
