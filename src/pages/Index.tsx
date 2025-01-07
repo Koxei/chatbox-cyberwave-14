@@ -55,28 +55,16 @@ const Index = () => {
       temperature: 0.7
     };
 
-    // Debug log - Request configuration (excluding sensitive data)
-    console.log('Request configuration:', {
-      model: requestBody.model,
-      messageCount: requestBody.messages.length,
-      max_tokens: requestBody.max_tokens,
-      temperature: requestBody.temperature
-    });
-https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot
-
     try {
       const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM'
-,
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
+          'Accept': 'application/json',
         },
         body: JSON.stringify(requestBody)
       });
-
-      // Debug log - Response status
-      console.log('API Response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
@@ -87,6 +75,10 @@ https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot
       const data = await response.json();
       console.log('API Response received successfully');
 
+      if (data.error) {
+        throw new Error(data.error.message || 'Unknown error occurred');
+      }
+
       const aiResponse = data.choices[0].message.content;
       setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
     } catch (error) {
@@ -95,11 +87,12 @@ https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot
       let errorMessage = "The chatbot is currently unavailable. Please try again later.";
       
       if (error instanceof Error) {
-        // If it's an API error with a specific message
-        if (error.message.includes('API Error')) {
-          errorMessage = `API Error: ${error.message}`;
+        if (error.message.includes('CORS')) {
+          errorMessage = "Server configuration error. Please try again later.";
         } else if (error.message.includes('Failed to fetch')) {
           errorMessage = "Network error: Please check your internet connection.";
+        } else if (error.message.includes('API key')) {
+          errorMessage = "API configuration error. Please check your API key.";
         } else {
           errorMessage = `Error: ${error.message}`;
         }
