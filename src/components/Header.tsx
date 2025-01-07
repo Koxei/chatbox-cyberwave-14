@@ -12,11 +12,10 @@ const Header = () => {
             className="text-heading hover:opacity-80 transition-opacity"
           >
             <img 
-              src="/lovable-uploads/354a3ed6-b88c-45d5-a696-6eb3bc0db0e9.png" 
+              src="/newdex.png" 
               alt="X Logo" 
               width={40} 
               height={40}
-              padding-top={20}
               className="w-[40px] h-[40px]"
             />
           </a>
@@ -27,7 +26,7 @@ const Header = () => {
             className="text-heading hover:opacity-80 transition-opacity"
           >
             <img 
-              src="/lovable-uploads/98d01e29-167d-4e94-9a5f-f3a5ecca26d7.png" 
+              src="/nexx.png" 
               alt="X Logo" 
               width={48} 
               height={30}
