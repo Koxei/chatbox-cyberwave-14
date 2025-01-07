@@ -62,9 +62,10 @@ const Index = () => {
       max_tokens: requestBody.max_tokens,
       temperature: requestBody.temperature
     });
+https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
