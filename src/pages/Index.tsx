@@ -32,14 +32,14 @@ const Index = () => {
         </main>
         <form 
           onSubmit={handleSubmit}
-          className="p-4 bg-black/50 backdrop-blur-sm border-t border-userMessage rounded-sm"
+          className="p-4 bg-black/50 backdrop-blur-sm border-t border-userMessage"
         >
           <div className="max-w-3xl mx-auto flex gap-2">
             <input
               type="text"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type your message..."
+              placeholder="Chat here . . ."
               className="flex-1 bg-container p-2 rounded border border-userMessage text-white font-arcade"
             />
             <button
