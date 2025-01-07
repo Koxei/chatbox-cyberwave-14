@@ -23,7 +23,7 @@
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-
+  border-radius: 12px;
 }
 
 /* Glitch container and pseudo-elements */
