@@ -27,6 +27,7 @@
   box-shadow: -2px 8px 16px rgba(2, 255, 242, 0.2);
 }
 
+/* Glitch container and pseudo-elements */
 .chat-container::before {
   content: '';
   position: absolute;
@@ -38,6 +39,70 @@
   pointer-events: none;
   z-index: 1;
   border-radius: 12px;
+}
+
+.chat-container::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  animation: glitchBorder 5s infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes glitchBorder {
+  0%, 100% {
+    border-color: transparent;
+    transform: none;
+    filter: none;
+  }
+  95% {
+    border-color: transparent;
+    transform: none;
+    filter: none;
+  }
+  95.5% {
+    border-color: #7FDBFF;
+    transform: translate(2px, 1px);
+    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
+  }
+  96% {
+    border-color: #ff00ea;
+    transform: translate(-2px, -1px);
+  }
+  96.5% {
+    border-color: #00ffff;
+    transform: translate(1px, 2px);
+  }
+  97% {
+    border-color: #7FDBFF;
+    transform: translate(-1px, -1px);
+    filter: drop-shadow(2px 0 #00ffff) drop-shadow(-2px 0 #ff00ea);
+  }
+  97.5% {
+    border-color: #ff00ea;
+    transform: translate(1px, -1px);
+  }
+  98% {
+    border-color: #00ffff;
+    transform: translate(-1px, 1px);
+  }
+  98.5% {
+    border-color: #7FDBFF;
+    transform: none;
+    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
+  }
+  99% {
+    border-color: transparent;
+    transform: none;
+    filter: none;
+  }
 }
 
 .message {
