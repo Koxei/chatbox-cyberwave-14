@@ -14,6 +14,7 @@ const Header = () => {
             <img 
               src="/lovable-uploads/354a3ed6-b88c-45d5-a696-6eb3bc0db0e9.png" 
               alt="X Logo" 
+              margin-top={10}
               width={40} 
               height={40}
               className="w-[40px] h-[40px]"
