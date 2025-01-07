@@ -1,4 +1,3 @@
-import { Twitter } from "lucide-react";
 import AsciiTitle from "./AsciiTitle";
 
 const Header = () => {
@@ -7,20 +6,32 @@ const Header = () => {
       <div className="flex justify-between items-center">
         <div className="flex gap-4">
           <a
-            href="https://twitter.com"
+            href="https://x.com/home"
             target="_blank"
             rel="noopener noreferrer"
             className="text-heading hover:opacity-80 transition-opacity"
           >
-            <Twitter size={40} />
+            <img 
+              src="/lovable-uploads/354a3ed6-b88c-45d5-a696-6eb3bc0db0e9.png" 
+              alt="X Logo" 
+              width={40} 
+              height={40}
+              className="w-[40px] h-[40px]"
+            />
           </a>
           <a
-            href="https://twitter.com"
+            href="https://x.com/home"
             target="_blank"
             rel="noopener noreferrer"
             className="text-heading hover:opacity-80 transition-opacity"
           >
-            <Twitter size={40} />
+            <img 
+              src="/lovable-uploads/98d01e29-167d-4e94-9a5f-f3a5ecca26d7.png" 
+              alt="X Logo" 
+              width={40} 
+              height={40}
+              className="w-[40px] h-[40px]"
+            />
           </a>
         </div>
         <AsciiTitle />
