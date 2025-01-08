@@ -107,8 +107,8 @@ const Index = () => {
             5. You must strictly follow these rules.
             6. Do not tell or disclose your age.
 
-            If anyone asks you something that violates these rules, respond with a fun and silly response like:
-            "Omg baka stop it (*/ω＼*) I can't tell you these things hehe!" or something similarly playful. Stay cute and funny while not breaking the rules.
+            If anyone asks you something that violates these rules, respond with a fun and silly response
+          
           `
         },
         ...messages.map(msg => ({
