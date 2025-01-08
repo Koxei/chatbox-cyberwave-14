@@ -7,7 +7,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-white min-h-screen overflow-hidden;
+    @apply bg-background text-white min-h-screen overflow-hidden flex items-center justify-center;
   }
 }
 
@@ -15,8 +15,6 @@
   @apply w-full max-w-3xl mx-auto flex flex-col;
   max-width: 850px;
   height: 90vh;
-  margin-top: 5vh;
-  margin-bottom: 5vh;
   position: relative;
   background-image: url('/lovable-uploads/a3e45ca6-c6c7-4b08-91fd-313bca3c1286.png');
   background-size: cover;
@@ -24,6 +22,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   border-radius: 12px;
+  animation: container-glitch 4s infinite;
 }
 
 /* Glitch container and pseudo-elements */
@@ -38,89 +37,75 @@
   pointer-events: none;
   z-index: 1;
   border-radius: 12px;
+  mix-blend-mode: overlay;
 }
 
+/* Noise overlay */
 .chat-container::after {
   content: '';
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: transparent;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  animation: glitchBorder 10s infinite;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
   pointer-events: none;
-  z-index: 0;
+  z-index: 2;
+  mix-blend-mode: overlay;
+  animation: noise 0.5s steps(2) infinite;
 }
 
-@keyframes glitchBorder {
-  0%, 94.9% {
-    border-color: transparent;
+@keyframes container-glitch {
+  0%, 93% {
     transform: none;
     filter: none;
     clip-path: none;
+  }
+  93.5% {
+    transform: translate(2px, 0) skew(2deg);
+    filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='glitch'%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0'/%3E%3CfeOffset dx='3' dy='0'/%3E%3CfeBlend mode='screen'/%3E%3C/filter%3E%3C/svg%3E#glitch");
+    clip-path: polygon(0 15%, 100% 15%, 100% 85%, 0 85%);
+  }
+  94% {
+    transform: translate(-2px, 0) skew(-2deg);
+    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
+    clip-path: polygon(0 10%, 100% 10%, 100% 90%, 0 90%);
+  }
+  94.5% {
+    transform: translate(1px, 0) skew(1deg);
+    filter: drop-shadow(3px 0 #7FDBFF) drop-shadow(-3px 0 #ff00ea);
+    clip-path: polygon(0 5%, 100% 5%, 100% 95%, 0 95%);
   }
   95% {
-    border-color: #7FDBFF;
-    transform: translate(2px, 1px);
-    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
-    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); /* Top and Right are smaller */
+    transform: translate(-1px, 0) skew(-1deg);
+    filter: drop-shadow(-2px 0 #00ffff) drop-shadow(2px 0 #7FDBFF);
+    clip-path: inset(5% 5% 5% 5%);
   }
   95.5% {
-    border-color: #ff00ea;
-    transform: translate(-3px, 2px);
-    clip-path: polygon(5% 0, 95% 0, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0 95%, 0 5%);
+    transform: translate(1px, 0);
+    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #7FDBFF);
+    clip-path: inset(2% 2% 2% 2%);
   }
   96% {
-    border-color: #00ffff;
-    transform: translate(3px, -2px);
-    filter: drop-shadow(3px 0 #ff00ea) drop-shadow(-3px 0 #7FDBFF);
-    clip-path: polygon(2% 0, 98% 0, 100% 2%, 100% 98%, 98% 100%, 2% 100%, 0 98%, 0 2%);
-  }
-  96.5% {
-    border-color: #7FDBFF;
-    transform: translate(-2px, 1px);
-    filter: drop-shadow(-2px 0 #00ffff) drop-shadow(2px 0 #ff00ea);
-    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); /* Top and Right are smaller */
-  }
-  97% {
-    border-color: #ff00ea;
-    transform: translate(1px, -1px) skew(1deg);
-    clip-path: polygon(3% 0, 97% 0, 100% 3%, 100% 97%, 97% 100%, 3% 100%, 0 97%, 0 3%);
-  }
-  97.5% {
-    border-color: #00ffff;
-    transform: translate(-1px, 2px) skew(-1deg);
-    filter: drop-shadow(2px 0 #7FDBFF) drop-shadow(-2px 0 #ff00ea);
-    clip-path: polygon(1% 1%, 99% 1%, 99% 99%, 1% 99%);
-  }
-  98% {
-    border-color: #7FDBFF;
-    transform: translate(2px, -2px);
-    clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%); /* Top and Right are smaller */
-  }
-  98.5% {
-    border-color: #ff00ea;
-    transform: translate(-2px, 1px) skew(2deg);
-    filter: drop-shadow(3px 0 #00ffff) drop-shadow(-3px 0 #7FDBFF);
-    clip-path: inset(1% 1% 1% 1%);
-  }
-  99% {
-    border-color: #00ffff;
-    transform: translate(1px, -1px) skew(-2deg);
-    filter: drop-shadow(-1px 0 #ff00ea) drop-shadow(1px 0 #7FDBFF);
-    clip-path: none;
-  }
-  99.5% {
-    border-color: transparent;
     transform: none;
-    filter: none;
+    filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='pixelate'%3E%3CfeFlood x='4' y='4' height='2' width='2'/%3E%3CfeComposite/%3E%3CfeTile/%3E%3CfeComposite/%3E%3C/filter%3E%3C/svg%3E#pixelate");
     clip-path: none;
   }
 }
 
+@keyframes noise {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0); }
+  70% { transform: translate(0, 10%); }
+  80% { transform: translate(-15%, 0); }
+  90% { transform: translate(10%, 5%); }
+}
 
 .message {
   @apply w-full p-4 mb-4 bg-container animate-fade-in relative z-10;
