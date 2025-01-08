@@ -64,32 +64,55 @@
   }
   93.5% {
     transform: translate(2px, 0) skew(2deg);
-    filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='glitch'%3E%3CfeColorMatrix type='matrix' values='1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0'/%3E%3CfeOffset dx='3' dy='0'/%3E%3CfeBlend mode='screen'/%3E%3C/filter%3E%3C/svg%3E#glitch");
+    filter: 
+      drop-shadow(2px 0 #ff00ea) 
+      drop-shadow(-2px 0 #00ffff)
+      hue-rotate(90deg);
     clip-path: polygon(0 15%, 100% 15%, 100% 85%, 0 85%);
   }
   94% {
     transform: translate(-2px, 0) skew(-2deg);
-    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #00ffff);
+    filter: 
+      drop-shadow(3px 0 #ff0000) 
+      drop-shadow(-3px 0 #00ffff)
+      saturate(150%)
+      contrast(120%);
     clip-path: polygon(0 10%, 100% 10%, 100% 90%, 0 90%);
   }
   94.5% {
     transform: translate(1px, 0) skew(1deg);
-    filter: drop-shadow(3px 0 #7FDBFF) drop-shadow(-3px 0 #ff00ea);
+    filter: 
+      drop-shadow(4px 0 #7FDBFF) 
+      drop-shadow(-4px 0 #ff00ea)
+      hue-rotate(-90deg)
+      brightness(120%);
     clip-path: polygon(0 5%, 100% 5%, 100% 95%, 0 95%);
   }
   95% {
     transform: translate(-1px, 0) skew(-1deg);
-    filter: drop-shadow(-2px 0 #00ffff) drop-shadow(2px 0 #7FDBFF);
+    filter: 
+      drop-shadow(-3px 0 #00ffff) 
+      drop-shadow(3px 0 #ff0000)
+      saturate(200%)
+      contrast(150%);
     clip-path: inset(5% 5% 5% 5%);
   }
   95.5% {
     transform: translate(1px, 0);
-    filter: drop-shadow(2px 0 #ff00ea) drop-shadow(-2px 0 #7FDBFF);
+    filter: 
+      drop-shadow(2px 0 #ff00ea) 
+      drop-shadow(-2px 0 #7FDBFF)
+      hue-rotate(45deg)
+      brightness(150%);
     clip-path: inset(2% 2% 2% 2%);
   }
   96% {
     transform: none;
-    filter: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='pixelate'%3E%3CfeFlood x='4' y='4' height='2' width='2'/%3E%3CfeComposite/%3E%3CfeTile/%3E%3CfeComposite/%3E%3C/filter%3E%3C/svg%3E#pixelate");
+    filter: 
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='pixelate'%3E%3CfeFlood x='4' y='4' height='2' width='2'/%3E%3CfeComposite/%3E%3CfeTile/%3E%3CfeComposite/%3E%3C/filter%3E%3C/svg%3E#pixelate")
+      saturate(130%)
+      contrast(110%)
+      brightness(110%);
     clip-path: none;
   }
 }
