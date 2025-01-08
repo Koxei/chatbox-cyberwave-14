@@ -14,8 +14,8 @@ const Header = () => {
             <img 
               src="/lovable-uploads/nexx.png" 
               alt="X Logo" 
-              width={45} 
-              height={35}
+              width={48} 
+              height={30}
               className="w-[35px] h-[35px]"
             />
           </a>
