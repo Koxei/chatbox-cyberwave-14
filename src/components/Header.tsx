@@ -6,20 +6,6 @@ const Header = () => {
       <div className="flex justify-between items-center">
         <div className="flex gap-4">
           <a
-            href="https://pump.fun/board"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-heading hover:opacity-80 transition-opacity"
-          >
-            <img 
-              src="/lovable-uploads/nexx.png" 
-              alt="X Logo" 
-              width={35} 
-              height={35}
-              className="w-[35px] h-[35px]"
-            />
-          </a>
-          <a
             href="https://x.com/home"
             target="_blank"
             rel="noopener noreferrer"
@@ -28,9 +14,9 @@ const Header = () => {
             <img 
               src="/lovable-uploads/nexx.png" 
               alt="X Logo" 
-              width={48} 
-              height={30}
-              className="w-[48px] h-[30px]"
+              width={45} 
+              height={35}
+              className="w-[35px] h-[35px]"
             />
           </a>
         </div>
