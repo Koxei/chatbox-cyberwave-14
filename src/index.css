@@ -13,7 +13,7 @@
 
 .chat-container {
   @apply w-full max-w-3xl mx-auto flex flex-col;
-  max-width: 850px;
+  max-width: 950px;
   height: 90vh;
   position: relative;
   background-image: url('/lovable-uploads/a3e45ca6-c6c7-4b08-91fd-313bca3c1286.png');
@@ -22,7 +22,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   border-radius: 12px;
-  animation: container-glitch 4s infinite;
+  animation: container-glitch 11s infinite;
 }
 
 /* Glitch container and pseudo-elements */
