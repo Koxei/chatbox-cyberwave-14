@@ -16,7 +16,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
       alt="AI Avatar" 
       width={35} 
       height={35} 
-      className="w-[35px] h-[35px]" 
+      className="w-[35px] h-[35px] flex-shrink-0 min-w-[35px] min-h-[35px]" 
     />
   ) : ">"}
         </span>
