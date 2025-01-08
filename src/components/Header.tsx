@@ -5,6 +5,19 @@ const Header = () => {
     <header className="w-full p-4 mb-8 relative z-10">
       <div className="flex justify-between items-center">
         <div className="flex gap-4">
+          <a
+            href="https://pump.fun/board"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-heading hover:opacity-80 transition-opacity"
+          >
+            <img 
+              src="/lovable-uploads/nexx.png" 
+              alt="X Logo" 
+              width={35} 
+              height={35}
+              className="w-[35px] h-[35px]"
+            />
           </a>
           <a
             href="https://x.com/home"

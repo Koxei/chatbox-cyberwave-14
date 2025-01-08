@@ -191,7 +191,7 @@ const Index = () => {
           {isLoading && (
             <ChatMessage
               isAI
-              message="Thinking..."
+              message="Wait a second pwease. . ."
             />
           )}
           <div ref={messagesEndRef} />
@@ -205,7 +205,7 @@ const Index = () => {
               type="text"
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Chat here . . ."
+              placeholder="Write something c:"
               className="flex-1 bg-container p-2 rounded border border-userMessage text-white font-arcade"
               disabled={isLoading}
             />
