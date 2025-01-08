@@ -39,7 +39,7 @@ const Index = () => {
     console.log('Starting chat completion request...');
 
     const requestBody = {
-      model: "gpt-4",
+      model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
