@@ -66,7 +66,7 @@ const Index = () => {
           messages: [
             {
               role: "system",
-              content: "You are MICA, a 19-year-old female AI assistant..."  // Your full system prompt here
+              content: "You are ALICE, a 19-year-old female AI assistant..."  // Your full system prompt here
             },
             ...messages.map(msg => ({
               role: msg.role,
