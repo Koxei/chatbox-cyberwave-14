@@ -8,7 +8,6 @@ interface AuthModalProps {
 }
 
 const AuthModal = ({ isOpen }: AuthModalProps) => {
-  // Explicitly set the full callback URL
   const redirectURL = 'https://preview--micaai.lovable.app/auth/v1/callback';
 
   return (
@@ -16,17 +15,36 @@ const AuthModal = ({ isOpen }: AuthModalProps) => {
       <DialogContent className="sm:max-w-[425px]">
         <Auth
           supabaseClient={supabase}
-          appearance={{ theme: ThemeSupa }}
+          appearance={{ 
+            theme: ThemeSupa,
+            variables: {
+              default: {
+                colors: {
+                  brand: '#00ffff',
+                  brandAccent: '#00cccc'
+                }
+              }
+            }
+          }}
           providers={["google"]}
           theme="light"
           redirectTo={redirectURL}
-          showLinks={false}
+          showLinks={true}
+          view="sign_in"
           localization={{
             variables: {
               sign_in: {
                 email_label: "Email",
                 password_label: "Password",
+                button_label: "Sign in",
+                link_text: "Already have an account? Sign in"
               },
+              sign_up: {
+                email_label: "Email",
+                password_label: "Password",
+                button_label: "Sign up",
+                link_text: "Don't have an account? Sign up"
+              }
             },
           }}
           queryParams={{
