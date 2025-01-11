@@ -14,7 +14,7 @@ return (
       appearance={{ theme: ThemeSupa }}
       providers={["google"]}
       theme="light"
-      redirectTo="https://preview--micaai.lovable.app"
+      redirectTo="https://preview--micaai.lovable.app/auth/v1/callback"
       showLinks={false}
       localization={{
         variables: {
