@@ -14,6 +14,8 @@ isOpen: boolean;
 
 const AuthModal = ({ isOpen }: AuthModalProps) => {
 
+const redirectURL = new URL('/auth/callback', window.location.origin).toString();
+
 return (
 
 <Dialog open={isOpen} modal>
@@ -23,7 +25,7 @@ return (
       appearance={{ theme: ThemeSupa }}
       providers={["google"]}
       theme="light"
-      redirectTo="https://preview--micaai.lovable.app/"
+      redirectTo={redirectURL}
       showLinks={false}
       localization={{
         variables: {
@@ -35,8 +37,7 @@ return (
       }}
       queryParams={{
         access_type: 'offline',
-        prompt: 'consent',
-        hd: 'preview--micaai.lovable.app'
+        prompt: 'consent'
       }}
     />
   </DialogContent>
@@ -46,3 +47,4 @@ return (
 };
 
 export default AuthModal;
+
