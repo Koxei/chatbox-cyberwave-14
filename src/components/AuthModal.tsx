@@ -7,8 +7,8 @@ import { AuthFooter } from "./auth/AuthFooter";
 
 interface AuthModalProps {
   isOpen: boolean;
-  onPasswordResetStart?: () => void;  // Added new prop
-  onPasswordResetComplete?: () => void;  // Added new prop
+  onPasswordResetStart?: () => void;
+  onPasswordResetComplete?: () => void;
 }
 
 const AuthModal = ({ 
@@ -36,6 +36,13 @@ const AuthModal = ({
     onPasswordResetComplete?.();
   };
 
+  // New handler for back to login
+  const handleBackToLogin = () => {
+    setShowPasswordReset(false);
+    setResetStep('email');
+    setIsLogin(true);
+  };
+
   return (
     <Dialog open={keepOpen} modal>
       <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
@@ -54,6 +61,7 @@ const AuthModal = ({
             resetStep={resetStep}
             setResetStep={setResetStep}
             onPasswordResetComplete={handlePasswordResetComplete}
+            onBackToLogin={handleBackToLogin}  // New prop
           />
           <AuthFooter />
         </div>
