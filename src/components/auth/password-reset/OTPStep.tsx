@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 import { Button } from "@/components/ui/button";
 
 import {
@@ -43,12 +45,16 @@ const [isReady, setIsReady] = useState(false);
 useEffect(() => {
 
 // Small delay to ensure proper mounting
-const timer = setTimeout(() => setIsReady(true), 100);
+const timer = setTimeout(() => {
+  console.log('Setting OTP step ready');
+  setIsReady(true);
+}, 100);
 return () => clearTimeout(timer);
 }, []);
 
 if (!isReady) {
 
+console.log('OTP step not ready yet');
 return <div>Loading verification input...</div>;
 }
 
@@ -73,7 +79,7 @@ return (
           maxLength={6}
           render={({ slots }) => (
             <InputOTPGroup>
-              {slots && slots.map((slot, idx) => (
+              {slots.map((slot, idx) => (
                 <InputOTPSlot key={idx} {...slot} index={idx} />
               ))}
             </InputOTPGroup>
