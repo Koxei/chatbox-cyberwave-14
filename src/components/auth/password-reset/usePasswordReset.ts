@@ -7,7 +7,8 @@ export const usePasswordReset = (onSuccess: () => void) => {
     email: "",
     otp: "",
     newPassword: "",
-    loading: false
+    loading: false, 
+    error: "" // THIS ONEEEEEEEEEE
   });
 
   console.log('usePasswordReset hook state:', state);
@@ -17,7 +18,9 @@ export const usePasswordReset = (onSuccess: () => void) => {
     e.preventDefault();
     setState(prev => {
       console.log('Setting loading state to true');
-      return { ...prev, loading: true };
+      return { ...prev, loading: true,
+        error: "" // THIS OONEEEEEEEEEEEEEEEEEEE
+       };
     });
     
     try {
@@ -138,9 +141,10 @@ export const usePasswordReset = (onSuccess: () => void) => {
 
   return {
     email: state.email,
+    error: state.error, // Expose error state
     setEmail: (email: string) => {
       console.log('Setting email:', email);
-      setState(prev => ({ ...prev, email }));
+      setState(prev => ({ ...prev, email, error: "" })); // THIS CHANGE
     },
     otp: state.otp,
     setOtp: (otp: string) => {
