@@ -1,6 +1,6 @@
 export const AuthFooter = () => (
   <div className="text-center text-xs text-gray-500 mt-6">
-    <div className="flex flex-col items-center justify-center space-y-2">
+    <div className="flex items-center justify-center space-x-2">
       <span>Protected by</span>
       <a 
         href="https://supabase.com" 

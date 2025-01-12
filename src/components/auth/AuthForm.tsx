@@ -12,14 +12,21 @@ interface AuthFormProps {
 
 export const AuthForm = ({ isLogin, onToggle, redirectURL }: AuthFormProps) => {
   const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
 
   if (showPasswordReset) {
     return (
       <PasswordResetFlow
-        onBack={() => setShowPasswordReset(false)}
+        onBack={() => {
+          setShowPasswordReset(false);
+          setResetStep('email');
+        }}
         onSuccess={() => {
           setShowPasswordReset(false);
+          setResetStep('email');
         }}
+        onStepChange={setResetStep}
+        currentStep={resetStep}
       />
     );
   }

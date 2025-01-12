@@ -10,13 +10,19 @@ interface AuthModalProps {
 
 const AuthModal = ({ isOpen }: AuthModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
   const redirectURL = 'https://preview--micaai.lovable.app/auth/v1/callback';
 
   return (
     <Dialog open={isOpen} modal>
       <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
         <div className="space-y-6">
-          <AuthHeader isLogin={isLogin} />
+          <AuthHeader 
+            isLogin={isLogin} 
+            showPasswordReset={showPasswordReset}
+            resetStep={resetStep}
+          />
           <AuthForm 
             isLogin={isLogin} 
             redirectURL={redirectURL}
