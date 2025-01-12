@@ -8,12 +8,21 @@ interface AuthFormProps {
   isLogin: boolean;
   onToggle: () => void;
   redirectURL: string;
+  showPasswordReset: boolean;
+  setShowPasswordReset: (show: boolean) => void;
+  resetStep: 'email' | 'otp' | 'password';
+  setResetStep: (step: 'email' | 'otp' | 'password') => void;
 }
 
-export const AuthForm = ({ isLogin, onToggle, redirectURL }: AuthFormProps) => {
-  const [showPasswordReset, setShowPasswordReset] = useState(false);
-  const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
-
+export const AuthForm = ({ 
+  isLogin, 
+  onToggle, 
+  redirectURL,
+  showPasswordReset,
+  setShowPasswordReset,
+  resetStep,
+  setResetStep
+}: AuthFormProps) => {
   if (showPasswordReset) {
     return (
       <PasswordResetFlow
