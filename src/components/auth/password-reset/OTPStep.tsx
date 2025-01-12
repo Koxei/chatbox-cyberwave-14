@@ -42,12 +42,8 @@ console.log('OTPStep rendering with otp:', otp);
 
 const [isReady, setIsReady] = useState(false);
 
-const [slots, setSlots] = useState<Array<any>>([]);
-
 useEffect(() => {
 
-// Initialize slots array with 6 empty slots
-setSlots(Array(6).fill({}));
 // Small delay to ensure proper mounting
 const timer = setTimeout(() => {
   console.log('Setting OTP step ready');
@@ -83,16 +79,12 @@ return (
         maxLength={6}
         render={({ slots }) => (
           <InputOTPGroup>
-            {slots && slots.length > 0 ? (
-              slots.map((slot, idx) => (
-                <InputOTPSlot key={idx} {...slot} />
-              ))
-            ) : (
-              // Fallback using our initialized slots
-              slots.map((_, idx) => (
-                <InputOTPSlot key={idx} />
-              ))
-            )}
+            {Array.from({ length: 6 }, (_, index) => (
+              <InputOTPSlot 
+                key={index} 
+                {...(slots?.[index] || {})} 
+              />
+            ))}
           </InputOTPGroup>
         )}
       />
