@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
 
 export const usePasswordReset = (onSuccess: () => void) => {
   const [state, setState] = useState({
     email: "",
     otp: "",
     newPassword: "",
-    loading: false, 
-    error: "" // THIS ONEEEEEEEEEE
+    loading: false
   });
 
   console.log('usePasswordReset hook state:', state);
@@ -18,37 +17,24 @@ export const usePasswordReset = (onSuccess: () => void) => {
     e.preventDefault();
     setState(prev => {
       console.log('Setting loading state to true');
-      return { ...prev, loading: true,
-        error: "" // THIS OONEEEEEEEEEEEEEEEEEEE
-       };
+      return { ...prev, loading: true };
     });
     
     try {
-      // First check if the email exists in auth.users
-      const { data: { users }, error: userError } = await supabase.auth.admin.listUsers({
-        filters: {
-          email: state.email
-        }
-      });
-
-      if (userError) throw userError;
-
-      // If no users found with this email
-      if (!users || users.length === 0) {
-        console.log('Email not found in system:', state.email);
-        toast({
-          title: "Error",
-          description: "This email is not registered in our system.",
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      // If email exists, proceed with password reset
-      console.log('Email found, sending reset code');
       const { error } = await supabase.auth.resetPasswordForEmail(state.email);
       
-      if (error) throw error;
+      if (error) {
+        // Customize error message for non-existent user
+        if (error.message.includes('Email not found') || error.message.includes('User not found')) {
+          toast({
+            title: "Error",
+            description: "This email is not registered in our system.",
+            variant: "destructive",
+          });
+          return false;
+        }
+        throw error;
+      }
       
       console.log('Reset code sent successfully');
       toast({
@@ -141,10 +127,9 @@ export const usePasswordReset = (onSuccess: () => void) => {
 
   return {
     email: state.email,
-    error: state.error, // Expose error state
     setEmail: (email: string) => {
       console.log('Setting email:', email);
-      setState(prev => ({ ...prev, email, error: "" })); // THIS CHANGE
+      setState(prev => ({ ...prev, email }));
     },
     otp: state.otp,
     setOtp: (otp: string) => {
