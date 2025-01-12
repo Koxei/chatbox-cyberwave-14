@@ -12,11 +12,11 @@ export const AuthHeader = ({ isLogin, showPasswordReset, resetStep }: AuthHeader
     return (
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-1">
-          {isLogin ? "Log in to your account" : "Create your account"}
+          {isLogin ? "Log in to your account 2" : "Create your account"}
         </h2>
         <p className="text-sm text-gray-500">
           {isLogin 
-            ? "Welcome back! Please enter your details." 
+            ? "Welcome back! Please enter your details. 2" 
             : "Join us! Fill in your information below."}
         </p>
       </div>
