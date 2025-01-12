@@ -27,6 +27,7 @@ const AuthModal = ({
   // Handle password reset state changes
   const handlePasswordResetStart = () => {
     setShowPasswordReset(true);
+    setResetStep('email');
     onPasswordResetStart?.();
   };
 
@@ -41,6 +42,13 @@ const AuthModal = ({
     setShowPasswordReset(false);
     setResetStep('email');
     setIsLogin(true);
+  };
+
+  // New handler for step changes
+  const handleStepChange = (step: 'email' | 'otp' | 'password') => {
+    setResetStep(step);
+    // Ensure modal stays open during step transitions
+    setShowPasswordReset(true);
   };
 
   return (
@@ -59,9 +67,9 @@ const AuthModal = ({
             showPasswordReset={showPasswordReset}
             setShowPasswordReset={handlePasswordResetStart}
             resetStep={resetStep}
-            setResetStep={setResetStep}
+            setResetStep={handleStepChange}  // Use new handler
             onPasswordResetComplete={handlePasswordResetComplete}
-            onBackToLogin={handleBackToLogin}  // New prop
+            onBackToLogin={handleBackToLogin}
           />
           <AuthFooter />
         </div>
@@ -71,3 +79,4 @@ const AuthModal = ({
 };
 
 export default AuthModal;
+
