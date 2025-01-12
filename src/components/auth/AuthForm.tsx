@@ -1,4 +1,3 @@
-// src/components/auth/AuthForm.tsx
 import { useState } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -14,6 +13,7 @@ interface AuthFormProps {
   resetStep: 'email' | 'otp' | 'password';
   setResetStep: (step: 'email' | 'otp' | 'password') => void;
   onPasswordResetComplete?: () => void;
+  onBackToLogin: () => void;
 }
 
 export const AuthForm = ({ 
@@ -24,19 +24,16 @@ export const AuthForm = ({
   setShowPasswordReset,
   resetStep,
   setResetStep,
-  onPasswordResetComplete
+  onPasswordResetComplete,
+  onBackToLogin
 }: AuthFormProps) => {
   if (showPasswordReset) {
     return (
       <PasswordResetFlow
-        onBack={() => {
-          setShowPasswordReset(false);
-          setResetStep('email');
-        }}
+        onBack={onBackToLogin}
         onSuccess={() => {
-          setShowPasswordReset(false);
-          setResetStep('email');
           onPasswordResetComplete?.();
+          onBackToLogin();
         }}
         onStepChange={setResetStep}
         currentStep={resetStep}

@@ -1,8 +1,7 @@
-// src/components/auth/password-reset/usePasswordReset.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { AuthError } from "@supabase/supabase-js";
 
 export const usePasswordReset = (onSuccess: () => void) => {
   const [email, setEmail] = useState("");
@@ -10,7 +9,6 @@ export const usePasswordReset = (onSuccess: () => void) => {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +19,17 @@ export const usePasswordReset = (onSuccess: () => void) => {
         redirectTo: window.location.origin,
       });
       
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('User not found')) {
+          toast({
+            title: "Error",
+            description: "This email is not registered in our system.",
+            variant: "destructive",
+          });
+          return false;
+        }
+        throw error;
+      }
       
       toast({
         title: "Code sent!",
@@ -85,8 +93,6 @@ export const usePasswordReset = (onSuccess: () => void) => {
         title: "Success!",
         description: "Your password has been updated.",
       });
-      
-      // Only call onSuccess, remove navigation
       onSuccess();
       return true;
     } catch (err: any) {
