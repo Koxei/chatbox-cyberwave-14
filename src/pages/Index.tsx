@@ -1,3 +1,4 @@
+// src/pages/Index.tsx
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +17,7 @@ const Index = () => {
   const [showStartButton, setShowStartButton] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +29,7 @@ const Index = () => {
         setIsAuthenticated(true);
         setShowAuthModal(false);
         setShowStartButton(false);
+        setIsResettingPassword(false);
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         setShowAuthModal(true);
@@ -97,12 +100,24 @@ const Index = () => {
     }
   };
 
+  // Show auth modal if not authenticated or resetting password
+  const showModal = showAuthModal || isResettingPassword;
+
   if (showStartButton) {
     return <Landing onStartClick={handleStartClick} />;
   }
 
   if (!isAuthenticated) {
-    return <AuthModal isOpen={showAuthModal} />;
+    return (
+      <AuthModal 
+        isOpen={showModal} 
+        onPasswordResetStart={() => setIsResettingPassword(true)}
+        onPasswordResetComplete={() => {
+          setIsResettingPassword(false);
+          setShowAuthModal(false);
+        }}
+      />
+    );
   }
 
   return (

@@ -13,6 +13,7 @@ interface AuthFormProps {
   setShowPasswordReset: (show: boolean) => void;
   resetStep: 'email' | 'otp' | 'password';
   setResetStep: (step: 'email' | 'otp' | 'password') => void;
+  onPasswordResetComplete?: () => void;
 }
 
 export const AuthForm = ({ 
@@ -22,7 +23,8 @@ export const AuthForm = ({
   showPasswordReset,
   setShowPasswordReset,
   resetStep,
-  setResetStep
+  setResetStep,
+  onPasswordResetComplete
 }: AuthFormProps) => {
   if (showPasswordReset) {
     return (
@@ -34,6 +36,7 @@ export const AuthForm = ({
         onSuccess={() => {
           setShowPasswordReset(false);
           setResetStep('email');
+          onPasswordResetComplete?.();
         }}
         onStepChange={setResetStep}
         currentStep={resetStep}

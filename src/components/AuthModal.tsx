@@ -7,9 +7,15 @@ import { AuthFooter } from "./auth/AuthFooter";
 
 interface AuthModalProps {
   isOpen: boolean;
+  onPasswordResetStart?: () => void;  // Added new prop
+  onPasswordResetComplete?: () => void;  // Added new prop
 }
 
-const AuthModal = ({ isOpen }: AuthModalProps) => {
+const AuthModal = ({ 
+  isOpen, 
+  onPasswordResetStart, 
+  onPasswordResetComplete 
+}: AuthModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
@@ -17,6 +23,18 @@ const AuthModal = ({ isOpen }: AuthModalProps) => {
 
   // Keep dialog open during password reset
   const keepOpen = isOpen || showPasswordReset;
+
+  // Handle password reset state changes
+  const handlePasswordResetStart = () => {
+    setShowPasswordReset(true);
+    onPasswordResetStart?.();
+  };
+
+  const handlePasswordResetComplete = () => {
+    setShowPasswordReset(false);
+    setResetStep('email');
+    onPasswordResetComplete?.();
+  };
 
   return (
     <Dialog open={keepOpen} modal>
@@ -32,9 +50,10 @@ const AuthModal = ({ isOpen }: AuthModalProps) => {
             redirectURL={redirectURL}
             onToggle={() => setIsLogin(!isLogin)}
             showPasswordReset={showPasswordReset}
-            setShowPasswordReset={setShowPasswordReset}
+            setShowPasswordReset={handlePasswordResetStart}
             resetStep={resetStep}
             setResetStep={setResetStep}
+            onPasswordResetComplete={handlePasswordResetComplete}
           />
           <AuthFooter />
         </div>
