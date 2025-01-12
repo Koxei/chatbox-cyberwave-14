@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 
 export const usePasswordReset = (onSuccess: () => void) => {
   const [email, setEmail] = useState("");
@@ -8,6 +9,7 @@ export const usePasswordReset = (onSuccess: () => void) => {
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +84,9 @@ export const usePasswordReset = (onSuccess: () => void) => {
         title: "Success!",
         description: "Your password has been updated.",
       });
+      
+      // Redirect to homepage after successful password update
+      navigate("/");
       onSuccess();
       return true;
     } catch (err: any) {

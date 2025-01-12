@@ -31,7 +31,7 @@ export const PasswordStep = ({
       className="w-full"
       disabled={loading}
     >
-      {loading ? "Updating..." : "Update Password"}
+      {loading ? "Updating..." : "Confirm"}
     </Button>
   </form>
 );
