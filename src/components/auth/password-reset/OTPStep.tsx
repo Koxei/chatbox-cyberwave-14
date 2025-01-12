@@ -38,13 +38,10 @@ onSubmit
 
 console.log('OTPStep rendering with otp:', otp);
 
-// Initialize state for component readiness
-
 const [isReady, setIsReady] = useState(false);
 
 useEffect(() => {
 
-// Small delay to ensure proper mounting
 const timer = setTimeout(() => {
   console.log('Setting OTP step ready');
   setIsReady(true);
@@ -79,10 +76,11 @@ return (
         maxLength={6}
         render={({ slots }) => (
           <InputOTPGroup>
-            {Array.from({ length: 6 }, (_, index) => (
+            {slots.map((slot, index) => (
               <InputOTPSlot 
                 key={index} 
-                {...(slots?.[index] || {})} 
+                {...slot}
+                index={index}
               />
             ))}
           </InputOTPGroup>
