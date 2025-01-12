@@ -29,7 +29,7 @@ const Index = () => {
         setIsAuthenticated(true);
         setShowAuthModal(false);
         setShowStartButton(false);
-        setIsResettingPassword(false);
+        // Don't reset password state here anymore
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         setShowAuthModal(true);
@@ -69,7 +69,7 @@ const Index = () => {
           messages: [
             {
               role: "system",
-              content: "You are ALICE, a 19-year-old female AI assistant..."  // Your full system prompt here
+              content: "You are ALICE, a 19-year-old female AI assistant..."
             },
             ...messages.map(msg => ({
               role: msg.role,
@@ -101,22 +101,28 @@ const Index = () => {
   };
 
   // Show auth modal if not authenticated or resetting password
-  const showModal = showAuthModal || isResettingPassword;
+  const showModal = !isAuthenticated || isResettingPassword;
 
   if (showStartButton) {
     return <Landing onStartClick={handleStartClick} />;
   }
 
-  if (!isAuthenticated) {
+  // Changed this condition to check for both showModal states
+  if (showModal) {
     return (
-      <AuthModal 
-        isOpen={showModal} 
-        onPasswordResetStart={() => setIsResettingPassword(true)}
-        onPasswordResetComplete={() => {
-          setIsResettingPassword(false);
-          setShowAuthModal(false);
-        }}
-      />
+      <div className="fixed inset-0 bg-black/80">
+        <AuthModal 
+          isOpen={true}  // Always true when rendered
+          onPasswordResetStart={() => setIsResettingPassword(true)}
+          onPasswordResetComplete={() => {
+            setIsResettingPassword(false);
+            // Don't close auth modal here if user isn't authenticated yet
+            if (isAuthenticated) {
+              setShowAuthModal(false);
+            }
+          }}
+        />
+      </div>
     );
   }
 
