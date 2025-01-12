@@ -4,21 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { useToast } from "@/hooks/use-toast";
 
-interface PasswordResetState {
-
-email: string;
-
-otp: string;
-
-newPassword: string;
-
-loading: boolean;
-
-}
-
 export const usePasswordReset = (onSuccess: () => void) => {
 
-const [state, setState] = useState<PasswordResetState>({
+const [state, setState] = useState({
 
 email: "",
 otp: "",
@@ -33,9 +21,7 @@ const handleRequestCode = async (e: React.FormEvent) => {
 e.preventDefault();
 setState(prev => ({ ...prev, loading: true }));
 try {
-  const { data, error } = await supabase.auth.resetPasswordForEmail(
-    state.email
-  );
+  const { error } = await supabase.auth.resetPasswordForEmail(state.email);
   if (error) {
     if (error.message.includes('User not found')) {
       toast({
@@ -47,7 +33,6 @@ try {
     }
     throw error;
   }
-  // Success case
   toast({
     title: "Code sent!",
     description: "Check your email for the verification code.",
@@ -70,7 +55,7 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
 e.preventDefault();
 setState(prev => ({ ...prev, loading: true }));
 try {
-  const { data, error } = await supabase.auth.verifyOtp({
+  const { error } = await supabase.auth.verifyOtp({
     email: state.email,
     token: state.otp,
     type: 'recovery'
@@ -98,7 +83,7 @@ const handleUpdatePassword = async (e: React.FormEvent) => {
 e.preventDefault();
 setState(prev => ({ ...prev, loading: true }));
 try {
-  const { data, error } = await supabase.auth.updateUser({
+  const { error } = await supabase.auth.updateUser({
     password: state.newPassword
   });
   if (error) throw error;
