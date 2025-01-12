@@ -1,16 +1,6 @@
-import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
-
-import {
-
-InputOTP,
-
-InputOTPGroup,
-
-InputOTPSlot,
-
-} from "@/components/ui/input-otp";
 
 interface OTPStepProps {
 
@@ -34,68 +24,35 @@ onOTPChange,
 
 onSubmit
 
-}: OTPStepProps) => {
+}: OTPStepProps) => (
 
-console.log('OTPStep rendering with otp:', otp);
-
-const [isReady, setIsReady] = useState(false);
-
-useEffect(() => {
-
-const timer = setTimeout(() => {
-  console.log('Setting OTP step ready');
-  setIsReady(true);
-}, 100);
-return () => clearTimeout(timer);
-}, []);
-
-if (!isReady) {
-
-console.log('OTP step not ready yet');
-return <div>Loading verification input...</div>;
-}
-
-return (
-
-<div className="space-y-4">
-  <h2 className="text-xl font-semibold text-center">
-    Check your Mail for reset code
-  </h2>
-  <form onSubmit={(e) => {
-    e.preventDefault();
-    console.log('OTP form submitted with code:', otp);
-    onSubmit(e);
-  }} className="space-y-4">
-    <div className="flex justify-center">
-      <InputOTP
-        value={otp}
-        onChange={(value) => {
-          console.log('OTP changed to:', value);
-          onOTPChange(value);
-        }}
-        maxLength={6}
-        render={({ slots }) => (
-          <InputOTPGroup>
-            {slots.map((slot, index) => (
-              <InputOTPSlot 
-                key={index} 
-                {...slot}
-                index={index}
-              />
-            ))}
-          </InputOTPGroup>
-        )}
-      />
-    </div>
-    <Button
-      type="submit"
-      className="w-full"
-      disabled={loading || !otp || otp.length !== 6}
-    >
-      {loading ? "Verifying..." : "Confirm Code"}
-    </Button>
-  </form>
+<form onSubmit={onSubmit} className="space-y-4">
+<h2 className="text-xl font-semibold text-center">
+  Check your Mail for reset code
+</h2>
+<div>
+  <Input
+    type="text"
+    placeholder="Enter 6-digit code"
+    value={otp}
+    onChange={(e) => {
+      // Only allow numbers and limit to 6 digits
+      const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+      onOTPChange(value);
+    }}
+    required
+    className="w-full text-center tracking-widest font-mono text-lg"
+    maxLength={6}
+    pattern="\d{6}"
+    inputMode="numeric"
+  />
 </div>
+<Button
+  type="submit"
+  className="w-full"
+  disabled={loading || !otp || otp.length !== 6}
+>
+  {loading ? "Verifying..." : "Confirm Code"}
+</Button>
+</form>
 );
-
-};
