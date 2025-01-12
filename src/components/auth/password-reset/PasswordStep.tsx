@@ -5,7 +5,7 @@ interface PasswordStepProps {
   password: string;
   loading: boolean;
   onPasswordChange: (password: string) => void;
-  onSubmit: (e: React.FormEvent) => Promise<void>;
+  onSubmit: (e: React.FormEvent) => void;
 }
 
 export const PasswordStep = ({

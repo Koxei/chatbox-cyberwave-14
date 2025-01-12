@@ -5,7 +5,7 @@ interface EmailStepProps {
   email: string;
   loading: boolean;
   onEmailChange: (email: string) => void;
-  onSubmit: (e: React.FormEvent) => Promise<void>;
+  onSubmit: (e: React.FormEvent) => void;
   onBack: () => void;
 }
 

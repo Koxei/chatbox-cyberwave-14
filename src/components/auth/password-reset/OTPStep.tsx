@@ -9,7 +9,7 @@ interface OTPStepProps {
   otp: string;
   loading: boolean;
   onOTPChange: (otp: string) => void;
-  onSubmit: (e: React.FormEvent) => Promise<void>;
+  onSubmit: (e: React.FormEvent) => void;
 }
 
 export const OTPStep = ({
