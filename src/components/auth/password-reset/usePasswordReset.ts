@@ -1,3 +1,4 @@
+// src/components/auth/password-reset/usePasswordReset.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -85,8 +86,7 @@ export const usePasswordReset = (onSuccess: () => void) => {
         description: "Your password has been updated.",
       });
       
-      // Redirect to homepage after successful password update
-      navigate("/");
+      // Only call onSuccess, remove navigation
       onSuccess();
       return true;
     } catch (err: any) {
