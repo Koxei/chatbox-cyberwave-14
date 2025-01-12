@@ -1,4 +1,3 @@
-// src/components/auth/password-reset/usePasswordReset.ts
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
@@ -25,22 +24,31 @@ export const usePasswordReset = (onSuccess: () => void) => {
     });
     
     try {
-      // Directly try to send reset email - no need to check existence first
+      // First check if the email exists in auth.users
+      const { data: { users }, error: userError } = await supabase.auth.admin.listUsers({
+        filters: {
+          email: state.email
+        }
+      });
+
+      if (userError) throw userError;
+
+      // If no users found with this email
+      if (!users || users.length === 0) {
+        console.log('Email not found in system:', state.email);
+        toast({
+          title: "Error",
+          description: "This email is not registered in our system.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // If email exists, proceed with password reset
+      console.log('Email found, sending reset code');
       const { error } = await supabase.auth.resetPasswordForEmail(state.email);
       
-      if (error) {
-        // Handle specific error cases
-        if (error.message.includes('Email not found') || error.message.includes('User not found')) {
-          console.log('Email not found in system:', state.email);
-          toast({
-            title: "Error",
-            description: "This email is not registered in our system.",
-            variant: "destructive",
-          });
-          return false;
-        }
-        throw error;
-      }
+      if (error) throw error;
       
       console.log('Reset code sent successfully');
       toast({
