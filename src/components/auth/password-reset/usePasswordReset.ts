@@ -21,22 +21,31 @@ export const usePasswordReset = (onSuccess: () => void) => {
     });
     
     try {
-      console.log('Calling resetPasswordForEmail with email:', state.email);
-      const { data, error } = await supabase.auth.resetPasswordForEmail(state.email);
-      console.log('resetPasswordForEmail response:', { data, error });
-      
-      if (error) {
-        console.log('Error in resetPasswordForEmail:', error);
-        if (error.message.includes('Email not found')) {
-          toast({
-            title: "Error",
-            description: "This email is not registered in our system.",
-            variant: "destructive",
-          });
-          return false;
+      // First check if the email exists in auth.users
+      const { data: { users }, error: userError } = await supabase.auth.admin.listUsers({
+        filters: {
+          email: state.email
         }
-        throw error;
+      });
+
+      if (userError) throw userError;
+
+      // If no users found with this email
+      if (!users || users.length === 0) {
+        console.log('Email not found in system:', state.email);
+        toast({
+          title: "Error",
+          description: "This email is not registered in our system.",
+          variant: "destructive",
+        });
+        return false;
       }
+
+      // If email exists, proceed with password reset
+      console.log('Email found, sending reset code');
+      const { error } = await supabase.auth.resetPasswordForEmail(state.email);
+      
+      if (error) throw error;
       
       console.log('Reset code sent successfully');
       toast({
