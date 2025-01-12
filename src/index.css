@@ -7,9 +7,10 @@
 
 @layer base {
   body {
-    @apply bg-background text-white min-h-screen overflow-hidden flex items-center justify-center;
+    @apply bg-[#333333] text-white min-h-screen overflow-hidden flex items-center justify-center;
   }
 }
+
 
 .chat-container {
   @apply w-full max-w-3xl mx-auto flex flex-col;
