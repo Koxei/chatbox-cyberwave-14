@@ -39,6 +39,10 @@ export const PasswordResetFlow = ({
     if (success) onStepChange('password');
   };
 
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    await handleUpdatePassword(e);
+  };
+
   return (
     <div className="space-y-4">
       {currentStep === "email" && (
@@ -65,7 +69,7 @@ export const PasswordResetFlow = ({
           password={newPassword}
           loading={loading}
           onPasswordChange={setNewPassword}
-          onSubmit={handleUpdatePassword}
+          onSubmit={handlePasswordSubmit}
         />
       )}
     </div>
