@@ -1,122 +1,140 @@
 import { useState } from "react";
+
 import { supabase } from "@/integrations/supabase/client";
+
 import { useToast } from "@/hooks/use-toast";
-import { AuthError } from "@supabase/supabase-js";
+
+interface PasswordResetState {
+
+email: string;
+
+otp: string;
+
+newPassword: string;
+
+loading: boolean;
+
+}
 
 export const usePasswordReset = (onSuccess: () => void) => {
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
-  const handleRequestCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+const [state, setState] = useState<PasswordResetState>({
 
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin,
-      });
-      
-      if (error) {
-        if (error.message.includes('User not found')) {
-          toast({
-            title: "Error",
-            description: "This email is not registered in our system.",
-            variant: "destructive",
-          });
-          return false;
-        }
-        throw error;
-      }
-      
-      toast({
-        title: "Code sent!",
-        description: "Check your email for the verification code.",
-      });
-      return true;
-    } catch (err: any) {
+email: "",
+otp: "",
+newPassword: "",
+loading: false
+});
+
+const { toast } = useToast();
+
+const handleRequestCode = async (e: React.FormEvent) => {
+
+e.preventDefault();
+setState(prev => ({ ...prev, loading: true }));
+try {
+  const { error } = await supabase.auth.resetPasswordForEmail(state.email, {
+    redirectTo: window.location.origin,
+  });
+  if (error) {
+    if (error.message.includes('User not found')) {
       toast({
         title: "Error",
-        description: err.message,
+        description: "This email is not registered in our system.",
         variant: "destructive",
       });
       return false;
-    } finally {
-      setLoading(false);
     }
-  };
+    throw error;
+  }
+  toast({
+    title: "Code sent!",
+    description: "Check your email for the verification code.",
+  });
+  // Important: Update state before returning
+  setState(prev => ({ ...prev, loading: false }));
+  return true;
+} catch (err: any) {
+  toast({
+    title: "Error",
+    description: err.message,
+    variant: "destructive",
+  });
+  return false;
+} finally {
+  setState(prev => ({ ...prev, loading: false }));
+}
+};
 
-  const handleVerifyOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+const handleVerifyOTP = async (e: React.FormEvent) => {
 
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: 'recovery'
-      });
+e.preventDefault();
+setState(prev => ({ ...prev, loading: true }));
+try {
+  const { error } = await supabase.auth.verifyOtp({
+    email: state.email,
+    token: state.otp,
+    type: 'recovery'
+  });
+  if (error) throw error;
+  toast({
+    title: "Code verified!",
+    description: "You can now set your new password.",
+  });
+  // Important: Update state before returning
+  setState(prev => ({ ...prev, loading: false }));
+  return true;
+} catch (err: any) {
+  toast({
+    title: "Error",
+    description: err.message,
+    variant: "destructive",
+  });
+  return false;
+} finally {
+  setState(prev => ({ ...prev, loading: false }));
+}
+};
 
-      if (error) throw error;
-      
-      toast({
-        title: "Code verified!",
-        description: "You can now set your new password.",
-      });
-      return true;
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleUpdatePassword = async (e: React.FormEvent) => {
 
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+e.preventDefault();
+setState(prev => ({ ...prev, loading: true }));
+try {
+  const { error } = await supabase.auth.updateUser({
+    password: state.newPassword
+  });
+  if (error) throw error;
+  toast({
+    title: "Success!",
+    description: "Your password has been updated.",
+  });
+  onSuccess();
+  return true;
+} catch (err: any) {
+  toast({
+    title: "Error",
+    description: err.message,
+    variant: "destructive",
+  });
+  return false;
+} finally {
+  setState(prev => ({ ...prev, loading: false }));
+}
+};
 
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
+return {
 
-      if (error) throw error;
-      
-      toast({
-        title: "Success!",
-        description: "Your password has been updated.",
-      });
-      onSuccess();
-      return true;
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+email: state.email,
+setEmail: (email: string) => setState(prev => ({ ...prev, email })),
+otp: state.otp,
+setOtp: (otp: string) => setState(prev => ({ ...prev, otp })),
+newPassword: state.newPassword,
+setNewPassword: (newPassword: string) => setState(prev => ({ ...prev, newPassword })),
+loading: state.loading,
+handleRequestCode,
+handleVerifyOTP,
+handleUpdatePassword
+};
 
-  return {
-    email,
-    setEmail,
-    otp,
-    setOtp,
-    newPassword,
-    setNewPassword,
-    loading,
-    handleRequestCode,
-    handleVerifyOTP,
-    handleUpdatePassword
-  };
 };
