@@ -7,8 +7,7 @@ export const usePasswordReset = (onSuccess: () => void) => {
     email: "",
     otp: "",
     newPassword: "",
-    loading: false,
-    error: "" // New error state
+    loading: false
   });
 
   console.log('usePasswordReset hook state:', state);
@@ -16,25 +15,37 @@ export const usePasswordReset = (onSuccess: () => void) => {
   const handleRequestCode = async (e: React.FormEvent) => {
     console.log('handleRequestCode called');
     e.preventDefault();
-    setState(prev => ({
-      ...prev,
-      loading: true,
-      error: "" // Clear previous errors
-    }));
+    setState(prev => {
+      console.log('Setting loading state to true');
+      return { ...prev, loading: true };
+    });
     
     try {
+      // First check if the email exists in auth.users
+      const { data: { users }, error: userError } = await supabase.auth.admin.listUsers({
+        filters: {
+          email: state.email
+        }
+      });
+
+      if (userError) throw userError;
+
+      // If no users found with this email
+      if (!users || users.length === 0) {
+        console.log('Email not found in system:', state.email);
+        toast({
+          title: "Error",
+          description: "This email is not registered in our system.",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // If email exists, proceed with password reset
+      console.log('Email found, sending reset code');
       const { error } = await supabase.auth.resetPasswordForEmail(state.email);
       
-      if (error) {
-        if (error.message.includes('User not found')) {
-          setState(prev => ({
-            ...prev,
-            error: "This email is not registered in our system"
-          }));
-          return false;
-        }
-        throw error;
-      }
+      if (error) throw error;
       
       console.log('Reset code sent successfully');
       toast({
@@ -44,12 +55,14 @@ export const usePasswordReset = (onSuccess: () => void) => {
       return true;
     } catch (err: any) {
       console.error('Error in handleRequestCode:', err);
-      setState(prev => ({
-        ...prev,
-        error: err.message
-      }));
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
       return false;
     } finally {
+      console.log('Setting loading state to false');
       setState(prev => ({ ...prev, loading: false }));
     }
   };
@@ -125,10 +138,9 @@ export const usePasswordReset = (onSuccess: () => void) => {
 
   return {
     email: state.email,
-    error: state.error, // Expose error state
     setEmail: (email: string) => {
       console.log('Setting email:', email);
-      setState(prev => ({ ...prev, email, error: "" })); // Clear error when email changes
+      setState(prev => ({ ...prev, email }));
     },
     otp: state.otp,
     setOtp: (otp: string) => {
