@@ -24,16 +24,22 @@ export const AuthHeader = ({ isLogin, showPasswordReset, resetStep }: AuthHeader
     );
   }
 
-  return (
-    <div className="text-center">
-      <h2 className="text-2xl font-bold mb-1">
-        {isLogin ? "Log in to your account" : "Create your account"}
-      </h2>
-      <p className="text-sm text-gray-500">
-        {isLogin 
-          ? "Welcome back! Please enter your details." 
-          : "Join us! Fill in your information below."}
-      </p>
-    </div>
-  );
+  // Only show the login/signup header when not in password reset flow
+  if (!showPasswordReset) {
+    return (
+      <div className="text-center">
+        <h2 className="text-2xl font-bold mb-1">
+          {isLogin ? "Log in to your account" : "Create your account"}
+        </h2>
+        <p className="text-sm text-gray-500">
+          {isLogin 
+            ? "Welcome back! Please enter your details." 
+            : "Join us! Fill in your information below."}
+        </p>
+      </div>
+    );
+  }
+
+  // Return null when in password reset flow
+  return null;
 };

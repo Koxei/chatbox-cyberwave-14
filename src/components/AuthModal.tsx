@@ -27,6 +27,10 @@ const AuthModal = ({ isOpen }: AuthModalProps) => {
             isLogin={isLogin} 
             redirectURL={redirectURL}
             onToggle={() => setIsLogin(!isLogin)}
+            showPasswordReset={showPasswordReset}
+            setShowPasswordReset={setShowPasswordReset}
+            resetStep={resetStep}
+            setResetStep={setResetStep}
           />
           <AuthFooter />
         </div>
