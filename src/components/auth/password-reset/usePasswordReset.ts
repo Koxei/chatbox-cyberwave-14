@@ -33,9 +33,9 @@ const handleRequestCode = async (e: React.FormEvent) => {
 e.preventDefault();
 setState(prev => ({ ...prev, loading: true }));
 try {
-  const { error } = await supabase.auth.resetPasswordForEmail(state.email, {
-    redirectTo: window.location.origin,
-  });
+  const { data, error } = await supabase.auth.resetPasswordForEmail(
+    state.email
+  );
   if (error) {
     if (error.message.includes('User not found')) {
       toast({
@@ -47,12 +47,11 @@ try {
     }
     throw error;
   }
+  // Success case
   toast({
     title: "Code sent!",
     description: "Check your email for the verification code.",
   });
-  // Important: Update state before returning
-  setState(prev => ({ ...prev, loading: false }));
   return true;
 } catch (err: any) {
   toast({
@@ -71,7 +70,7 @@ const handleVerifyOTP = async (e: React.FormEvent) => {
 e.preventDefault();
 setState(prev => ({ ...prev, loading: true }));
 try {
-  const { error } = await supabase.auth.verifyOtp({
+  const { data, error } = await supabase.auth.verifyOtp({
     email: state.email,
     token: state.otp,
     type: 'recovery'
@@ -81,8 +80,6 @@ try {
     title: "Code verified!",
     description: "You can now set your new password.",
   });
-  // Important: Update state before returning
-  setState(prev => ({ ...prev, loading: false }));
   return true;
 } catch (err: any) {
   toast({
@@ -101,7 +98,7 @@ const handleUpdatePassword = async (e: React.FormEvent) => {
 e.preventDefault();
 setState(prev => ({ ...prev, loading: true }));
 try {
-  const { error } = await supabase.auth.updateUser({
+  const { data, error } = await supabase.auth.updateUser({
     password: state.newPassword
   });
   if (error) throw error;
