@@ -9,13 +9,15 @@ interface AuthModalProps {
   onPasswordResetStart?: () => void;
   onPasswordResetComplete?: () => void;
   onClose?: () => void;
+  onGuestLogin?: () => void;
 }
 
 const AuthModal = ({
   isOpen,
   onPasswordResetStart,
   onPasswordResetComplete,
-  onClose
+  onClose,
+  onGuestLogin
 }: AuthModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
@@ -76,7 +78,7 @@ const AuthModal = ({
   // Handle guest login
   const handleGuestLogin = () => {
     console.log('Guest login clicked');
-    onClose?.();
+    onGuestLogin?.();
   };
 
   return (
