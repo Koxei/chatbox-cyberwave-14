@@ -1,30 +1,46 @@
-// src/components/auth/password-reset/usePasswordReset.ts
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
+interface PasswordResetState {
+  email: string;
+  otp: string;
+  newPassword: string;
+  loading: boolean;
+}
+
 export const usePasswordReset = (onSuccess: () => void) => {
-  const [state, setState] = useState({
+  const [state, setState] = useState<PasswordResetState>({
     email: "",
     otp: "",
     newPassword: "",
-    loading: false
+    loading: false,
   });
 
+  const setEmail = (email: string) => {
+    console.log("Setting email:", email);
+    setState((prev) => ({ ...prev, email }));
+  };
+
+  const setOtp = (otp: string) => {
+    console.log("Setting OTP:", otp);
+    setState((prev) => ({ ...prev, otp }));
+  };
+
+  const setNewPassword = (newPassword: string) => {
+    console.log("Setting new password");
+    setState((prev) => ({ ...prev, newPassword }));
+  };
+
   const handleRequestCode = async (e: React.FormEvent) => {
-    console.log('handleRequestCode called');
     e.preventDefault();
-    setState(prev => ({ ...prev, loading: true }));
-    
+    setState((prev) => ({ ...prev, loading: true }));
     try {
-      // First check if user exists using our new Edge Function
-      const { data, error } = await supabase.functions.invoke('check-user-exists', {
-        body: { email: state.email }
+      const { data, error } = await supabase.functions.invoke("check-user-exists", {
+        body: { email: state.email },
       });
 
-      if (error) throw error;
-
-      if (!data.exists) {
+      if (error || !data?.exists) {
         toast({
           title: "Error",
           description: "This email is not registered in our system.",
@@ -33,67 +49,67 @@ export const usePasswordReset = (onSuccess: () => void) => {
         return false;
       }
 
-      // If user exists, proceed with password reset
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(state.email);
       if (resetError) throw resetError;
-      
+
       toast({
         title: "Code sent!",
         description: "Check your email for the verification code.",
       });
       return true;
     } catch (err: any) {
+      console.error("Error in handleRequestCode:", err);
       toast({
         title: "Error",
-        description: err.message,
+        description: err.message || "An unexpected error occurred.",
         variant: "destructive",
       });
       return false;
     } finally {
-      setState(prev => ({ ...prev, loading: false }));
+      setState((prev) => ({ ...prev, loading: false }));
     }
   };
 
-  // Keep all other existing functions unchanged
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
-    setState(prev => ({ ...prev, loading: true }));
+    setState((prev) => ({ ...prev, loading: true }));
     try {
       const { data, error } = await supabase.auth.verifyOtp({
         email: state.email,
         token: state.otp,
-        type: 'recovery'
+        type: "recovery",
       });
-      
+
       if (error) throw error;
-      
+
       toast({
         title: "Code verified!",
         description: "You can now set your new password.",
       });
       return true;
     } catch (err: any) {
+      console.error("Error in handleVerifyOTP:", err);
       toast({
         title: "Error",
-        description: err.message,
+        description: err.message || "An unexpected error occurred.",
         variant: "destructive",
       });
       return false;
     } finally {
-      setState(prev => ({ ...prev, loading: false }));
+      setState((prev) => ({ ...prev, loading: false }));
     }
   };
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    setState(prev => ({ ...prev, loading: true }));
+    setState((prev) => ({ ...prev, loading: true }));
     try {
       const { data, error } = await supabase.auth.updateUser({
-        password: state.newPassword
+        password: state.newPassword,
       });
-      
+
       if (error) throw error;
-      
+
       toast({
         title: "Success!",
         description: "Your password has been updated.",
@@ -101,30 +117,36 @@ export const usePasswordReset = (onSuccess: () => void) => {
       onSuccess();
       return true;
     } catch (err: any) {
+      console.error("Error in handleUpdatePassword:", err);
       toast({
         title: "Error",
-        description: err.message,
+        description: err.message || "An unexpected error occurred.",
         variant: "destructive",
       });
       return false;
     } finally {
-      setState(prev => ({ ...prev, loading: false }));
+      setState((prev) => ({ ...prev, loading: false }));
     }
   };
 
+  useEffect(() => {
+    console.log("Password Reset State Updated:", state);
+  }, [state]);
+
   return {
     email: state.email,
-    setEmail: (email: string) => setState(prev => ({ ...prev, email })),
+    setEmail,
     otp: state.otp,
-    setOtp: (otp: string) => setState(prev => ({ ...prev, otp })),
+    setOtp,
     newPassword: state.newPassword,
-    setNewPassword: (newPassword: string) => setState(prev => ({ ...prev, newPassword })),
+    setNewPassword,
     loading: state.loading,
     handleRequestCode,
     handleVerifyOTP,
-    handleUpdatePassword
+    handleUpdatePassword,
   };
 };
+
 
 
 
