@@ -19,6 +19,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -27,6 +28,7 @@ const Index = () => {
         setIsAuthenticated(true);
         setShowAuthModal(false);
         setShowStartButton(false);
+        setUserId(session?.user?.id || null);
         await loadChats();
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
@@ -34,8 +36,20 @@ const Index = () => {
         setShowStartButton(false);
         setChats([]);
         setCurrentChat(null);
+        setUserId(null);
       }
     });
+
+    // Check initial session
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUserId(session.user.id);
+        setIsAuthenticated(true);
+        await loadChats();
+      }
+    };
+    checkSession();
 
     return () => subscription.unsubscribe();
   }, []);
@@ -83,11 +97,21 @@ const Index = () => {
   };
 
   const createNewChat = async () => {
+    if (!userId) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to create a chat.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const { data: newChat, error } = await supabase
         .from('chats')
         .insert([
           { 
+            user_id: userId,
             is_guest: !isAuthenticated,
             title: 'New Chat'
           }
@@ -111,7 +135,7 @@ const Index = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputMessage.trim() || isLoading || !currentChat) return;
+    if (!inputMessage.trim() || isLoading || !currentChat || !userId) return;
 
     const userMessage = inputMessage.trim();
     setInputMessage("");
@@ -125,7 +149,8 @@ const Index = () => {
           {
             content: userMessage,
             is_ai: false,
-            chat_id: currentChat.id
+            chat_id: currentChat.id,
+            user_id: userId
           }
         ])
         .select()
@@ -169,7 +194,8 @@ const Index = () => {
           {
             content: aiResponse,
             is_ai: true,
-            chat_id: currentChat.id
+            chat_id: currentChat.id,
+            user_id: userId
           }
         ])
         .select()
