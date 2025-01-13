@@ -1,4 +1,3 @@
-// supabase/functions/check-user-exists/index.ts
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
@@ -16,7 +15,7 @@ Deno.serve(async (req) => {
     console.log('Function started');
     
     const { email } = await req.json();
-    console.log('Email received:', email);
+    console.log('Checking existence for email:', email);
 
     if (!email) {
       console.log('No email provided');
@@ -26,23 +25,51 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
-    console.log('Creating Supabase client');
-    const supabase = createClient(supabaseUrl!, supabaseKey!);
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Missing environment variables');
+    }
 
-    console.log('Querying users');
-    const { data: { users }, error } = await supabase.auth.admin.listUsers({
+    console.log('Creating Supabase client');
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // First, get the user from auth.users
+    console.log('Querying auth.users');
+    const { data: { users }, error: authError } = await supabase.auth.admin.listUsers({
       page: 1,
       perPage: 1,
       filter: { email }
     });
 
-    if (error) {
-      console.error('Query error:', error);
-      throw error;
+    if (authError) {
+      console.error('Auth query error:', authError);
+      throw authError;
     }
 
-    const exists = Boolean(users?.length);
-    console.log('User exists:', exists);
+    if (!users?.length) {
+      console.log('User not found in auth.users');
+      return new Response(
+        JSON.stringify({ exists: false }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = users[0].id;
+    console.log('Found user in auth.users, checking profiles');
+
+    // Then, check if they exist in public.profiles
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    if (profileError && profileError.code !== 'PGRST116') {
+      console.error('Profile query error:', profileError);
+      throw profileError;
+    }
+
+    const exists = Boolean(profile);
+    console.log('Profile exists:', exists);
 
     return new Response(
       JSON.stringify({ exists }),
