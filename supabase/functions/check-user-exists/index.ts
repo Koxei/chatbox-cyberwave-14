@@ -1,107 +1,64 @@
 // supabase/functions/check-user-exists/index.ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Helper function for consistent logging
-const logEvent = (message: string, data?: any) => {
-  const logData = data ? `${message}: ${JSON.stringify(data)}` : message;
-  // Force immediate console output
-  console.log(logData);
-  // Ensure logs are flushed
-  Deno.stderr.writeSync(new TextEncoder().encode(logData + '\n'));
-};
-
 Deno.serve(async (req) => {
-  // Log every request immediately
-  logEvent('Request received', {
-    method: req.method,
-    url: req.url
-  });
-
-  // Handle CORS preflight requests
+  // Handle CORS
   if (req.method === 'OPTIONS') {
-    logEvent('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Log request body
-    const body = await req.json();
-    logEvent('Request body received', body);
-    const { email } = body;
+    console.log('Function started');
+    
+    const { email } = await req.json();
+    console.log('Email received:', email);
 
     if (!email) {
-      logEvent('Error: No email provided');
+      console.log('No email provided');
       throw new Error('Email is required');
     }
 
-    // Create Supabase admin client
-    logEvent('Creating Supabase admin client');
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    console.log('Creating Supabase client');
+    const supabase = createClient(supabaseUrl!, supabaseKey!);
 
-    // Different approach: Use auth.users directly with email filter
-    logEvent('Querying auth.users');
-    const { data: { users }, error: adminError } = await supabaseAdmin.auth.admin.listUsers({
+    console.log('Querying users');
+    const { data: { users }, error } = await supabase.auth.admin.listUsers({
       page: 1,
       perPage: 1,
-      filter: {
-        email: email
-      }
-    });
-    
-    logEvent('Query result', {
-      hasUsers: !!users?.length,
-      userCount: users?.length ?? 0,
-      hasError: !!adminError
+      filter: { email }
     });
 
-    if (adminError) {
-      logEvent('Admin API error', adminError);
-      throw adminError;
+    if (error) {
+      console.error('Query error:', error);
+      throw error;
     }
 
-    const exists = users && users.length > 0;
-    logEvent('User existence check result', { exists });
-
-    // Create response
-    const response = { exists };
-    logEvent('Sending response', response);
+    const exists = Boolean(users?.length);
+    console.log('User exists:', exists);
 
     return new Response(
-      JSON.stringify(response),
+      JSON.stringify({ exists }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
+        status: 200
       }
     );
 
   } catch (error) {
-    logEvent('Error in edge function', {
-      message: error.message,
-      stack: error.stack
-    });
-
+    console.error('Function error:', error);
     return new Response(
-      JSON.stringify({ 
-        error: error.message,
-        exists: false 
-      }),
+      JSON.stringify({ error: error.message, exists: false }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500
+        status: 400
       }
     );
   }
