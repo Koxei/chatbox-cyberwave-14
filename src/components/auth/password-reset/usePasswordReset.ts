@@ -22,6 +22,7 @@ export const usePasswordReset = (onSuccess: () => void) => {
         body: { email: state.email }
       });
       console.log('Edge function response:', { data, error });
+      console.log('Full edge function response:', JSON.stringify(data));
 
       if (error) {
         console.error('Edge function error:', error);
