@@ -12,49 +12,43 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('Function started');
-    
-    // Parse the email from the request body
+    // Parsing the email from the request body
     const { email } = await req.json();
-    console.log('Email received:', email);
-
     if (!email) {
       console.log('No email provided');
       throw new Error('Email is required');
     }
 
-    // Get Supabase URL and key from environment variables
+    // Get Supabase URL and service role key from environment variables
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
-    console.log('Creating Supabase client');
+    // Creating Supabase client securely
     const supabase = createClient(supabaseUrl!, supabaseKey!);
 
     let page = 1;
     let userExists = false;
 
-    // Dynamically paginate through users until we find the email or exhaust pages
+    // Dynamically paginate through users
     while (true) {
-      console.log(`Querying users on page ${page}`);
       const { data: users, error } = await supabase.auth.admin.listUsers({
         page,
-        perPage: 100,  // Adjust based on expected user count, 100 is a good start
+        perPage: 100,  // Adjust as necessary
       });
 
       if (error) {
-        console.error('Query error:', error);
-        throw error;
+        console.error('Query error occurred while fetching users');
+        throw error;  // Don't log the actual error message to avoid exposure
       }
 
-      // Check if the email exists in the current page of users
+      // Check if the email exists on the current page of users
       userExists = users.some(user => user.email === email);
 
       if (userExists) {
-        console.log('User exists:', userExists);
-        break;
+        break;  // Exit loop if user is found
       }
 
-      // If there are no users left to query, break the loop
+      // Break the loop if there are no more users to query
       if (users.length === 0 || users.length < 100) {
         break;
       }
@@ -72,9 +66,9 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Function error:', error);
+    console.error('Error in function execution, check logs for details');
     return new Response(
-      JSON.stringify({ error: error.message, exists: false }),
+      JSON.stringify({ error: 'An error occurred while checking user existence' }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400
