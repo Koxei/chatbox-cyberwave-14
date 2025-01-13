@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Landing from "@/components/Landing";
+import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatHeader from "@/components/ChatHeader";
 import MatrixRain from "@/features/effects/MatrixRain";
@@ -12,7 +12,8 @@ import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
 import { Chat } from "@/types/chat";
 
 const Index = () => {
-  const [showStartButton, setShowStartButton] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -40,6 +41,21 @@ const Index = () => {
   const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
   const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
 
+  // Check if we should show auth modal based on navigation state
+  useEffect(() => {
+    const showAuth = location.state?.showAuth;
+    if (showAuth) {
+      setShowAuthModal(true);
+    }
+  }, [location.state]);
+
+  // Redirect to landing if accessed directly
+  useEffect(() => {
+    if (!location.state && !isAuthenticated && !isGuest) {
+      navigate('/');
+    }
+  }, [location.state, isAuthenticated, isGuest]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading || !currentChat) return;
@@ -56,26 +72,16 @@ const Index = () => {
     }
   };
 
-  const handleStartClick = () => {
-    setShowStartButton(false);
-    setShowAuthModal(true);
-  };
-
   const handleGuestLogin = () => {
     initGuestSession();
     setShowAuthModal(false);
-    setShowStartButton(false);
   };
-
-  if (showStartButton) {
-    return <Landing onStartClick={handleStartClick} />;
-  }
 
   if (!isAuthenticated && !isGuest) {
     return (
       <div className="fixed inset-0 bg-black/80">
         <AuthModal 
-          isOpen={true}
+          isOpen={showAuthModal}
           onPasswordResetStart={() => setIsResettingPassword(true)}
           onPasswordResetComplete={() => {
             setIsResettingPassword(false);
