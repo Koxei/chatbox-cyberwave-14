@@ -1,16 +1,19 @@
 import { useState } from "react";
 import Landing from "@/components/Landing";
 import AuthModal from "@/features/auth/components/AuthModal";
-import ChatMessage from "@/features/chat/components/messages/ChatMessage";
 import ChatHeader from "@/components/ChatHeader";
 import MatrixRain from "@/features/effects/MatrixRain";
-import { PlusCircle } from "lucide-react";
+import ChatContainer from "@/features/chat/components/container/ChatContainer";
 import { useAuth } from "@/features/chat/hooks/useAuth";
-import { useChats } from "@/features/chat/hooks/useChats";
-import { useMessageHandler } from "@/features/chat/hooks/useMessageHandler";
+import { useChatList } from "@/features/chat/hooks/chat/useChatList";
+import { useChatSelection } from "@/features/chat/hooks/chat/useChatSelection";
+import { useMessageSubmission } from "@/features/chat/hooks/message/useMessageSubmission";
+import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
 
 const Index = () => {
   const [showStartButton, setShowStartButton] = useState(true);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   
   const {
     isAuthenticated,
@@ -24,35 +27,49 @@ const Index = () => {
   const {
     chats,
     setChats,
+    loadChats,
+    createNewChat
+  } = useChatList(userId, isAuthenticated);
+
+  const {
     currentChat,
     setCurrentChat,
     messages,
     setMessages,
-    loadChats,
-    createNewChat,
     handleChatSelect
-  } = useChats(userId, isAuthenticated);
+  } = useChatSelection();
 
-  const {
-    inputMessage,
-    setInputMessage,
-    isLoading,
-    handleSubmit
-  } = useMessageHandler(userId, currentChat, setMessages, setChats, setCurrentChat);
+  const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
+  const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputMessage.trim() || isLoading || !currentChat || !userId) return;
+
+    const userMessage = inputMessage.trim();
+    setInputMessage("");
+    setIsLoading(true);
+
+    try {
+      const savedMessage = await submitMessage(userMessage);
+      if (savedMessage) {
+        await getAIResponse(userMessage);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleStartClick = () => {
     setShowStartButton(false);
     setShowAuthModal(true);
   };
 
-  // Show auth modal if not authenticated or resetting password
-  const showModal = !isAuthenticated || isResettingPassword;
-
   if (showStartButton) {
     return <Landing onStartClick={handleStartClick} />;
   }
 
-  if (showModal) {
+  if (!isAuthenticated || isResettingPassword) {
     return (
       <div className="fixed inset-0 bg-black/80">
         <AuthModal 
@@ -72,60 +89,21 @@ const Index = () => {
   return (
     <div className="chat-container p-4">
       <MatrixRain />
-      <div className="relative z-10 flex flex-col h-full">
-        <ChatHeader 
-          currentChat={currentChat}
-          chats={chats}
-          onChatSelect={handleChatSelect}
-          onNewChat={createNewChat}
-          isAuthenticated={isAuthenticated}
-        />
-        <main className="flex-1 overflow-y-auto px-4 pb-4">
-          {messages.map((message, index) => (
-            <ChatMessage
-              key={message.id || index}
-              isAI={message.is_ai}
-              message={message.content}
-            />
-          ))}
-          {isLoading && (
-            <ChatMessage
-              isAI
-              message="Wait a second pwease. . ."
-            />
-          )}
-          {!currentChat && (
-            <div className="flex flex-col items-center justify-center h-full text-gray-400">
-              <PlusCircle className="w-12 h-12 mb-4" />
-              <p className="text-lg">Start a new chat</p>
-            </div>
-          )}
-        </main>
-        {currentChat && (
-          <form 
-            onSubmit={handleSubmit}
-            className="p-4 bg-black/50 backdrop-blur-sm border-t border-userMessage"
-          >
-            <div className="max-w-3xl mx-auto flex gap-2">
-              <input
-                type="text"
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                placeholder="Write something c:"
-                className="flex-1 bg-container p-2 rounded border border-userMessage text-white font-arcade"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                className="px-4 py-2 bg-container border border-userMessage text-userMessage rounded font-arcade hover:opacity-80 transition-opacity disabled:opacity-50"
-                disabled={isLoading}
-              >
-                Send
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
+      <ChatHeader 
+        currentChat={currentChat}
+        chats={chats}
+        onChatSelect={handleChatSelect}
+        onNewChat={createNewChat}
+        isAuthenticated={isAuthenticated}
+      />
+      <ChatContainer
+        currentChat={currentChat}
+        messages={messages}
+        isLoading={isLoading}
+        onSubmit={handleSubmit}
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+      />
     </div>
   );
 };
