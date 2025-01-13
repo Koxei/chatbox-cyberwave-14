@@ -1,12 +1,11 @@
-// src/pages/Index.tsx
 import { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Landing from "@/components/Landing";
-import AuthModal from "@/components/AuthModal";
-import ChatMessage from "@/components/ChatMessage";
+import AuthModal from "@/features/auth/components/AuthModal";
+import ChatMessage from "@/features/chat/components/messages/ChatMessage";
 import ChatHeader from "@/components/ChatHeader";
-import MatrixRain from "@/components/MatrixRain";
+import MatrixRain from "@/features/effects/MatrixRain";
 
 interface Message {
   role: 'user' | 'assistant';
@@ -174,3 +173,4 @@ const Index = () => {
 };
 
 export default Index;
+
