@@ -22,7 +22,6 @@ export const PasswordStep = ({
         value={password}
         onChange={(e) => onPasswordChange(e.target.value)}
         required
-        className="w-full"
         minLength={6}
       />
     </div>
@@ -31,7 +30,7 @@ export const PasswordStep = ({
       className="w-full"
       disabled={loading}
     >
-      {loading ? "Updating..." : "Confirm"}
+      {loading ? "Updating..." : "Update Password"}
     </Button>
   </form>
 );
