@@ -14,18 +14,28 @@ const { toast } = useToast();
 
 const handleStartClick = async () => {
 
+console.log('Start button clicked');
 try {
   const { data: { session }, error } = await supabase.auth.getSession();
+  console.log('Session check result:', { session, error });
   if (error) {
+    console.error('Session check error:', error);
     throw error;
   }
   // Check for active session or guest session
   const hasGuestSession = localStorage.getItem('guest_session');
+  console.log('Guest session check:', { hasGuestSession });
   if (session || hasGuestSession) {
-    navigate('/home');
+    console.log('Active session found, navigating to home');
+    // Force a hard navigation to /home
+    window.location.href = '/home';
   } else {
-    // Show auth modal by setting showAuth to true in navigation state
-    navigate('/home', { state: { showAuth: true } });
+    console.log('No active session, showing auth modal');
+    // Force a hard navigation to /home with state
+    navigate('/home', { 
+      state: { showAuth: true },
+      replace: true 
+    });
   }
 } catch (error: any) {
   console.error('Session check failed:', error);
@@ -35,7 +45,10 @@ try {
     variant: "destructive",
   });
   // Redirect to auth as fallback
-  navigate('/home', { state: { showAuth: true } });
+  navigate('/home', { 
+    state: { showAuth: true },
+    replace: true 
+  });
 }
 };
 
