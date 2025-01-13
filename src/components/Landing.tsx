@@ -1,12 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-interface LandingProps {
-  onStartClick: () => void;
-}
-const Landing = ({ onStartClick }: LandingProps) => {
+
+const Landing = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="h-screen w-screen flex items-center justify-center">
       <Button 
-        onClick={onStartClick}
+        onClick={() => navigate("/login")}
         className="px-8 py-6 text-lg"
       >
         Start
@@ -14,4 +15,5 @@ const Landing = ({ onStartClick }: LandingProps) => {
     </div>
   );
 };
+
 export default Landing;
