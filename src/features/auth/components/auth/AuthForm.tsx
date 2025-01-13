@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
-import { PasswordResetFlow } from "./PasswordResetFlow";
+import { PasswordResetFlow } from "@/features/auth/components/password-reset/PasswordResetFlow";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -109,4 +109,3 @@ export const AuthForm = ({
     </div>
   );
 };
-
