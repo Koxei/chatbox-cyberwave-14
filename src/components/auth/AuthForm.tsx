@@ -3,6 +3,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { PasswordResetFlow } from "./PasswordResetFlow";
+import { Button } from "@/components/ui/button";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -14,6 +15,7 @@ interface AuthFormProps {
   setResetStep: (step: 'email' | 'otp' | 'password') => void;
   onPasswordResetComplete?: () => void;
   onBackToLogin: () => void;
+  onGuestLogin?: () => void;
 }
 
 export const AuthForm = ({ 
@@ -25,7 +27,8 @@ export const AuthForm = ({
   resetStep,
   setResetStep,
   onPasswordResetComplete,
-  onBackToLogin
+  onBackToLogin,
+  onGuestLogin
 }: AuthFormProps) => {
   if (showPasswordReset) {
     return (
@@ -40,6 +43,36 @@ export const AuthForm = ({
       />
     );
   }
+
+  const handleGuestLogin = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.signInWithPassword({
+        email: `guest_${Date.now()}@temporary.com`,
+        password: 'temporary_guest_password'
+      });
+
+      if (error) throw error;
+
+      // Create a new chat for the guest user
+      if (session) {
+        const { error: chatError } = await supabase
+          .from('chats')
+          .insert([
+            { 
+              user_id: session.user.id,
+              is_guest: true,
+              title: 'Guest Chat'
+            }
+          ]);
+
+        if (chatError) throw chatError;
+      }
+
+      onGuestLogin?.();
+    } catch (error) {
+      console.error('Error during guest login:', error);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -89,12 +122,21 @@ export const AuthForm = ({
       />
       
       {isLogin && (
-        <button
-          onClick={() => setShowPasswordReset(true)}
-          className="text-sm text-cyan-600 hover:text-cyan-500 w-full text-center"
-        >
-          Forgot password?
-        </button>
+        <>
+          <button
+            onClick={() => setShowPasswordReset(true)}
+            className="text-sm text-cyan-600 hover:text-cyan-500 w-full text-center"
+          >
+            Forgot password?
+          </button>
+          <Button
+            onClick={handleGuestLogin}
+            variant="outline"
+            className="w-full border-cyan-600 text-cyan-600 hover:bg-cyan-50"
+          >
+            Continue as Guest
+          </Button>
+        </>
       )}
 
       <div className="flex items-center justify-center space-x-1 text-sm text-gray-500">
