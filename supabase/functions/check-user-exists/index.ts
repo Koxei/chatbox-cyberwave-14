@@ -1,5 +1,29 @@
-// supabase/functions/check-user-exists/index.ts
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
+// check-user-exists.ts (Edge Function)
+import { supabase } from '@supabase/supabase-js';
+
+export const handler = async (event) => {
+  const { email } = JSON.parse(event.body);
+  const { data, error } = await supabase
+    .from('users')  // Replace with your actual users table name
+    .select('id')
+    .eq('email', email)
+    .single(); // Fetches only the first matching user
+
+  if (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Failed to check user existence' }),
+    };
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ exists: !!data }),
+  };
+};
+
+
+/*import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
@@ -70,4 +94,4 @@ serve(async (req) => {
       }
     );
   }
-});
+});*/
