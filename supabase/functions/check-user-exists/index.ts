@@ -1,60 +1,30 @@
-// check-user-exists.ts (Edge Function)
-import { supabase } from '@supabase/supabase-js';
+// supabase/functions/check-user-exists/index.ts
+import { createClient } from '@supabase/supabase-js';
 
-export const handler = async (event) => {
-  const { email } = JSON.parse(event.body);
-  const { data, error } = await supabase
-    .from('users')  // Replace with your actual users table name
-    .select('id')
-    .eq('email', email)
-    .single(); // Fetches only the first matching user
-
-  if (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to check user existence' }),
-    };
-  }
-
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ exists: !!data }),
-  };
-};
-
-
-/*import "https://deno.land/x/xhr@0.1.0/mod.ts";
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
-
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log('Handling CORS preflight request');
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Get email from request body
+    console.log('Edge function called');
     const { email } = await req.json();
+    console.log('Checking existence for email:', email);
 
     if (!email) {
-      return new Response(
-        JSON.stringify({ error: 'Email is required' }),
-        { 
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        }
-      );
+      console.error('No email provided');
+      throw new Error('Email is required');
     }
 
     // Create Supabase client with service role key
+    console.log('Creating Supabase admin client');
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -66,19 +36,28 @@ serve(async (req) => {
       }
     );
 
-    // Check if user exists
+    console.log('Querying auth.users for email:', email);
     const { data: { users }, error: adminError } = await supabaseAdmin.auth.admin.listUsers({
       page: 1,
       perPage: 1,
       query: email
     });
+    
+    console.log('Query result:', { 
+      userCount: users?.length ?? 0,
+      hasError: !!adminError
+    });
 
     if (adminError) {
+      console.error('Admin API error:', adminError);
       throw adminError;
     }
 
+    const exists = users && users.length > 0;
+    console.log('User exists:', exists);
+
     return new Response(
-      JSON.stringify({ exists: users && users.length > 0 }),
+      JSON.stringify({ exists }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200 
@@ -86,12 +65,16 @@ serve(async (req) => {
     );
 
   } catch (error) {
+    console.error('Edge function error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        exists: false 
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500
       }
     );
   }
-});*/
+});

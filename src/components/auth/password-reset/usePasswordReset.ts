@@ -13,15 +13,23 @@ export const usePasswordReset = (onSuccess: () => void) => {
   
   const handleRequestCode = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Starting password reset for email:', state.email);
     setState(prev => ({ ...prev, loading: true }));
     
     try {
-      // Check if user exists via Edge Function instead of direct admin API
+      console.log('Calling check-user-exists function...');
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email: state.email }
       });
+      console.log('Edge function response:', { data, error });
 
-      if (error || !data?.exists) {
+      if (error) {
+        console.error('Edge function error:', error);
+        throw error;
+      }
+
+      if (!data?.exists) {
+        console.log('User does not exist, stopping password reset');
         toast({
           title: "Error",
           description: "This email is not registered in our system.",
@@ -30,16 +38,21 @@ export const usePasswordReset = (onSuccess: () => void) => {
         return false;
       }
 
-      // If user exists, proceed with password reset
+      console.log('User exists, proceeding with password reset email');
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(state.email);
-      if (resetError) throw resetError;
+      if (resetError) {
+        console.error('Reset email error:', resetError);
+        throw resetError;
+      }
       
+      console.log('Reset email sent successfully');
       toast({
         title: "Code sent!",
         description: "Check your email for the verification code.",
       });
       return true;
     } catch (err: any) {
+      console.error('Password reset error:', err);
       toast({
         title: "Error",
         description: err.message,
@@ -53,22 +66,29 @@ export const usePasswordReset = (onSuccess: () => void) => {
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Starting OTP verification for email:', state.email);
     setState(prev => ({ ...prev, loading: true }));
     try {
+      console.log('Verifying OTP:', state.otp);
       const { data, error } = await supabase.auth.verifyOtp({
         email: state.email,
         token: state.otp,
         type: 'recovery'
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('OTP verification error:', error);
+        throw error;
+      }
       
+      console.log('OTP verified successfully');
       toast({
         title: "Code verified!",
         description: "You can now set your new password.",
       });
       return true;
     } catch (err: any) {
+      console.error('OTP verification error:', err);
       toast({
         title: "Error",
         description: err.message,
@@ -82,14 +102,20 @@ export const usePasswordReset = (onSuccess: () => void) => {
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Starting password update');
     setState(prev => ({ ...prev, loading: true }));
     try {
+      console.log('Updating password...');
       const { data, error } = await supabase.auth.updateUser({
         password: state.newPassword
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Password update error:', error);
+        throw error;
+      }
       
+      console.log('Password updated successfully');
       toast({
         title: "Success!",
         description: "Your password has been updated.",
@@ -97,6 +123,7 @@ export const usePasswordReset = (onSuccess: () => void) => {
       onSuccess();
       return true;
     } catch (err: any) {
+      console.error('Password update error:', err);
       toast({
         title: "Error",
         description: err.message,
@@ -111,14 +138,17 @@ export const usePasswordReset = (onSuccess: () => void) => {
   return {
     email: state.email,
     setEmail: (email: string) => {
+      console.log('Email changed:', email);
       setState(prev => ({ ...prev, email }));
     },
     otp: state.otp,
     setOtp: (otp: string) => {
+      console.log('OTP changed:', otp);
       setState(prev => ({ ...prev, otp }));
     },
     newPassword: state.newPassword,
     setNewPassword: (newPassword: string) => {
+      console.log('New password changed');
       setState(prev => ({ ...prev, newPassword }));
     },
     loading: state.loading,
