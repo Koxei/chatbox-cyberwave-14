@@ -5,6 +5,7 @@ import { AuthFooter } from "@/features/auth/components/auth/AuthFooter";
 
 interface AuthModalContentProps {
   isLogin: boolean;
+  onToggle: () => void;
   onPasswordResetStart?: () => void;
   onPasswordResetComplete?: () => void;
   showPasswordReset: boolean;
@@ -14,6 +15,7 @@ interface AuthModalContentProps {
 
 export const AuthModalContent = ({
   isLogin,
+  onToggle,
   onPasswordResetStart,
   onPasswordResetComplete,
   showPasswordReset,
@@ -34,13 +36,13 @@ export const AuthModalContent = ({
         <AuthForm 
           isLogin={isLogin}
           redirectURL="https://preview--micaai.lovable.app/auth/v1/callback"
+          onToggle={onToggle}
           showPasswordReset={showPasswordReset}
           setShowPasswordReset={onPasswordResetStart || (() => {})}
           resetStep={resetStep}
           setResetStep={(step) => console.log('Step changed:', step)}
           onPasswordResetComplete={onPasswordResetComplete}
           onBackToLogin={() => console.log('Back to login')}
-          onToggle={() => console.log('Toggle login/signup')}
           onGuestLogin={onGuestLogin}
         />
         <AuthFooter />
