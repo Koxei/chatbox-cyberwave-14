@@ -14,6 +14,7 @@ interface AuthFormProps {
   setResetStep: (step: 'email' | 'otp' | 'password') => void;
   onPasswordResetComplete?: () => void;
   onBackToLogin: () => void;
+  onGuestLogin?: () => void;
 }
 
 export const AuthForm = ({ 
@@ -25,7 +26,8 @@ export const AuthForm = ({
   resetStep,
   setResetStep,
   onPasswordResetComplete,
-  onBackToLogin
+  onBackToLogin,
+  onGuestLogin
 }: AuthFormProps) => {
   if (showPasswordReset) {
     return (
@@ -89,12 +91,22 @@ export const AuthForm = ({
       />
       
       {isLogin && (
-        <button
-          onClick={() => setShowPasswordReset(true)}
-          className="text-sm text-cyan-600 hover:text-cyan-500 w-full text-center"
-        >
-          Forgot password?
-        </button>
+        <>
+          <button
+            onClick={() => setShowPasswordReset(true)}
+            className="text-sm text-cyan-600 hover:text-cyan-500 w-full text-center"
+          >
+            Forgot password?
+          </button>
+          {onGuestLogin && (
+            <button
+              onClick={onGuestLogin}
+              className="w-full flex justify-center py-2 px-4 border border-cyan-600 rounded-md shadow-sm text-sm font-medium text-cyan-600 bg-white hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+            >
+              Continue as Guest
+            </button>
+          )}
+        </>
       )}
 
       <div className="flex items-center justify-center space-x-1 text-sm text-gray-500">
