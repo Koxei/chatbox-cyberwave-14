@@ -1,7 +1,7 @@
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { AuthHeader } from "./AuthHeader";
-import { AuthForm } from "./AuthForm";
-import { AuthFooter } from "./AuthFooter";
+import { AuthHeader } from "@/features/auth/components/auth/AuthHeader";
+import { AuthForm } from "@/features/auth/components/auth/AuthForm";
+import { AuthFooter } from "@/features/auth/components/auth/AuthFooter";
 
 interface AuthModalContentProps {
   isLogin: boolean;

@@ -1,7 +1,7 @@
-import { EmailStep } from "./EmailStep";
-import { OTPStep } from "./OTPStep";
-import { PasswordStep } from "./PasswordStep";
-import { usePasswordReset } from "../../hooks/usePasswordReset";
+import { EmailStep } from "@/features/auth/components/password-reset/EmailStep";
+import { OTPStep } from "@/features/auth/components/password-reset/OTPStep";
+import { PasswordStep } from "@/features/auth/components/password-reset/PasswordStep";
+import { usePasswordReset } from "@/features/auth/hooks/usePasswordReset";
 
 interface ResetStepContainerProps {
   currentStep: 'email' | 'otp' | 'password';

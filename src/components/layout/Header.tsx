@@ -1,4 +1,4 @@
-import AsciiTitle from "./AsciiTitle";
+import AsciiTitle from "@/components/common/AsciiTitle";
 
 const Header = () => {
   return (
