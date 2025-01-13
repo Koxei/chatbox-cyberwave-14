@@ -23,8 +23,13 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
+    // Check if environment variables are available (but avoid logging them)
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase credentials are missing');
+    }
+
     // Creating Supabase client securely
-    const supabase = createClient(supabaseUrl!, supabaseKey!);
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
     let page = 1;
     let userExists = false;
@@ -37,8 +42,8 @@ Deno.serve(async (req) => {
       });
 
       if (error) {
-        console.error('Query error occurred while fetching users');
-        throw error;  // Don't log the actual error message to avoid exposure
+        console.error('Error querying users');
+        throw new Error('Error querying Supabase users');
       }
 
       // Check if the email exists on the current page of users
@@ -57,6 +62,7 @@ Deno.serve(async (req) => {
       page++;
     }
 
+    // Returning response with user existence status
     return new Response(
       JSON.stringify({ exists: userExists }),
       { 
@@ -66,7 +72,8 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error in function execution, check logs for details');
+    // Always log generic error messages, never expose sensitive data
+    console.error('Error in function execution:', error.message);
     return new Response(
       JSON.stringify({ error: 'An error occurred while checking user existence' }),
       { 
