@@ -23,8 +23,11 @@ const Index = () => {
 
   const {
     chats,
+    setChats,
     currentChat,
+    setCurrentChat,
     messages,
+    setMessages,
     loadChats,
     createNewChat,
     handleChatSelect
@@ -35,7 +38,7 @@ const Index = () => {
     setInputMessage,
     isLoading,
     handleSubmit
-  } = useMessageHandler(userId, currentChat, messages, chats, currentChat);
+  } = useMessageHandler(userId, currentChat, setMessages, setChats, setCurrentChat);
 
   const handleStartClick = () => {
     setShowStartButton(false);

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Chat } from "@/types/chat";
+import { Chat, Message } from "@/types/chat";
 
 export const useMessageHandler = (
   userId: string | null,
   currentChat: Chat | null,
-  setMessages: React.Dispatch<React.SetStateAction<any[]>>,
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   setChats: React.Dispatch<React.SetStateAction<Chat[]>>,
   setCurrentChat: React.Dispatch<React.SetStateAction<Chat | null>>
 ) => {
