@@ -9,6 +9,7 @@ interface AuthModalContentProps {
   onPasswordResetComplete?: () => void;
   showPasswordReset: boolean;
   resetStep: 'email' | 'otp' | 'password';
+  onGuestLogin?: () => void;
 }
 
 export const AuthModalContent = ({
@@ -16,7 +17,8 @@ export const AuthModalContent = ({
   onPasswordResetStart,
   onPasswordResetComplete,
   showPasswordReset,
-  resetStep
+  resetStep,
+  onGuestLogin
 }: AuthModalContentProps) => {
   return (
     <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
@@ -39,6 +41,7 @@ export const AuthModalContent = ({
           onPasswordResetComplete={onPasswordResetComplete}
           onBackToLogin={() => console.log('Back to login')}
           onToggle={() => console.log('Toggle login/signup')}
+          onGuestLogin={onGuestLogin}
         />
         <AuthFooter />
       </div>
