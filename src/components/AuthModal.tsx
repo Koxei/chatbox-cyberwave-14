@@ -83,8 +83,10 @@ const AuthModal = ({
 
   // New handler for toggling between login and signup
   const handleAuthToggle = () => {
-    console.log('Auth toggle clicked, current state:', isLogin);
+    console.log('AuthModal toggle handler called');
+    console.log('Before toggle - isLogin:', isLogin);
     setIsLogin(!isLogin);
+    console.log('After toggle - isLogin:', !isLogin);
     // Reset password reset state when toggling
     if (showPasswordReset) {
       setShowPasswordReset(false);
