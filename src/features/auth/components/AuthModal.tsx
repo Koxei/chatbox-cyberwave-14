@@ -6,12 +6,14 @@ interface AuthModalProps {
   isOpen: boolean;
   onPasswordResetStart?: () => void;
   onPasswordResetComplete?: () => void;
+  onGuestLogin?: () => void;
 }
 
 const AuthModal = ({
   isOpen,
   onPasswordResetStart,
-  onPasswordResetComplete
+  onPasswordResetComplete,
+  onGuestLogin
 }: AuthModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
@@ -31,6 +33,7 @@ const AuthModal = ({
           setShowPasswordReset(false);
           onPasswordResetComplete?.();
         }}
+        onGuestLogin={onGuestLogin}
       />
     </Dialog>
   );
