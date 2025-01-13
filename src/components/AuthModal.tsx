@@ -81,6 +81,17 @@ const AuthModal = ({
     onGuestLogin?.();
   };
 
+  // New handler for toggling between login and signup
+  const handleAuthToggle = () => {
+    console.log('Auth toggle clicked, current state:', isLogin);
+    setIsLogin(!isLogin);
+    // Reset password reset state when toggling
+    if (showPasswordReset) {
+      setShowPasswordReset(false);
+      setResetStep('email');
+    }
+  };
+
   return (
     <Dialog open={keepOpen} modal>
       <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
@@ -94,7 +105,7 @@ const AuthModal = ({
           <AuthForm 
             isLogin={isLogin} 
             redirectURL={redirectURL}
-            onToggle={() => setIsLogin(!isLogin)}
+            onToggle={handleAuthToggle}
             showPasswordReset={showPasswordReset}
             setShowPasswordReset={handlePasswordResetStart}
             resetStep={resetStep}
