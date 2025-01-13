@@ -1,120 +1,93 @@
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useState, useEffect } from 'react';
 
-export const usePasswordReset = (onSuccess: () => void) => {
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+interface GuestChat {
 
-  const handleRequestCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+id: string;
 
-    try {
-      const { data, error } = await supabase.functions.invoke("check-user-exists", {
-        body: { email }
-      });
+title: string;
 
-      if (error || !data.exists) {
-        toast({
-          title: "Error",
-          description: "Email not found",
-          variant: "destructive",
-        });
-        return false;
-      }
+messages: any[];
 
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email);
-      if (resetError) throw resetError;
+isGuest: boolean;
 
-      toast({
-        title: "Success",
-        description: "Check your email for the reset code",
-      });
-      return true;
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+createdAt: number;
 
-  const handleVerifyOTP = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+}
 
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: 'recovery'
-      });
+export const useGuestSession = () => {
 
-      if (error) throw error;
+const [isGuest, setIsGuest] = useState(false);
 
-      toast({
-        title: "Success",
-        description: "Code verified successfully",
-      });
-      return true;
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+const [guestId, setGuestId] = useState<string | null>(null);
 
-  const handleUpdatePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+const [guestChat, setGuestChat] = useState<GuestChat | null>(null);
 
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword
-      });
+// Initialize guest session
 
-      if (error) throw error;
+const initGuestSession = () => {
 
-      toast({
-        title: "Success",
-        description: "Password updated successfully",
-      });
-      onSuccess();
-      return true;
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message,
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
+const guestId = `guest_${Date.now()}`;
+const guestChat = {
+  id: guestId,
+  title: 'Guest Chat',
+  messages: [],
+  isGuest: true,
+  createdAt: Date.now()
+};
+localStorage.setItem('guest_id', guestId);
+localStorage.setItem('guest_chat', JSON.stringify(guestChat));
+localStorage.setItem('guest_session_start', Date.now().toString());
+setIsGuest(true);
+setGuestId(guestId);
+setGuestChat(guestChat);
+};
 
-  return {
-    email,
-    setEmail,
-    otp,
-    setOtp,
-    newPassword,
-    setNewPassword,
-    loading,
-    handleRequestCode,
-    handleVerifyOTP,
-    handleUpdatePassword
-  };
+// Check session expiry (36 hours)
+
+const checkSessionExpiry = () => {
+
+const sessionStart = localStorage.getItem('guest_session_start');
+if (sessionStart) {
+  const expiryTime = parseInt(sessionStart) + (36 * 60 * 60 * 1000); // 36 hours in milliseconds
+  if (Date.now() > expiryTime) {
+    clearGuestSession();
+  }
+}
+};
+
+// Clear guest session
+
+const clearGuestSession = () => {
+
+localStorage.removeItem('guest_id');
+localStorage.removeItem('guest_chat');
+localStorage.removeItem('guest_session_start');
+setIsGuest(false);
+setGuestId(null);
+setGuestChat(null);
+};
+
+// Load existing guest session
+
+useEffect(() => {
+
+const storedGuestId = localStorage.getItem('guest_id');
+const storedGuestChat = localStorage.getItem('guest_chat');
+if (storedGuestId && storedGuestChat) {
+  checkSessionExpiry();
+  setIsGuest(true);
+  setGuestId(storedGuestId);
+  setGuestChat(JSON.parse(storedGuestChat));
+}
+}, []);
+
+return {
+
+isGuest,
+guestId,
+guestChat,
+initGuestSession,
+clearGuestSession
+};
+
 };

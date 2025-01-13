@@ -1,19 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Chat, Message } from "@/types/chat";
 
-export const useChats = (userId: string | null, isAuthenticated: boolean) => {
+export const useChats = (userId: string | null, isGuest: boolean) => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const { toast } = useToast();
 
+  useEffect(() => {
+    if (isGuest) {
+      // Load guest chat from localStorage
+      const guestChatStr = localStorage.getItem('guest_chat');
+      if (guestChatStr) {
+        const guestChat = JSON.parse(guestChatStr);
+        setChats([guestChat]);
+        setCurrentChat(guestChat);
+        setMessages(guestChat.messages);
+      }
+    } else if (userId) {
+      loadChats();
+    }
+  }, [userId, isGuest]);
+
   const loadChats = async () => {
+    if (isGuest) return;
+    
     try {
       const { data: chatsData, error: chatsError } = await supabase
         .from('chats')
         .select('*')
+        .eq('user_id', userId)
         .order('updated_at', { ascending: false });
 
       if (chatsError) throw chatsError;
@@ -33,6 +51,8 @@ export const useChats = (userId: string | null, isAuthenticated: boolean) => {
   };
 
   const loadMessages = async (chatId: string) => {
+    if (isGuest) return;
+
     try {
       const { data: messagesData, error: messagesError } = await supabase
         .from('messages')
@@ -52,6 +72,15 @@ export const useChats = (userId: string | null, isAuthenticated: boolean) => {
   };
 
   const createNewChat = async () => {
+    if (isGuest) {
+      toast({
+        title: "Guest Mode",
+        description: "Create new chat is not available in guest mode.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!userId) {
       toast({
         title: "Error",
@@ -64,13 +93,7 @@ export const useChats = (userId: string | null, isAuthenticated: boolean) => {
     try {
       const { data: newChat, error } = await supabase
         .from('chats')
-        .insert([
-          { 
-            user_id: userId,
-            is_guest: !isAuthenticated,
-            title: 'New Chat'
-          }
-        ])
+        .insert([{ user_id: userId, title: 'New Chat' }])
         .select()
         .single();
 
@@ -88,21 +111,25 @@ export const useChats = (userId: string | null, isAuthenticated: boolean) => {
     }
   };
 
-  const handleChatSelect = async (chat: Chat) => {
-    setCurrentChat(chat);
-    await loadMessages(chat.id);
+  const updateGuestChat = (newMessages: Message[]) => {
+    if (!isGuest) return;
+
+    const guestChatStr = localStorage.getItem('guest_chat');
+    if (guestChatStr) {
+      const guestChat = JSON.parse(guestChatStr);
+      guestChat.messages = newMessages;
+      localStorage.setItem('guest_chat', JSON.stringify(guestChat));
+      setMessages(newMessages);
+    }
   };
 
   return {
     chats,
-    setChats,
     currentChat,
-    setCurrentChat,
     messages,
-    setMessages,
+    setMessages: isGuest ? updateGuestChat : setMessages,
     loadChats,
-    loadMessages,
     createNewChat,
-    handleChatSelect
+    handleChatSelect: isGuest ? undefined : loadMessages
   };
 };
