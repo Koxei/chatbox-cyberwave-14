@@ -1,246 +1,45 @@
-import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 import Landing from "@/components/Landing";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatMessage from "@/features/chat/components/messages/ChatMessage";
 import ChatHeader from "@/components/ChatHeader";
 import MatrixRain from "@/features/effects/MatrixRain";
-import { Chat, Message } from "@/types/chat";
 import { PlusCircle } from "lucide-react";
+import { useAuth } from "@/features/chat/hooks/useAuth";
+import { useChats } from "@/features/chat/hooks/useChats";
+import { useMessageHandler } from "@/features/chat/hooks/useMessageHandler";
 
 const Index = () => {
   const [showStartButton, setShowStartButton] = useState(true);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isResettingPassword, setIsResettingPassword] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [chats, setChats] = useState<Chat[]>([]);
-  const [currentChat, setCurrentChat] = useState<Chat | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
-  const { toast } = useToast();
+  
+  const {
+    isAuthenticated,
+    showAuthModal,
+    setShowAuthModal,
+    isResettingPassword,
+    setIsResettingPassword,
+    userId
+  } = useAuth();
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN') {
-        setIsAuthenticated(true);
-        setShowAuthModal(false);
-        setShowStartButton(false);
-        setUserId(session?.user?.id || null);
-        await loadChats();
-      } else if (event === 'SIGNED_OUT') {
-        setIsAuthenticated(false);
-        setShowAuthModal(true);
-        setShowStartButton(false);
-        setChats([]);
-        setCurrentChat(null);
-        setUserId(null);
-      }
-    });
+  const {
+    chats,
+    currentChat,
+    messages,
+    loadChats,
+    createNewChat,
+    handleChatSelect
+  } = useChats(userId, isAuthenticated);
 
-    // Check initial session
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setUserId(session.user.id);
-        setIsAuthenticated(true);
-        await loadChats();
-      }
-    };
-    checkSession();
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const loadChats = async () => {
-    try {
-      const { data: chatsData, error: chatsError } = await supabase
-        .from('chats')
-        .select('*')
-        .order('updated_at', { ascending: false });
-
-      if (chatsError) throw chatsError;
-
-      setChats(chatsData || []);
-      if (chatsData && chatsData.length > 0) {
-        setCurrentChat(chatsData[0]);
-        await loadMessages(chatsData[0].id);
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load chats. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const loadMessages = async (chatId: string) => {
-    try {
-      const { data: messagesData, error: messagesError } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('chat_id', chatId)
-        .order('created_at', { ascending: true });
-
-      if (messagesError) throw messagesError;
-      setMessages(messagesData || []);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load messages. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const createNewChat = async () => {
-    if (!userId) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to create a chat.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { data: newChat, error } = await supabase
-        .from('chats')
-        .insert([
-          { 
-            user_id: userId,
-            is_guest: !isAuthenticated,
-            title: 'New Chat'
-          }
-        ])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setChats(prev => [newChat, ...prev]);
-      setCurrentChat(newChat);
-      setMessages([]);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create new chat. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMessage.trim() || isLoading || !currentChat || !userId) return;
-
-    const userMessage = inputMessage.trim();
-    setInputMessage("");
-    setIsLoading(true);
-
-    try {
-      // Save user message
-      const { data: savedMessage, error: messageError } = await supabase
-        .from('messages')
-        .insert([
-          {
-            content: userMessage,
-            is_ai: false,
-            chat_id: currentChat.id,
-            user_id: userId
-          }
-        ])
-        .select()
-        .single();
-
-      if (messageError) throw messageError;
-
-      setMessages(prev => [...prev, savedMessage]);
-
-      // Get AI response
-      const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
-        },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: "system",
-              content: "You are ALICE, a 19-year-old female AI assistant..."
-            },
-            ...messages.map(msg => ({
-              role: msg.is_ai ? "assistant" : "user",
-              content: msg.content
-            })),
-            { role: "user", content: userMessage }
-          ]
-        })
-      });
-
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-      const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
-
-      // Save AI response
-      const { data: savedAiMessage, error: aiMessageError } = await supabase
-        .from('messages')
-        .insert([
-          {
-            content: aiResponse,
-            is_ai: true,
-            chat_id: currentChat.id,
-            user_id: userId
-          }
-        ])
-        .select()
-        .single();
-
-      if (aiMessageError) throw aiMessageError;
-
-      setMessages(prev => [...prev, savedAiMessage]);
-
-      // Update chat title after first exchange
-      if (messages.length === 0) {
-        const { error: updateError } = await supabase
-          .from('chats')
-          .update({ title: userMessage.slice(0, 30) + '...' })
-          .eq('id', currentChat.id);
-
-        if (updateError) throw updateError;
-        
-        setChats(prev => prev.map(chat => 
-          chat.id === currentChat.id 
-            ? { ...chat, title: userMessage.slice(0, 30) + '...' }
-            : chat
-        ));
-        setCurrentChat(prev => prev ? { ...prev, title: userMessage.slice(0, 30) + '...' } : null);
-      }
-
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to get response. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    inputMessage,
+    setInputMessage,
+    isLoading,
+    handleSubmit
+  } = useMessageHandler(userId, currentChat, messages, chats, currentChat);
 
   const handleStartClick = () => {
     setShowStartButton(false);
     setShowAuthModal(true);
-  };
-
-  const handleChatSelect = async (chat: Chat) => {
-    setCurrentChat(chat);
-    await loadMessages(chat.id);
   };
 
   // Show auth modal if not authenticated or resetting password
