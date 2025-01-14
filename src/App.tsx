@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import Landing from "@/components/Landing";
@@ -14,26 +14,34 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Check initial auth state
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsAuthenticated(!!session);
-    });
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setIsAuthenticated(!!session);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkAuth();
 
     // Subscribe to auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event);
       setIsAuthenticated(!!session);
-      
-      // Redirect to home when user signs in
-      if (event === 'SIGNED_IN') {
-        window.location.href = '/home';
-      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Show nothing while checking auth state
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -45,16 +53,23 @@ const App = () => {
             <Route 
               path="/" 
               element={
-                isAuthenticated ? 
+                isAuthenticated === true ? 
                 <Navigate to="/home" replace /> : 
                 <Landing />
               } 
             />
-            <Route path="/login" element={<Login />} />
+            <Route 
+              path="/login" 
+              element={
+                isAuthenticated === true ? 
+                <Navigate to="/home" replace /> : 
+                <Login />
+              } 
+            />
             <Route 
               path="/home" 
               element={
-                isAuthenticated ? 
+                isAuthenticated === true ? 
                 <Home /> : 
                 <Navigate to="/" replace />
               } 
