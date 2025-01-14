@@ -25,23 +25,23 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      // 2. Check if email exists
+      // 2. Check if email exists using Edge Function
       console.log('Checking if email exists');
-      const { data, error } = await supabase.functions.invoke("check-user-exists", {
+      const { data: checkData, error: checkError } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
 
-      if (error) {
-        console.error('Error checking email:', error);
+      if (checkError) {
+        console.log('Error checking email:', checkError.message);
         toast({
           title: "Error",
-          description: "Unable to verify email",
+          description: "Unable to verify email availability",
           variant: "destructive",
         });
         return false;
       }
 
-      if (data?.exists) {
+      if (checkData?.exists) {
         console.log('Email already registered');
         toast({
           title: "Error",
@@ -51,7 +51,7 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      // 3. Proceed with signup using consistent redirectTo URL
+      // 3. If email is available, proceed with signup
       console.log('Email available, proceeding with signup');
       const redirectTo = `${window.location.origin}/auth/callback`;
       
@@ -60,14 +60,18 @@ export const useSignUp = (onSuccess: () => void) => {
         password,
         options: {
           emailRedirectTo: redirectTo,
+          data: {
+            email // Store email in user metadata
+          }
         }
       });
 
       if (signUpError) {
-        console.error('Signup error:', signUpError);
+        // Generic error message to avoid exposing sensitive info
+        console.log('Signup error occurred');
         toast({
           title: "Error",
-          description: signUpError.message,
+          description: "Unable to complete signup. Please try again.",
           variant: "destructive",
         });
         return false;
@@ -76,16 +80,17 @@ export const useSignUp = (onSuccess: () => void) => {
       console.log('Signup successful');
       toast({
         title: "Success",
-        description: "Account created successfully",
+        description: "Account created successfully. Please check your email.",
       });
       onSuccess();
       return true;
 
-    } catch (err: any) {
-      console.error('Unexpected error during signup:', err);
+    } catch (err) {
+      // Generic error handling to avoid exposing sensitive info
+      console.error('Unexpected error during signup');
       toast({
         title: "Error",
-        description: err.message,
+        description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
       return false;

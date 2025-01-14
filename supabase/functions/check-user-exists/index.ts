@@ -11,17 +11,16 @@ Deno.serve(async (req) => {
   }
 
   try {
-    console.log('Function started');
-
     const { email } = await req.json();
     if (!email) {
-      console.log('No email provided');
-      throw new Error('Email is required');
+      return new Response(
+        JSON.stringify({ error: 'Email is required' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400
+        }
+      );
     }
-
-    // Mask email in logs (or avoid logging in production environments)
-    const emailMasked = email.replace(/(.{2})(.*)(?=@)/, '$1*****$3');
-    console.log('Checking existence for email:', emailMasked);
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -30,80 +29,24 @@ Deno.serve(async (req) => {
       throw new Error('Missing environment variables');
     }
 
-    console.log('Creating Supabase client');
     const supabase = createClient(supabaseUrl, supabaseKey);
-
-    let userExists = false;
-    let page = 1;
-
-    // Paginate through users to check existence in auth.users table
-    while (true) {
-      console.log(`Querying auth.users, Page: ${page}`);
-      const { data: { users }, error: authError } = await supabase.auth.admin.listUsers({
-        page,
-        perPage: 100, // Adjust based on your needs
-        filter: { email }
-      });
-
-      if (authError) {
-        console.error('Error querying auth.users:', authError);
-        throw new Error('Error querying Supabase users');
-      }
-
-      // Check if email exists in this page of results
-      if (users?.some(user => user.email === email)) {
-        userExists = true;
-        break;
-      }
-
-      // If no more users are available, stop pagination
-      if (users.length < 100) {
-        break;
-      }
-
-      // Increment page for next batch
-      page++;
-    }
-
-    if (!userExists) {
-      console.log('User not found in auth.users');
-      return new Response(
-        JSON.stringify({ exists: false }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // If user exists, proceed to check if the user has a profile
-    const { data: { users } } = await supabase.auth.admin.listUsers({
+    
+    // Query auth.users table efficiently
+    const { data: { users }, error: authError } = await supabase.auth.admin.listUsers({
       page: 1,
       perPage: 1,
-      filter: { email }
+      filter: {
+        email: email.toLowerCase() // Case-insensitive comparison
+      }
     });
 
-    const userId = users[0].id;
-    console.log('Found user in auth.users with ID:', userId);
-
-    const { data: profiles, error: profileError } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', userId);
-
-    if (profileError) {
-      console.error('Error querying profiles:', profileError);
-      throw new Error('Error querying user profile');
+    if (authError) {
+      throw new Error('Error querying users');
     }
 
-    const exists = profiles?.length > 0;
-    console.log('Final existence check:', exists);
+    const exists = users.length > 0;
 
-    // Only send verification email if the user exists in profiles as well
-    if (exists) {
-      console.log('User exists in profiles. Proceeding with verification email.');
-      // Here, you can trigger the actual email verification action (e.g., sending a verification email).
-    } else {
-      console.log('User exists in auth.users but has no profile. No email verification sent.');
-    }
-
+    // Return minimal response
     return new Response(
       JSON.stringify({ exists }),
       { 
@@ -113,9 +56,7 @@ Deno.serve(async (req) => {
     );
 
   } catch (error) {
-    // Only log non-sensitive error messages
-    console.error('Function error:', error.message);
-
+    // Generic error response to avoid leaking implementation details
     return new Response(
       JSON.stringify({
         error: 'An error occurred while checking user existence',
