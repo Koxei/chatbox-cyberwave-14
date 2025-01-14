@@ -1,76 +1,54 @@
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
-
 import { AuthHeader } from "@/features/auth/components/auth/AuthHeader";
-
 import { AuthForm } from "@/features/auth/components/auth/AuthForm";
-
 import { AuthFooter } from "@/features/auth/components/auth/AuthFooter";
 
 interface AuthModalContentProps {
-
-isLogin: boolean;
-
-onToggle: () => void;
-
-onPasswordResetStart?: () => void;
-
-onPasswordResetComplete?: () => void;
-
-showPasswordReset: boolean;
-
-resetStep: 'email' | 'otp' | 'password';
-
-onGuestLogin?: () => void;
-
+  isLogin: boolean;
+  onToggle: () => void;
+  onPasswordResetStart?: () => void;
+  onPasswordResetComplete?: () => void;
+  showPasswordReset: boolean;
+  resetStep: 'email' | 'otp' | 'password';
+  onGuestLogin?: () => void;
 }
 
 export const AuthModalContent = ({
-
-isLogin,
-
-onToggle,
-
-onPasswordResetStart,
-
-onPasswordResetComplete,
-
-showPasswordReset,
-
-resetStep,
-
-onGuestLogin
-
+  isLogin,
+  onToggle,
+  onPasswordResetStart,
+  onPasswordResetComplete,
+  showPasswordReset,
+  resetStep,
+  onGuestLogin
 }: AuthModalContentProps) => {
+  const redirectURL = `${window.location.origin}/auth/callback`;
 
-const redirectURL = ${window.location.origin}/auth/callback;
-
-return (
-
-<DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
-  <DialogTitle className="sr-only">
-    {showPasswordReset ? "Reset Password" : (isLogin ? "Log In" : "Sign Up")}
-  </DialogTitle>
-  <div className="space-y-6">
-    <AuthHeader 
-      isLogin={isLogin} 
-      showPasswordReset={showPasswordReset}
-      resetStep={resetStep}
-    />
-    <AuthForm 
-      isLogin={isLogin}
-      redirectURL={redirectURL}
-      onToggle={onToggle}
-      showPasswordReset={showPasswordReset}
-      setShowPasswordReset={onPasswordResetStart || (() => {})}
-      resetStep={resetStep}
-      setResetStep={(step) => console.log('Step changed:', step)}
-      onPasswordResetComplete={onPasswordResetComplete}
-      onBackToLogin={() => console.log('Back to login')}
-      onGuestLogin={onGuestLogin}
-    />
-    <AuthFooter />
-  </div>
-</DialogContent>
-);
-
+  return (
+    <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
+      <DialogTitle className="sr-only">
+        {showPasswordReset ? "Reset Password" : (isLogin ? "Log In" : "Sign Up")}
+      </DialogTitle>
+      <div className="space-y-6">
+        <AuthHeader 
+          isLogin={isLogin} 
+          showPasswordReset={showPasswordReset}
+          resetStep={resetStep}
+        />
+        <AuthForm 
+          isLogin={isLogin}
+          redirectURL={redirectURL}
+          onToggle={onToggle}
+          showPasswordReset={showPasswordReset}
+          setShowPasswordReset={onPasswordResetStart || (() => {})}
+          resetStep={resetStep}
+          setResetStep={(step) => console.log('Step changed:', step)}
+          onPasswordResetComplete={onPasswordResetComplete}
+          onBackToLogin={() => console.log('Back to login')}
+          onGuestLogin={onGuestLogin}
+        />
+        <AuthFooter />
+      </div>
+    </DialogContent>
+  );
 };
