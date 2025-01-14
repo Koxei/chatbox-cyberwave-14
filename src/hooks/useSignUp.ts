@@ -35,18 +35,28 @@ export const useSignUp = (onSuccess: () => void) => {
         email,
         password,
         options: {
-          emailRedirectTo: "your_redirect_url_here", // Ensure this URL is valid
+          emailRedirectTo: "your_redirect_url_here",
         }
       });
 
-      // Check for errors and map to user-friendly message
+      // Handle the error by sanitizing the error object
       if (signUpError) {
-        const errorMessage = errorMessages[signUpError.code] || errorMessages['default'];
+        // Map to a user-friendly message
+        let errorMessage = "An unexpected error occurred. Please try again later.";
+        
+        if (signUpError.code === 'duplicate_email') {
+          errorMessage = "Email is already registered. Please use a different one.";
+        }
+        
         toast({
           title: "Error",
           description: errorMessage,
           variant: "destructive",
         });
+
+        // Prevent the admin key or sensitive data from being logged
+        console.error("SignUp Error:", signUpError.message);
+
         return false;
       }
 
@@ -58,6 +68,9 @@ export const useSignUp = (onSuccess: () => void) => {
       return true;
 
     } catch (err: any) {
+      // Log only non-sensitive errors
+      console.error("Unexpected Error:", err.message);
+      
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
