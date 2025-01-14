@@ -1,25 +1,47 @@
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { AUTH_CONFIG } from "@/config/auth";
 
 export const SocialLogin = () => {
   const handleGoogleLogin = async () => {
     console.log('Starting Google OAuth flow...');
-    console.log('Redirect URL:', window.location.origin + '/auth/v1/callback');
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/auth/v1/callback',
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent'
+    console.log('Using redirect URL:', AUTH_CONFIG.redirectURL);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: AUTH_CONFIG.redirectURL,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+            redirect_uri: AUTH_CONFIG.redirectURL  // Explicitly set redirect_uri
+          },
+          skipBrowserRedirect: true // Use popup mode
         }
+      });
+
+      if (error) {
+        console.error('Google login error:', error);
+        toast({
+          title: "Login Error",
+          description: "Unable to connect to Google. Please try again.",
+          variant: "destructive",
+        });
+        return;
       }
-    });
-    if (error) {
-      console.error('Google login error:', error);
-    }
-    if (data) {
-      console.log('OAuth request successful:', data);
+
+      if (data) {
+        console.log('OAuth request successful:', data);
+      }
+    } catch (err) {
+      console.error('Unexpected error during login:', err);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
