@@ -1,7 +1,11 @@
+// src/features/auth/components/auth/AuthForm.tsx
+
 import { useState } from "react";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useSignUp } from "@/features/auth/hooks/useSignUp";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import { PasswordResetFlow } from "@/features/auth/components/password-reset/PasswordResetFlow";
 
 interface AuthFormProps {
@@ -17,9 +21,9 @@ interface AuthFormProps {
   onGuestLogin?: () => void;
 }
 
-export const AuthForm = ({ 
-  isLogin, 
-  onToggle, 
+export const AuthForm = ({
+  isLogin,
+  onToggle,
   redirectURL,
   showPasswordReset,
   setShowPasswordReset,
@@ -29,13 +33,52 @@ export const AuthForm = ({
   onBackToLogin,
   onGuestLogin
 }: AuthFormProps) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { handleSignUp } = useSignUp(() => {});
+
+  const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      console.error('Login error:', err.message);
+      toast({
+        title: "Error",
+        description: "Invalid login credentials",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log('Starting signup process');
+    await handleSignUp(email, password);
+  };
+
+  // Updated handler for back to login
+  const handleBackToLogin = () => {
+    setShowPasswordReset(false); // Ensure we exit password reset mode
+    setResetStep('email'); // Reset the step to initial state
+    onBackToLogin(); // Call the parent handler
+  };
+
   if (showPasswordReset) {
     return (
       <PasswordResetFlow
-        onBack={onBackToLogin}
+        onBack={handleBackToLogin} // Pass our new handler
         onSuccess={() => {
           onPasswordResetComplete?.();
-          onBackToLogin();
+          handleBackToLogin(); // Use the same handler for consistency
         }}
         onStepChange={setResetStep}
         currentStep={resetStep}
@@ -45,51 +88,36 @@ export const AuthForm = ({
 
   return (
     <div className="space-y-6">
-      <Auth
-        supabaseClient={supabase}
-        view={isLogin ? "sign_in" : "sign_up"}
-        appearance={{ 
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: '#00ffff',
-                brandAccent: '#00cccc'
-              }
-            }
-          },
-          className: {
-            container: 'space-y-4',
-            label: 'text-sm font-medium text-gray-700',
-            input: 'mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 shadow-sm focus:border-cyan-500 focus:outline-none focus:ring-1 focus:ring-cyan-500',
-            button: 'w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500',
-            divider: 'my-4',
-            anchor: 'text-sm text-cyan-600 hover:text-cyan-500'
-          }
-        }}
-        providers={["google"]}
-        redirectTo={redirectURL}
-        showLinks={false}
-        localization={{
-          variables: {
-            sign_in: {
-              email_label: "Email",
-              password_label: "Password",
-              button_label: "Sign in",
-              loading_button_label: "Signing in ...",
-              social_provider_text: "Sign in with {{provider}}"
-            },
-            sign_up: {
-              email_label: "Email",
-              password_label: "Password",
-              button_label: "Sign up",
-              loading_button_label: "Signing up ...",
-              social_provider_text: "Sign up with {{provider}}"
-            }
-          }
-        }}
-      />
-      
+      <form onSubmit={isLogin ? handleLoginSubmit : handleSignUpSubmit} className="space-y-4">
+        <div>
+          <Input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+            className="w-full"
+          />
+        </div>
+        <div>
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+            className="w-full"
+          />
+        </div>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={loading}
+        >
+          {loading ? (isLogin ? "Signing in..." : "Creating Account...") : (isLogin ? "Sign In" : "Create Account")}
+        </Button>
+      </form>
+
       {isLogin && (
         <>
           <button
