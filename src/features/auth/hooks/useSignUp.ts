@@ -2,6 +2,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
+const isValidEmail = (email: string) => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
 export const useSignUp = (onSuccess: () => void) => {
   const [loading, setLoading] = useState(false);
 
@@ -10,13 +14,23 @@ export const useSignUp = (onSuccess: () => void) => {
     setLoading(true);
 
     try {
-      // 1. Check if email exists first, just like in password reset
+      // 1. Validate email format first
+      if (!isValidEmail(email)) {
+        console.log('Invalid email format');
+        toast({
+          title: "Error",
+          description: "Please enter a valid email address",
+          variant: "destructive",
+        });
+        return false;
+      }
+
+      // 2. Check if email exists
       console.log('Checking if email exists');
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
 
-      // 2. If check fails or user exists, return early before any auth calls
       if (error) {
         console.error('Error checking email:', error);
         toast({
@@ -37,13 +51,15 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      // 3. Only if email is available, proceed with signup
+      // 3. Proceed with signup using consistent redirectTo URL
       console.log('Email available, proceeding with signup');
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          emailRedirectTo: window.location.origin + '/auth/callback'
+          emailRedirectTo: redirectTo,
         }
       });
 
