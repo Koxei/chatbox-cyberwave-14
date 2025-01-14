@@ -1,3 +1,5 @@
+// src/features/auth/components/AuthModalContent.tsx
+
 import { DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { AuthHeader } from "@/features/auth/components/auth/AuthHeader";
 import { AuthForm } from "@/features/auth/components/auth/AuthForm";
@@ -10,6 +12,7 @@ interface AuthModalContentProps {
   onPasswordResetComplete?: () => void;
   showPasswordReset: boolean;
   resetStep: 'email' | 'otp' | 'password';
+  onBackToLogin: () => void;
   onGuestLogin?: () => void;
 }
 
@@ -20,9 +23,16 @@ export const AuthModalContent = ({
   onPasswordResetComplete,
   showPasswordReset,
   resetStep,
+  onBackToLogin,
   onGuestLogin
 }: AuthModalContentProps) => {
   const redirectURL = `${window.location.origin}/auth/callback`;
+
+  // Updated to ensure state sync
+  const handleBackToLogin = () => {
+    console.log('AuthModalContent: Back to login');
+    onBackToLogin();
+  };
 
   return (
     <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
@@ -44,7 +54,7 @@ export const AuthModalContent = ({
           resetStep={resetStep}
           setResetStep={(step) => console.log('Step changed:', step)}
           onPasswordResetComplete={onPasswordResetComplete}
-          onBackToLogin={() => console.log('Back to login')}
+          onBackToLogin={handleBackToLogin}
           onGuestLogin={onGuestLogin}
         />
         <AuthFooter />
