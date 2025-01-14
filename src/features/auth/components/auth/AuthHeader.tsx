@@ -14,9 +14,7 @@ export const AuthHeader = ({ isLogin, showPasswordReset }: AuthHeaderProps) => {
           {isLogin ? "Log in to your account" : "Create your account"}
         </h2>
         <p className="text-sm text-gray-500">
-          {isLogin 
-            ? "Welcome back! Please enter your details." 
-            : "Join us! Fill in your information below."}
+          {!isLogin && "Join us! Fill in your information below."}
         </p>
       </div>
     );
