@@ -1,10 +1,11 @@
-// src/features/auth/components/auth/AuthForm.tsx
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { PasswordResetFlow } from "@/features/auth/components/password-reset/PasswordResetFlow";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { checkUserExists } from "@/hooks/useCheckUser";
+import { toast } from "@/hooks/use-toast";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -47,9 +48,37 @@ export const AuthForm = ({
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  const handleToggle = (e: React.MouseEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onToggle();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+    
+    if (!isLogin) {
+      // First check if user exists
+      const exists = await checkUserExists(email);
+      if (!exists) {
+        // Only proceed with signup if user doesn't exist
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: "Failed to create account",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        toast({
+          title: "Success",
+          description: "Account created successfully",
+        });
+      }
+    }
   };
 
   if (showPasswordReset) {
@@ -68,24 +97,32 @@ export const AuthForm = ({
 
   return (
     <div className="space-y-6">
-      <Auth
-        supabaseClient={supabase}
-        view={isLogin ? "sign_in" : "sign_up"}
-        appearance={{ 
-          theme: ThemeSupa,
-          variables: {
-            default: {
-              colors: {
-                brand: '#00ffff',
-                brandAccent: '#00cccc'
-              }
-            }
-          }
-        }}
-        providers={["google"]}
-        redirectTo={redirectURL}
-        showLinks={false}
-      />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            required
+            className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+          />
+        </div>
+        <div>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            required
+            className="w-full px-3 py-2 border rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500"
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-cyan-600 hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
+        >
+          {isLogin ? "Sign In" : "Sign Up"}
+        </button>
+      </form>
       
       {isLogin && (
         <>
@@ -109,7 +146,7 @@ export const AuthForm = ({
       <div className="flex items-center justify-center space-x-1 text-sm text-gray-500">
         <span>{isLogin ? "Don't have an account?" : "Already have an account?"}</span>
         <button
-          onClick={handleToggle}
+          onClick={onToggle}
           className="text-cyan-600 hover:text-cyan-500 font-medium"
         >
           {isLogin ? "Sign up" : "Sign in"}
