@@ -7,15 +7,14 @@ export const useSignUp = (onSuccess: () => void) => {
   const [loading, setLoading] = useState(false);
 
   const handleSignUp = async (email: string, password: string) => {
-    console.log('Starting signup process for email:', email);
     setLoading(true);
     try {
-      // First validate email exists using edge function
+      // 1. Check existence first, just like password reset
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
 
-      // Mirror password reset flow error handling
+      // 2. Return early if check fails, before any auth call
       if (error || data?.exists) {
         toast({
           title: "Error",
@@ -25,7 +24,7 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      // Only proceed with signup if email doesn't exist
+      // 3. Only if email is available, proceed with signup
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
