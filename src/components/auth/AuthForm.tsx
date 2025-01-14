@@ -39,7 +39,7 @@ export const AuthForm = ({
       console.log('Auth state changed:', event);
       console.log('Session:', session);
 
-      if (event === 'SIGNED_IN' || event === 'SIGNED_UP') {
+      if (event === 'USER_UPDATED' || event === 'SIGNED_IN') {
         console.log('Redirecting to home page...');
         navigate('/home');
       }
