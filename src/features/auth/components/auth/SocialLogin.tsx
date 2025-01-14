@@ -10,7 +10,8 @@ export const SocialLogin = () => {
         redirectTo: 'https://lovable.app/auth/v1/callback',
         queryParams: {
           access_type: 'offline',
-          prompt: 'consent'
+          prompt: 'consent',
+          redirect_uri: 'https://lovable.app/auth/v1/callback'
         }
       }
     });
