@@ -5,28 +5,30 @@ import { toast } from "@/hooks/use-toast";
 export const useSignUp = (onSuccess: () => void) => {
   const [loading, setLoading] = useState(false);
 
-  const handleEmailCheck = async (email: string) => {
-    console.log('Checking email existence:', email);
+  const handleSignUp = async (email: string, password: string) => {
+    console.log('Starting signup process');
     setLoading(true);
+
     try {
+      // 1. Check if email exists first, just like in password reset
+      console.log('Checking if email exists');
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
 
-      console.log('Email check response:', { data, error });
-
+      // 2. If check fails or user exists, return early before any auth calls
       if (error) {
-        console.error('Email check error:', error);
+        console.error('Error checking email:', error);
         toast({
           title: "Error",
-          description: error.message || "Unable to verify email",
+          description: "Unable to verify email",
           variant: "destructive",
         });
         return false;
       }
 
       if (data?.exists) {
-        console.log('Email already exists');
+        console.log('Email already registered');
         toast({
           title: "Error",
           description: "Email already registered",
@@ -35,33 +37,14 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      console.log('Email available for registration');
-      toast({
-        title: "Success",
-        description: "Email available, please choose a password",
-      });
-      return true;
-
-    } catch (err: any) {
-      console.error('Unexpected error during email check:', err);
-      toast({
-        title: "Error",
-        description: err.message || "An error occurred while checking email",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSignUp = async (email: string, password: string) => {
-    console.log('Starting signup process for email:', email);
-    setLoading(true);
-    try {
+      // 3. Only if email is available, proceed with signup
+      console.log('Email available, proceeding with signup');
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: window.location.origin + '/auth/callback'
+        }
       });
 
       if (signUpError) {
@@ -97,7 +80,6 @@ export const useSignUp = (onSuccess: () => void) => {
 
   return {
     loading,
-    handleEmailCheck,
     handleSignUp
   };
 };
