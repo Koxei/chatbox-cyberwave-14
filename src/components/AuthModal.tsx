@@ -1,3 +1,5 @@
+// src/components/AuthModal.tsx
+
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { AuthHeader } from "./auth/AuthHeader";
@@ -44,6 +46,14 @@ const AuthModal = ({
     return isLogin ? "Log In" : "Sign Up";
   };
 
+  // Updated handler for back to login
+  const handleBackToLogin = () => {
+    console.log('Back to login clicked');
+    setShowPasswordReset(false); // Reset password reset state
+    setResetStep('email'); // Reset step
+    setIsLogin(true); // Ensure we're in login mode
+  };
+
   // Handle password reset state changes
   const handlePasswordResetStart = () => {
     console.log('Password reset started');
@@ -59,17 +69,9 @@ const AuthModal = ({
     onPasswordResetComplete?.();
   };
 
-  // New handler for back to login
-  const handleBackToLogin = () => {
-    console.log('Back to login clicked');
-    setShowPasswordReset(false);
-    setResetStep('email');
-    setIsLogin(true);
-  };
-
   // New handler for step changes
   const handleStepChange = (step: 'email' | 'otp' | 'password') => {
-    console.log('Step changed to:', step);
+    console.log('Step changed:', step);
     setResetStep(step);
     // Ensure modal stays open during step transitions
     setShowPasswordReset(true);
@@ -81,12 +83,10 @@ const AuthModal = ({
     onGuestLogin?.();
   };
 
-  // New handler for toggling between login and signup
+  // Handle auth toggle
   const handleAuthToggle = () => {
     console.log('AuthModal toggle handler called');
-    console.log('Before toggle - isLogin:', isLogin);
     setIsLogin(!isLogin);
-    console.log('After toggle - isLogin:', !isLogin);
     // Reset password reset state when toggling
     if (showPasswordReset) {
       setShowPasswordReset(false);
