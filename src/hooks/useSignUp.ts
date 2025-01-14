@@ -1,4 +1,3 @@
-// src/features/auth/hooks/useSignUp.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -70,62 +69,4 @@ export const useSignUp = (onSuccess: () => void) => {
     loading,
     handleSignUp
   };
-};
-
-// src/features/auth/components/auth/AuthForm.tsx
-// Add to your imports
-import { useSignUp } from "@/features/auth/hooks/useSignUp";
-
-export const AuthForm = ({ /* existing props */ }) => {
-  const navigate = useNavigate();
-  const { loading, handleSignUp } = useSignUp(() => {
-    navigate('/home');
-  });
-
-  // Add this function to handle form submission
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    
-    if (!isLogin) {
-      await handleSignUp(email, password);
-    }
-  };
-
-  // In your return statement, replace <Auth> with:
-  return (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 px-4 bg-cyan-600 text-white rounded-md hover:bg-cyan-700"
-        >
-          {loading ? "Processing..." : (isLogin ? "Sign In" : "Sign Up")}
-        </button>
-      </form>
-      
-      {/* Rest of your component remains the same */}
-    </div>
-  );
 };
