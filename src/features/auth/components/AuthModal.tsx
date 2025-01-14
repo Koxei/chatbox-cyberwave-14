@@ -1,3 +1,5 @@
+// src/features/auth/components/AuthModal.tsx
+
 import { Dialog } from "@/components/ui/dialog";
 import { useState } from "react";
 import { AuthModalContent } from "./AuthModalContent";
@@ -19,11 +21,12 @@ const AuthModal = ({
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
 
-  const handleToggle = () => {
-    console.log('AuthModal handleToggle called');
-    console.log('Current isLogin:', isLogin);
-    setIsLogin(!isLogin);
-    console.log('New isLogin will be:', !isLogin);
+  // Updated handler for back to login
+  const handleBackToLogin = () => {
+    console.log('AuthModal handleBackToLogin called');
+    setShowPasswordReset(false);
+    setResetStep('email');
+    setIsLogin(true);
   };
 
   return (
@@ -32,7 +35,14 @@ const AuthModal = ({
         isLogin={isLogin}
         showPasswordReset={showPasswordReset}
         resetStep={resetStep}
-        onToggle={handleToggle}
+        onToggle={() => {
+          console.log('AuthModal handleToggle called');
+          setIsLogin(!isLogin);
+          if (showPasswordReset) {
+            setShowPasswordReset(false);
+            setResetStep('email');
+          }
+        }}
         onPasswordResetStart={() => {
           setShowPasswordReset(true);
           onPasswordResetStart?.();
@@ -41,6 +51,7 @@ const AuthModal = ({
           setShowPasswordReset(false);
           onPasswordResetComplete?.();
         }}
+        onBackToLogin={handleBackToLogin}
         onGuestLogin={onGuestLogin}
       />
     </Dialog>
