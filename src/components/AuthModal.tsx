@@ -1,10 +1,9 @@
-// src/components/AuthModal.tsx
-
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { AuthHeader } from "./auth/AuthHeader";
 import { AuthForm } from "./auth/AuthForm";
 import { AuthFooter } from "./auth/AuthFooter";
+import { AUTH_CONFIG } from "@/config/auth";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -24,7 +23,6 @@ const AuthModal = ({
   const [isLogin, setIsLogin] = useState(true);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
-  const redirectURL = 'https://preview--micaai.lovable.app/auth/v1/callback';
 
   // Keep dialog open during password reset
   const keepOpen = isOpen || showPasswordReset;
@@ -106,7 +104,7 @@ const AuthModal = ({
           />
           <AuthForm 
             isLogin={isLogin} 
-            redirectURL={redirectURL}
+            redirectURL={AUTH_CONFIG.redirectURL}
             onToggle={handleAuthToggle}
             showPasswordReset={showPasswordReset}
             setShowPasswordReset={handlePasswordResetStart}
