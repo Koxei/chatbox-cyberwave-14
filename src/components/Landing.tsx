@@ -1,3 +1,4 @@
+// src/components/Landing.tsx
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -17,9 +18,12 @@ const Landing = ({ onStartClick }: LandingProps) => {
         const { data: { session } } = await supabase.auth.getSession();
         const guestSession = localStorage.getItem('guest_session');
         
-        if (session || guestSession) {
+        // Only redirect if there's a valid session
+        if (session || (guestSession && JSON.parse(guestSession).guestId)) {
           navigate('/home', { replace: true });
         }
+      } catch (error) {
+        console.error('Session check error:', error);
       } finally {
         setIsChecking(false);
       }
@@ -37,6 +41,7 @@ const Landing = ({ onStartClick }: LandingProps) => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Show loading state while checking
   if (isChecking) {
     return null;
   }
@@ -49,6 +54,7 @@ const Landing = ({ onStartClick }: LandingProps) => {
     }
   };
 
+  // Always render the button if not authenticated
   return (
     <div className="h-screen w-screen flex items-center justify-center">
       <Button 
