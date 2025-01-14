@@ -5,10 +5,10 @@ import { toast } from "@/hooks/use-toast";
 export const useSignUp = (onSuccess: () => void) => {
   const [loading, setLoading] = useState(false);
 
-  const handleSignUp = async (email: string, password: string) => {
+  const handleEmailCheck = async (email: string) => {
     setLoading(true);
     try {
-      // First check if user exists using the same edge function
+      // Check if user exists using edge function
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
@@ -31,7 +31,28 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      // If user doesn't exist, proceed with signup
+      // If we get here, the email is available
+      toast({
+        title: "Success",
+        description: "Email available, please choose a password",
+      });
+      return true;
+
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (email: string, password: string) => {
+    setLoading(true);
+    try {
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -67,6 +88,7 @@ export const useSignUp = (onSuccess: () => void) => {
 
   return {
     loading,
+    handleEmailCheck,
     handleSignUp
   };
 };
