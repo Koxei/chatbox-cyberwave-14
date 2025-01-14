@@ -138,7 +138,10 @@ export const AuthForm = ({
           
           {onGuestLogin && (
             <button
-              onClick={handleGuestLogin}
+              onClick={(e) => {
+                e.preventDefault();
+                handleGuestLogin();
+              }}
               className="w-full flex justify-center py-2 px-4 border border-cyan-600 rounded-md shadow-sm text-sm font-medium text-cyan-600 bg-white hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
             >
               Continue as Guest
