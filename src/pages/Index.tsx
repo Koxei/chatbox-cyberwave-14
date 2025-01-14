@@ -1,6 +1,4 @@
-// src/pages/Index.tsx
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Landing from "@/components/Landing";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatHeader from "@/components/ChatHeader";
@@ -12,14 +10,11 @@ import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import { useMessageSubmission } from "@/features/chat/hooks/message/useMessageSubmission";
 import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
 import { Chat } from "@/types/chat";
-import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const navigate = useNavigate();
   const [showStartButton, setShowStartButton] = useState(true);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   const {
     isAuthenticated,
@@ -44,34 +39,6 @@ const Index = () => {
 
   const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
   const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
-
-  useEffect(() => {
-    // Check initial session
-    const checkSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session || isGuest) {
-          setShowStartButton(false);
-          navigate('/home', { replace: true });
-        }
-      } finally {
-        setIsAuthChecking(false);
-      }
-    };
-    
-    checkSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed in Index:', event);
-      if ((event === 'SIGNED_IN' && session) || isGuest) {
-        setShowStartButton(false);
-        navigate('/home', { replace: true });
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, isGuest]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,13 +65,7 @@ const Index = () => {
     initGuestSession();
     setShowAuthModal(false);
     setShowStartButton(false);
-    navigate('/home', { replace: true });
   };
-
-  // Show nothing while checking auth state
-  if (isAuthChecking) {
-    return null;
-  }
 
   if (showStartButton) {
     return <Landing onStartClick={handleStartClick} />;

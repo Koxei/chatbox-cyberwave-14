@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 interface GuestSession {
   guestId: string;
@@ -17,7 +16,6 @@ interface GuestChat {
 export const useGuestSession = () => {
   const [isGuest, setIsGuest] = useState<boolean>(false);
   const [guestId, setGuestId] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   const initGuestSession = () => {
     const guestId = `guest_${Date.now()}`;
@@ -26,8 +24,10 @@ export const useGuestSession = () => {
       createdAt: Date.now()
     };
     
+    // Store guest session
     localStorage.setItem('guest_session', JSON.stringify(session));
     
+    // Initialize guest chat
     const guestChat: GuestChat = {
       id: `chat_${guestId}`,
       title: 'Guest Chat',
@@ -39,7 +39,6 @@ export const useGuestSession = () => {
     
     setGuestId(guestId);
     setIsGuest(true);
-    navigate('/home', { replace: true });
     return guestId;
   };
 
@@ -67,19 +66,20 @@ export const useGuestSession = () => {
   };
 
   useEffect(() => {
+    // Check for existing session on mount
     const sessionStr = localStorage.getItem('guest_session');
     if (sessionStr) {
       const session: GuestSession = JSON.parse(sessionStr);
       if (checkSessionExpiry()) {
         setGuestId(session.guestId);
         setIsGuest(true);
-        navigate('/home', { replace: true });
       }
     }
 
-    const interval = setInterval(checkSessionExpiry, 60000);
+    // Set up periodic check for session expiry
+    const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
     return () => clearInterval(interval);
-  }, [navigate]);
+  }, []);
 
   return {
     isGuest,
