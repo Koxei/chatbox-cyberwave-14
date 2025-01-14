@@ -35,7 +35,7 @@ export const useSignUp = (onSuccess: () => void) => {
         email,
         password,
         options: {
-          emailRedirectTo: "your_redirect_url_here",
+          emailRedirectTo: "your_redirect_url_here", // Ensure this URL is valid
         }
       });
 
