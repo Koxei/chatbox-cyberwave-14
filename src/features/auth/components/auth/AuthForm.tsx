@@ -1,3 +1,4 @@
+// src/features/auth/components/auth/AuthForm.tsx
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { PasswordResetFlow } from "@/features/auth/components/password-reset/PasswordResetFlow";
 import { SocialLogin } from "./SocialLogin";
+import { useNavigate } from "react-router-dom";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -32,6 +34,7 @@ export const AuthForm = ({
   onBackToLogin,
   onGuestLogin
 }: AuthFormProps) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -46,6 +49,7 @@ export const AuthForm = ({
         password,
       });
       if (error) throw error;
+      navigate('/home', { replace: true });
     } catch (err: any) {
       console.error('Login error:', err.message);
       toast({
@@ -68,6 +72,13 @@ export const AuthForm = ({
     setShowPasswordReset(false);
     setResetStep('email');
     onBackToLogin();
+  };
+
+  const handleGuestLogin = () => {
+    if (onGuestLogin) {
+      onGuestLogin();
+      navigate('/home', { replace: true });
+    }
   };
 
   if (showPasswordReset) {
@@ -129,7 +140,7 @@ export const AuthForm = ({
           
           {onGuestLogin && (
             <button
-              onClick={onGuestLogin}
+              onClick={handleGuestLogin}
               className="w-full flex justify-center py-2 px-4 border border-cyan-600 rounded-md shadow-sm text-sm font-medium text-cyan-600 bg-white hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
             >
               Continue as Guest
