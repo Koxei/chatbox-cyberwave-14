@@ -19,12 +19,20 @@ const AuthModal = ({
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
 
+  const handleToggle = () => {
+    console.log('AuthModal handleToggle called');
+    console.log('Current isLogin:', isLogin);
+    setIsLogin(!isLogin);
+    console.log('New isLogin will be:', !isLogin);
+  };
+
   return (
     <Dialog open={isOpen || showPasswordReset} modal>
       <AuthModalContent 
         isLogin={isLogin}
         showPasswordReset={showPasswordReset}
         resetStep={resetStep}
+        onToggle={handleToggle}
         onPasswordResetStart={() => {
           setShowPasswordReset(true);
           onPasswordResetStart?.();
