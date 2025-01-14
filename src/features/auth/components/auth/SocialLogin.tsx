@@ -16,9 +16,8 @@ export const SocialLogin = () => {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
-            redirect_uri: AUTH_CONFIG.redirectURL  // Explicitly set redirect_uri
-          },
-          skipBrowserRedirect: true // Use popup mode
+            redirect_uri: AUTH_CONFIG.redirectURL
+          }
         }
       });
 
