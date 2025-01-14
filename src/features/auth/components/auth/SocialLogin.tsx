@@ -7,7 +7,7 @@ export const SocialLogin = () => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: 'https://lovable.app/auth/v1/callback',
+        redirectTo: window.location.origin + '/auth/v1/callback',
         queryParams: {
           access_type: 'offline',
           prompt: 'consent'
