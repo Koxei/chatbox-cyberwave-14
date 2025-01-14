@@ -1,3 +1,4 @@
+// src/pages/Index.tsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Landing from "@/components/Landing";
@@ -49,7 +50,7 @@ const Index = () => {
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        if (session || isGuest) {
           setShowStartButton(false);
           navigate('/home', { replace: true });
         }
@@ -63,14 +64,14 @@ const Index = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed in Index:', event);
-      if (event === 'SIGNED_IN' && session) {
+      if ((event === 'SIGNED_IN' && session) || isGuest) {
         setShowStartButton(false);
         navigate('/home', { replace: true });
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, [navigate, isGuest]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,6 +98,7 @@ const Index = () => {
     initGuestSession();
     setShowAuthModal(false);
     setShowStartButton(false);
+    navigate('/home', { replace: true });
   };
 
   // Show nothing while checking auth state
