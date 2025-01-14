@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useSignUp } from "@/features/auth/hooks/useSignUp";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { PasswordResetFlow } from "./PasswordResetFlow";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -57,6 +58,7 @@ export const AuthForm = ({
 
   const handleSignUpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('Starting signup process');
     await handleSignUp(email, password);
   };
 
