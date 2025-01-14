@@ -6,23 +6,27 @@ export const useSignUp = (onSuccess: () => void) => {
   const [loading, setLoading] = useState(false);
 
   const handleEmailCheck = async (email: string) => {
+    console.log('Checking email existence:', email);
     setLoading(true);
     try {
-      // Check if user exists using edge function
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
 
+      console.log('Email check response:', { data, error });
+
       if (error) {
+        console.error('Email check error:', error);
         toast({
           title: "Error",
-          description: error.message,
+          description: error.message || "Unable to verify email",
           variant: "destructive",
         });
         return false;
       }
 
-      if (data.exists) {
+      if (data?.exists) {
+        console.log('Email already exists');
         toast({
           title: "Error",
           description: "Email already registered",
@@ -31,7 +35,7 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      // If we get here, the email is available
+      console.log('Email available for registration');
       toast({
         title: "Success",
         description: "Email available, please choose a password",
@@ -39,9 +43,10 @@ export const useSignUp = (onSuccess: () => void) => {
       return true;
 
     } catch (err: any) {
+      console.error('Unexpected error during email check:', err);
       toast({
         title: "Error",
-        description: err.message,
+        description: err.message || "An error occurred while checking email",
         variant: "destructive",
       });
       return false;
@@ -51,6 +56,7 @@ export const useSignUp = (onSuccess: () => void) => {
   };
 
   const handleSignUp = async (email: string, password: string) => {
+    console.log('Starting signup process for email:', email);
     setLoading(true);
     try {
       const { error: signUpError } = await supabase.auth.signUp({
@@ -59,6 +65,7 @@ export const useSignUp = (onSuccess: () => void) => {
       });
 
       if (signUpError) {
+        console.error('Signup error:', signUpError);
         toast({
           title: "Error",
           description: signUpError.message,
@@ -67,6 +74,7 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
+      console.log('Signup successful');
       toast({
         title: "Success",
         description: "Account created successfully",
@@ -75,6 +83,7 @@ export const useSignUp = (onSuccess: () => void) => {
       return true;
 
     } catch (err: any) {
+      console.error('Unexpected error during signup:', err);
       toast({
         title: "Error",
         description: err.message,

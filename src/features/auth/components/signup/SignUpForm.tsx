@@ -19,14 +19,17 @@ export const SignUpForm = ({
 
   const handleEmailSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('Handling email submit with:', email);
     const success = await handleEmailCheck(email);
     if (success) {
+      console.log('Email check passed, moving to password step');
       setStep('password');
     }
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log('Handling password submit');
     await handleSignUp(email, password);
   };
 
