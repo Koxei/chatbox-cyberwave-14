@@ -15,7 +15,9 @@ const Landing = ({ onStartClick }: LandingProps) => {
     const checkSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        const guestSession = localStorage.getItem('guest_session');
+        
+        if (session || guestSession) {
           navigate('/home', { replace: true });
         }
       } finally {
