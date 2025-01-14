@@ -1,3 +1,4 @@
+// src/features/auth/hooks/useSignUp.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -9,11 +10,12 @@ export const useSignUp = (onSuccess: () => void) => {
     console.log('Starting signup process for email:', email);
     setLoading(true);
     try {
-      // First check if user exists using edge function
+      // First validate email exists using edge function
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
 
+      // Mirror password reset flow error handling
       if (error || data?.exists) {
         toast({
           title: "Error",
@@ -23,7 +25,7 @@ export const useSignUp = (onSuccess: () => void) => {
         return false;
       }
 
-      // If email doesn't exist, proceed with signup
+      // Only proceed with signup if email doesn't exist
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,

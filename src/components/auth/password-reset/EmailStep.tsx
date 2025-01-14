@@ -24,6 +24,7 @@ export const EmailStep = ({
         value={email}
         onChange={(e) => onEmailChange(e.target.value)}
         required
+        className="w-full"
       />
     </div>
     <Button
