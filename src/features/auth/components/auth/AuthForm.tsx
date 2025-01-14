@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useSignUp } from "@/features/auth/hooks/useSignUp";
@@ -32,10 +33,13 @@ export const AuthForm = ({
   onBackToLogin,
   onGuestLogin
 }: AuthFormProps) => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { handleSignUp } = useSignUp(() => {});
+  const { handleSignUp } = useSignUp(() => {
+    navigate('/home', { replace: true });
+  });
 
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,6 +50,7 @@ export const AuthForm = ({
         password,
       });
       if (error) throw error;
+      navigate('/home', { replace: true });
     } catch (err: any) {
       console.error('Login error:', err.message);
       toast({
@@ -61,22 +66,26 @@ export const AuthForm = ({
   const handleSignUpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log('Starting signup process');
-    await handleSignUp(email, password);
+    const result = await handleSignUp(email, password);
+    if (!result?.error) {
+      navigate('/home', { replace: true });
+    }
   };
 
-  const handleBackToLogin = () => {
-    setShowPasswordReset(false);
-    setResetStep('email');
-    onBackToLogin();
+  const handleGuestLogin = () => {
+    if (onGuestLogin) {
+      onGuestLogin();
+      navigate('/home', { replace: true });
+    }
   };
 
   if (showPasswordReset) {
     return (
       <PasswordResetFlow
-        onBack={handleBackToLogin}
+        onBack={onBackToLogin}
         onSuccess={() => {
           onPasswordResetComplete?.();
-          handleBackToLogin();
+          onBackToLogin();
         }}
         onStepChange={setResetStep}
         currentStep={resetStep}
@@ -129,7 +138,7 @@ export const AuthForm = ({
           
           {onGuestLogin && (
             <button
-              onClick={onGuestLogin}
+              onClick={handleGuestLogin}
               className="w-full flex justify-center py-2 px-4 border border-cyan-600 rounded-md shadow-sm text-sm font-medium text-cyan-600 bg-white hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
             >
               Continue as Guest

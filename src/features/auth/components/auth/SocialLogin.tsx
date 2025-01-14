@@ -1,22 +1,18 @@
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { AUTH_CONFIG } from "@/config/auth";
 
 export const SocialLogin = () => {
   const handleGoogleLogin = async () => {
     console.log('Starting Google OAuth flow...');
-    console.log('Using redirect URL:', AUTH_CONFIG.redirectURL);
-    
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: AUTH_CONFIG.redirectURL,
+          redirectTo: `${window.location.origin}/home`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
-            redirect_uri: AUTH_CONFIG.redirectURL
           }
         }
       });
