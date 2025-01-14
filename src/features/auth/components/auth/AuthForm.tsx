@@ -1,5 +1,3 @@
-// src/features/auth/components/auth/AuthForm.tsx
-
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -7,6 +5,7 @@ import { useSignUp } from "@/features/auth/hooks/useSignUp";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { PasswordResetFlow } from "@/features/auth/components/password-reset/PasswordResetFlow";
+import { SocialLogin } from "./SocialLogin";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -65,20 +64,19 @@ export const AuthForm = ({
     await handleSignUp(email, password);
   };
 
-  // Updated handler for back to login
   const handleBackToLogin = () => {
-    setShowPasswordReset(false); // Ensure we exit password reset mode
-    setResetStep('email'); // Reset the step to initial state
-    onBackToLogin(); // Call the parent handler
+    setShowPasswordReset(false);
+    setResetStep('email');
+    onBackToLogin();
   };
 
   if (showPasswordReset) {
     return (
       <PasswordResetFlow
-        onBack={handleBackToLogin} // Pass our new handler
+        onBack={handleBackToLogin}
         onSuccess={() => {
           onPasswordResetComplete?.();
-          handleBackToLogin(); // Use the same handler for consistency
+          handleBackToLogin();
         }}
         onStepChange={setResetStep}
         currentStep={resetStep}
@@ -126,6 +124,9 @@ export const AuthForm = ({
           >
             Forgot password?
           </button>
+          
+          <SocialLogin />
+          
           {onGuestLogin && (
             <button
               onClick={onGuestLogin}
