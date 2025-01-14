@@ -33,7 +33,6 @@ if (!supabaseUrl || !supabaseKey) {
 }
 console.log('Creating Supabase client for signup check');
 const supabase = createClient(supabaseUrl, supabaseKey);
-let userExists = false;
 let page = 1;
 // Early return optimization for signup flow
 while (true) {
@@ -95,4 +94,3 @@ return new Response(
 }
 
 });
-
