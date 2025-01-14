@@ -1,12 +1,14 @@
+// src/features/auth/components/auth/AuthForm.tsx
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { supabase } from "@/integrations/supabase/client";
 import { PasswordResetFlow } from "@/features/auth/components/password-reset/PasswordResetFlow";
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface AuthFormProps {
   isLogin: boolean;
-  onToggle: () => void;  // Make sure this is required, not optional
+  onToggle: () => void;
   redirectURL: string;
   showPasswordReset: boolean;
   setShowPasswordReset: (show: boolean) => void;
@@ -29,25 +31,25 @@ export const AuthForm = ({
   onBackToLogin,
   onGuestLogin
 }: AuthFormProps) => {
-  // Add useEffect to monitor auth state changes
+  const navigate = useNavigate();
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event);
       console.log('Session:', session);
-      console.log('Current URL:', window.location.href);
+
+      if (event === 'SIGNED_IN' || event === 'SIGNED_UP') {
+        console.log('Redirecting to home page...');
+        navigate('/home');
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  // Handle toggle between login and signup
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault();
-    console.log('Toggle button clicked');
-    console.log('Current isLogin state:', isLogin);
-    console.log('onToggle function exists:', !!onToggle);
     onToggle();
-    console.log('After toggle, isLogin should be:', !isLogin);
   };
 
   if (showPasswordReset) {
