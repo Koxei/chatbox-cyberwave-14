@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export const SocialLogin = () => {
   const handleGoogleLogin = async () => {
     console.log('Starting Google OAuth flow...');
+    console.log('Redirect URL:', window.location.origin + '/auth/v1/callback');
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
