@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useGuestSession } from "./useGuestSession";
 
 export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -9,7 +8,6 @@ export const useAuth = () => {
   const [isResettingPassword, setIsResettingPassword] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const { toast } = useToast();
-  const { isGuest } = useGuestSession();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -43,7 +41,6 @@ export const useAuth = () => {
     setShowAuthModal,
     isResettingPassword,
     setIsResettingPassword,
-    userId,
-    isGuest
+    userId
   };
 };
