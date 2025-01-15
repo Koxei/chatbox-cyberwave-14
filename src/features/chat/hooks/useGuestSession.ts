@@ -17,7 +17,7 @@ export const useGuestSession = () => {
   const [isGuest, setIsGuest] = useState<boolean>(false);
   const [guestId, setGuestId] = useState<string | null>(null);
 
-  const initGuestSession = () => {
+  const initGuestSession = async () => {
     const guestId = `guest_${Date.now()}`;
     const session: GuestSession = {
       guestId,
@@ -37,8 +37,14 @@ export const useGuestSession = () => {
     };
     localStorage.setItem('guest_chat', JSON.stringify(guestChat));
     
-    setGuestId(guestId);
-    setIsGuest(true);
+    // Important: Set state and wait for it
+    await new Promise<void>((resolve) => {
+      setGuestId(guestId);
+      setIsGuest(true);
+      // Give a small delay to ensure state updates
+      setTimeout(resolve, 50);
+    });
+    
     return guestId;
   };
 
