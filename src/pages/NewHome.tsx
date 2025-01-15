@@ -21,8 +21,8 @@ const NewHome = () => {
               setShowAuthModal(false);
             }
           }}
-          onGuestLogin={async () => {
-            const guestId = await initGuestSession();
+          onGuestLogin={() => {
+            const guestId = initGuestSession();
             if (guestId) {
               navigate('/home', { replace: true });
             }
