@@ -9,6 +9,7 @@ import Home from "@/pages/Home";
 import NewHome from "@/pages/NewHome";
 import Login from "@/pages/Login";
 import SharedLayout from "@/components/layouts/SharedLayout";
+import TerminalPage from "@/pages/TerminalPage";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
             <Route element={<SharedLayout />}>
               <Route path="/home" element={<NewHome />} />
               <Route path="/chatbox" element={<Home />} />
+              <Route path="/terminal" element={<TerminalPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

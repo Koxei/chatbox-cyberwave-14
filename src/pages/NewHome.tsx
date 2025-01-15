@@ -6,10 +6,9 @@ import { Terminal as TerminalIcon } from "lucide-react";
 
 const NewHome = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword, userId } = useAuth();
+  const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword } = useAuth();
   const { isGuest, initGuestSession } = useGuestSession();
 
-  // Only show auth modal if user is not authenticated AND not a guest
   if (!isAuthenticated && !isGuest) {
     return (
       <div className="fixed inset-0 bg-black/80">
