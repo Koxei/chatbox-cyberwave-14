@@ -8,6 +8,8 @@ import { History, LogOut, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Chat } from "@/types/chat";
+import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface ChatHeaderProps {
   currentChat: Chat | null;
@@ -18,8 +20,31 @@ interface ChatHeaderProps {
 }
 
 const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticated }: ChatHeaderProps) => {
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout error:', error);
+        throw error;
+      }
+      
+      // Clear any local state if needed
+      navigate('/');
+      
+      toast({
+        title: "Logged out successfully",
+        description: "You have been logged out of your account",
+      });
+    } catch (err: any) {
+      console.error('Logout failed:', err);
+      toast({
+        title: "Logout failed",
+        description: err.message || "There was a problem logging out",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
