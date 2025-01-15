@@ -18,18 +18,26 @@ export const useGuestSession = () => {
   const [guestId, setGuestId] = useState<string | null>(null);
 
   const initGuestSession = () => {
-    const guestId = `guest_${Date.now()}`;
+    // Check if session already exists
+    const existingSession = localStorage.getItem('guest_session');
+    if (existingSession) {
+      const session = JSON.parse(existingSession);
+      setGuestId(session.guestId);
+      setIsGuest(true);
+      return session.guestId;
+    }
+
+    // Create new session
+    const newGuestId = `guest_${Date.now()}`;
     const session: GuestSession = {
-      guestId,
+      guestId: newGuestId,
       createdAt: Date.now()
     };
     
-    // Store guest session
     localStorage.setItem('guest_session', JSON.stringify(session));
     
-    // Initialize guest chat
     const guestChat: GuestChat = {
-      id: `chat_${guestId}`,
+      id: `chat_${newGuestId}`,
       title: 'Guest Chat',
       messages: [],
       isGuest: true,
@@ -37,11 +45,10 @@ export const useGuestSession = () => {
     };
     localStorage.setItem('guest_chat', JSON.stringify(guestChat));
     
-    // Set state synchronously
-    setGuestId(guestId);
+    setGuestId(newGuestId);
     setIsGuest(true);
     
-    return guestId;
+    return newGuestId;
   };
 
   const clearGuestSession = () => {
@@ -56,7 +63,7 @@ export const useGuestSession = () => {
     if (sessionStr) {
       const session: GuestSession = JSON.parse(sessionStr);
       const now = Date.now();
-      const expiryTime = 36 * 60 * 60 * 1000; // 36 hours in milliseconds
+      const expiryTime = 36 * 60 * 60 * 1000; // 36 hours
       
       if (now - session.createdAt > expiryTime) {
         clearGuestSession();
@@ -68,7 +75,6 @@ export const useGuestSession = () => {
   };
 
   useEffect(() => {
-    // Check for existing session on mount
     const sessionStr = localStorage.getItem('guest_session');
     if (sessionStr) {
       const session: GuestSession = JSON.parse(sessionStr);
@@ -78,8 +84,7 @@ export const useGuestSession = () => {
       }
     }
 
-    // Set up periodic check for session expiry
-    const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
+    const interval = setInterval(checkSessionExpiry, 60000);
     return () => clearInterval(interval);
   }, []);
 

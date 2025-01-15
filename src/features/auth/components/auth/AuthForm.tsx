@@ -65,7 +65,6 @@ export const AuthForm = ({
   const handleSignUpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    console.log('Starting signup process');
     try {
       const result = await handleSignUp(email, password);
       if (!result?.error) {
@@ -76,8 +75,8 @@ export const AuthForm = ({
     }
   };
 
-  // Remove navigation from here since it's handled in NewHome
-  const handleGuestLogin = () => {
+  const handleGuestLogin = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (onGuestLogin) {
       onGuestLogin();
     }
@@ -140,10 +139,7 @@ export const AuthForm = ({
           
           {onGuestLogin && (
             <button
-              onClick={(e) => {
-                e.preventDefault();
-                handleGuestLogin();
-              }}
+              onClick={handleGuestLogin}
               className="w-full flex justify-center py-2 px-4 border border-cyan-600 rounded-md shadow-sm text-sm font-medium text-cyan-600 bg-white hover:bg-cyan-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500"
             >
               Continue as Guest

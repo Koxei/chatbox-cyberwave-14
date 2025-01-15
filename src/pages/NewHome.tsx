@@ -6,8 +6,13 @@ import { Terminal as TerminalIcon } from "lucide-react";
 
 const NewHome = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword, userId } = useAuth();
+  const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword } = useAuth();
   const { isGuest, initGuestSession } = useGuestSession();
+
+  const handleGuestLogin = () => {
+    const guestId = initGuestSession();
+    navigate('/home', { replace: true });
+  };
 
   if (!isAuthenticated && !isGuest) {
     return (
@@ -21,12 +26,7 @@ const NewHome = () => {
               setShowAuthModal(false);
             }
           }}
-          onGuestLogin={() => {
-            const guestId = initGuestSession();
-            if (guestId) {
-              navigate('/home', { replace: true });
-            }
-          }}
+          onGuestLogin={handleGuestLogin}
         />
       </div>
     );
