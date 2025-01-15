@@ -1,3 +1,5 @@
+// In src/pages/Index.tsx
+
 import { useState } from "react";
 import Landing from "@/components/Landing";
 import AuthModal from "@/features/auth/components/AuthModal";
@@ -10,8 +12,10 @@ import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import { useMessageSubmission } from "@/features/chat/hooks/message/useMessageSubmission";
 import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
 import { Chat } from "@/types/chat";
+import { useNavigate } from "react-router-dom"; // Add this import
 
 const Index = () => {
+  const navigate = useNavigate(); // Add this
   const [showStartButton, setShowStartButton] = useState(true);
   const [inputMessage, setInputMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -61,10 +65,14 @@ const Index = () => {
     setShowAuthModal(true);
   };
 
-  const handleGuestLogin = () => {
-    initGuestSession();
-    setShowAuthModal(false);
-    setShowStartButton(false);
+  // CHANGED: Updated guest login handler to ensure proper initialization and navigation
+  const handleGuestLogin = async () => {
+    const guestId = initGuestSession();
+    if (guestId) {
+      setShowAuthModal(false);
+      setShowStartButton(false);
+      navigate('/home');
+    }
   };
 
   if (showStartButton) {
