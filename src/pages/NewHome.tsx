@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import AuthModal from "@/features/auth/components/AuthModal";
+import { Terminal as TerminalIcon } from "lucide-react";
 
 const NewHome = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const NewHome = () => {
           onGuestLogin={() => {
             const guestId = initGuestSession();
             if (guestId) {
-              navigate('/home');
+              navigate('/home', { replace: true });
             }
           }}
         />
@@ -34,12 +35,24 @@ const NewHome = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <div 
-        className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
-        onClick={() => navigate("/chatbox")}
-      >
-        <div className="w-20 h-20 bg-black rounded-lg shadow-lg"></div>
-        <p className="mt-2 text-white font-medium">Chatbox</p>
+      <div className="flex gap-8">
+        <div 
+          className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
+          onClick={() => navigate("/chatbox")}
+        >
+          <div className="w-20 h-20 bg-black rounded-lg shadow-lg"></div>
+          <p className="mt-2 text-white font-medium">Chatbox</p>
+        </div>
+
+        <div 
+          className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
+          onClick={() => navigate("/terminal")}
+        >
+          <div className="w-20 h-20 bg-black rounded-lg shadow-lg flex items-center justify-center">
+            <TerminalIcon className="w-12 h-12 text-cyan-500" />
+          </div>
+          <p className="mt-2 text-white font-medium">Terminal</p>
+        </div>
       </div>
     </div>
   );

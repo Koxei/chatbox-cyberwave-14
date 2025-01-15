@@ -76,10 +76,10 @@ export const AuthForm = ({
     }
   };
 
+  // Remove navigation from here since it's handled in NewHome
   const handleGuestLogin = () => {
     if (onGuestLogin) {
       onGuestLogin();
-      navigate('/home', { replace: true });
     }
   };
 
