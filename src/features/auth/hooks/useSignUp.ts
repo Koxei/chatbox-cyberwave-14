@@ -1,4 +1,3 @@
-// src/features/auth/hooks/useSignUp.ts
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,29 +10,11 @@ export const useSignUp = (onSuccess: () => void) => {
   const handleSignUp = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Start navigation earlier to improve perceived performance
-      const navigationPromise = navigate('/home', { replace: true });
-
-      // Run user check and signup in parallel
-      const [userCheckResult, signUpResult] = await Promise.all([
-        supabase.functions.invoke("check-user-exists", {
-          body: { email }
-        }),
-        supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/home`,
-          }
-        })
-      ]);
-
-      const { data, error } = userCheckResult;
-      const { error: signUpError } = signUpResult;
+      const { data, error } = await supabase.functions.invoke("check-user-exists", {
+        body: { email }
+      });
 
       if (error || data?.exists) {
-        // If there's an error, prevent navigation
-        window.history.pushState(null, '', window.location.pathname);
         toast({
           title: "Error",
           description: "Email already registered",
@@ -42,9 +23,15 @@ export const useSignUp = (onSuccess: () => void) => {
         return { error: new Error("Email already registered") };
       }
 
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/home`,
+        }
+      });
+
       if (signUpError) {
-        // If there's an error, prevent navigation
-        window.history.pushState(null, '', window.location.pathname);
         toast({
           title: "Error",
           description: signUpError.message,
@@ -53,21 +40,17 @@ export const useSignUp = (onSuccess: () => void) => {
         return { error: signUpError };
       }
 
-      // Wait for navigation to complete
-      await navigationPromise;
-
       toast({
         title: "Success",
         description: "Account created successfully",
       });
       
+      navigate('/home', { replace: true });
       onSuccess();
       return { error: null };
 
     } catch (err: any) {
       console.error("Unexpected Error:", err.message);
-      // If there's an error, prevent navigation
-      window.history.pushState(null, '', window.location.pathname);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
