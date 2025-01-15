@@ -1,4 +1,3 @@
-// src/features/auth/components/auth/AuthForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -7,7 +6,6 @@ import { useSignUp } from "@/features/auth/hooks/useSignUp";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { PasswordResetFlow } from "@/features/auth/components/password-reset/PasswordResetFlow";
-import { SocialLogin } from "./SocialLogin";
 
 interface AuthFormProps {
   isLogin: boolean;
@@ -134,8 +132,6 @@ export const AuthForm = ({
           >
             Forgot password?
           </button>
-          
-          <SocialLogin />
           
           {onGuestLogin && (
             <button
