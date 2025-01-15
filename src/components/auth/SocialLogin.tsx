@@ -1,3 +1,4 @@
+// src/components/auth/SocialLogin.tsx
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -16,8 +17,7 @@ export const SocialLogin = () => {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent'
-          },
-          skipBrowserRedirect: true // Use popup mode
+          }
         }
       });
 
