@@ -6,20 +6,30 @@ interface AuthHeaderProps {
   resetStep?: 'email' | 'otp' | 'password';
 }
 
-export const AuthHeader = ({ isLogin, showPasswordReset }: AuthHeaderProps) => {
-  if (!showPasswordReset) {
-    return (
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-1">
-          {isLogin ? "Log in to your account" : "Create your account"}
-        </h2>
-        <p className="text-sm text-gray-500">
-          {isLogin 
-            ? "Welcome back! Please enter your details." 
-            : "Join us! Fill in your information below."}
-        </p>
-      </div>
-    );
+export const AuthHeader = ({ isLogin, showPasswordReset, resetStep }: AuthHeaderProps) => {
+  if (showPasswordReset) {
+    switch (resetStep) {
+      case 'email':
+        return <h2 className="text-2xl font-bold text-center">Reset Password</h2>;
+      case 'otp':
+        return <h2 className="text-2xl font-bold text-center">Enter Verification Code</h2>;
+      case 'password':
+        return <h2 className="text-2xl font-bold text-center">Set New Password</h2>;
+      default:
+        return <h2 className="text-2xl font-bold text-center">Reset Password</h2>;
+    }
   }
-  return null;
+
+  return (
+    <div className="text-center">
+      <h2 className="text-2xl font-bold mb-1">
+        {isLogin ? "Welcome back" : "Create your account"}
+      </h2>
+      {isLogin && (
+        <p className="text-sm text-gray-500">
+          Please enter your details
+        </p>
+      )}
+    </div>
+  );
 };

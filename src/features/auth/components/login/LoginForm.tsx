@@ -6,13 +6,13 @@ import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
-  onGuestLogin?: () => void;
   onPasswordResetStart?: () => void;
+  onGuestLogin?: () => void;
 }
 
 export const LoginForm = ({
-  onGuestLogin,
-  onPasswordResetStart
+  onPasswordResetStart,
+  onGuestLogin
 }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,11 +28,12 @@ export const LoginForm = ({
         password,
       });
       if (error) throw error;
-      navigate('/home');
+      navigate('/home', { replace: true });
     } catch (err: any) {
+      console.error('Login error:', err.message);
       toast({
         title: "Error",
-        description: err.message,
+        description: "Invalid login credentials",
         variant: "destructive",
       });
     } finally {
