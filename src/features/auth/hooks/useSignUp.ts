@@ -1,3 +1,4 @@
+// src/features/auth/hooks/useSignUp.ts
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +11,7 @@ export const useSignUp = (onSuccess: () => void) => {
   const handleSignUp = async (email: string, password: string) => {
     setLoading(true);
     try {
+      // First check if user exists
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
         body: { email }
       });
@@ -23,6 +25,7 @@ export const useSignUp = (onSuccess: () => void) => {
         return { error: new Error("Email already registered") };
       }
 
+      // If user doesn't exist, proceed with signup
       const { error: signUpError } = await supabase.auth.signUp({
         email,
         password,
@@ -40,12 +43,17 @@ export const useSignUp = (onSuccess: () => void) => {
         return { error: signUpError };
       }
 
-      toast({
-        title: "Success",
-        description: "Account created successfully",
-      });
-      
+      // On success, navigate immediately before other operations
       navigate('/home', { replace: true });
+      
+      // Show success toast after navigation starts
+      setTimeout(() => {
+        toast({
+          title: "Success",
+          description: "Account created successfully",
+        });
+      }, 100);
+      
       onSuccess();
       return { error: null };
 
