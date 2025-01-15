@@ -118,11 +118,14 @@ export const AuthForm = ({
         </div>
         <Button
   type="submit"
-  className="w-full bg-[#D3E4FD] hover:bg-[#C3D4F5] active:scale-[0.98] transition-all duration-200"
+  className={`w-full bg-[#D3E4FD] hover:bg-[#C3D4F5] active:scale-[0.98] transition-all duration-200 ${
+    loading ? 'opacity-70 cursor-not-allowed bg-gray-200 hover:bg-gray-200' : ''
+  }`}
   disabled={loading}
 >
   {loading ? (isLogin ? "Signing in..." : "Creating Account...") : (isLogin ? "Sign In" : "Create Account")}
 </Button>
+
       </form>
 
       {isLogin && (
