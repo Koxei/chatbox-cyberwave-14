@@ -64,7 +64,7 @@ export const AuthForm = ({
 
   const handleSignUpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true); // Set loading immediately when form is submitted
+    setLoading(true);
     console.log('Starting signup process');
     try {
       const result = await handleSignUp(email, password);
@@ -72,7 +72,7 @@ export const AuthForm = ({
         navigate('/home', { replace: true });
       }
     } finally {
-      setLoading(false); // Ensure loading is set to false after completion
+      setLoading(false);
     }
   };
 

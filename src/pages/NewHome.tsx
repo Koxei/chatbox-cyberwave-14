@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/chat/hooks/useAuth";
+import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import AuthModal from "@/features/auth/components/AuthModal";
 
 const NewHome = () => {
   const navigate = useNavigate();
   const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword, userId } = useAuth();
+  const { isGuest, initGuestSession } = useGuestSession();
 
-  if (!isAuthenticated) {
+  // Only show auth modal if user is not authenticated AND not a guest
+  if (!isAuthenticated && !isGuest) {
     return (
       <div className="fixed inset-0 bg-black/80">
         <AuthModal 
@@ -18,7 +21,12 @@ const NewHome = () => {
               setShowAuthModal(false);
             }
           }}
-          onGuestLogin={() => navigate('/home')}
+          onGuestLogin={() => {
+            const guestId = initGuestSession();
+            if (guestId) {
+              navigate('/home');
+            }
+          }}
         />
       </div>
     );
