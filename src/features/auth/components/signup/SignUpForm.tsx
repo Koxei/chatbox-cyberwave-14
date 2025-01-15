@@ -3,18 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useSignUp } from "@/features/auth/hooks/useSignUp";
 
-interface SignUpFormProps {
-  onSuccess: () => void;
-  onBack: () => void;
+interface SignupFormProps {
+  onToggle: () => void;
 }
 
-export const SignUpForm = ({
-  onSuccess,
-  onBack
-}: SignUpFormProps) => {
+export const SignupForm = ({ onToggle }: SignupFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { loading, handleSignUp } = useSignUp(onSuccess);
+  const { loading, handleSignUp } = useSignUp(() => {});
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,7 +44,7 @@ export const SignUpForm = ({
         </div>
         <Button
           type="submit"
-          className="w-full"
+          className="w-full bg-[#D3E4FD] hover:bg-[#C3D4F5] active:scale-[0.98] transition-all duration-200 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:hover:bg-gray-200"
           disabled={loading}
         >
           {loading ? "Creating Account..." : "Create Account"}
@@ -56,7 +52,7 @@ export const SignUpForm = ({
         <Button
           type="button"
           variant="ghost"
-          onClick={onBack}
+          onClick={onToggle}
           className="w-full"
         >
           Back to Login
