@@ -1,3 +1,4 @@
+// src/pages/NewHome.tsx
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
@@ -10,7 +11,7 @@ const NewHome = () => {
   const { isGuest, initGuestSession } = useGuestSession();
 
   const handleGuestLogin = () => {
-    const guestId = initGuestSession();
+    initGuestSession();
     navigate('/home', { replace: true });
   };
 
@@ -33,7 +34,7 @@ const NewHome = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div className="fixed inset-0 bg-deep-sea-blue flex flex-col items-center justify-center p-4">
       <div className="flex gap-8">
         <div 
           className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
