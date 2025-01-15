@@ -1,3 +1,4 @@
+// src/features/auth/components/auth/AuthForm.tsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -65,10 +66,15 @@ export const AuthForm = ({
 
   const handleSignUpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true); // Set loading immediately when form is submitted
     console.log('Starting signup process');
-    const result = await handleSignUp(email, password);
-    if (!result?.error) {
-      navigate('/home', { replace: true });
+    try {
+      const result = await handleSignUp(email, password);
+      if (!result?.error) {
+        navigate('/home', { replace: true });
+      }
+    } finally {
+      setLoading(false); // Ensure loading is set to false after completion
     }
   };
 
@@ -117,13 +123,12 @@ export const AuthForm = ({
           />
         </div>
         <Button
-  type="submit"
-  className="w-full bg-[#D3E4FD] hover:bg-[#C3D4F5] active:scale-[0.98] transition-all duration-200 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:hover:bg-gray-200"
-  disabled={loading}
->
-  {loading ? (isLogin ? "Signing in..." : "Creating Account...") : (isLogin ? "Sign In" : "Create Account")}
-</Button>
-
+          type="submit"
+          className="w-full bg-[#D3E4FD] hover:bg-[#C3D4F5] active:scale-[0.98] transition-all duration-200 disabled:bg-gray-200 disabled:cursor-not-allowed disabled:hover:bg-gray-200"
+          disabled={loading}
+        >
+          {loading ? (isLogin ? "Signing in..." : "Creating Account...") : (isLogin ? "Sign In" : "Create Account")}
+        </Button>
       </form>
 
       {isLogin && (
