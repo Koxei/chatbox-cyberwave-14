@@ -1,5 +1,3 @@
-// src/features/auth/components/AuthModal.tsx
-
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { AuthHeader } from "./auth/AuthHeader";
