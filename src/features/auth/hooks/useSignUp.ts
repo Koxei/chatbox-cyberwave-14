@@ -1,4 +1,3 @@
-// src/features/auth/hooks/useSignUp.ts
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,12 +10,26 @@ export const useSignUp = (onSuccess: () => void) => {
   const handleSignUp = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // First check if user exists
+      // Prioritize user redirection over toast display
+      let userExists = false;
+
+      // Check if user exists (optional optimization: debounce or cache requests)
       const { data, error } = await supabase.functions.invoke("check-user-exists", {
-        body: { email }
+        body: { email },
       });
 
-      if (error || data?.exists) {
+      if (error) {
+        console.error("Error checking user existence:", error);
+        toast({
+          title: "Error",
+          description: "Could not verify email. Please try again.",
+          variant: "destructive",
+        });
+        return { error };
+      }
+
+      if (data?.exists) {
+        userExists = true;
         toast({
           title: "Error",
           description: "Email already registered",
@@ -25,38 +38,39 @@ export const useSignUp = (onSuccess: () => void) => {
         return { error: new Error("Email already registered") };
       }
 
-      // If user doesn't exist, proceed with signup
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/home`,
+      if (!userExists) {
+        // Proceed with user signup
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/home`,
+          },
+        });
+
+        if (signUpError) {
+          toast({
+            title: "Error",
+            description: signUpError.message,
+            variant: "destructive",
+          });
+          return { error: signUpError };
         }
-      });
 
-      if (signUpError) {
-        toast({
-          title: "Error",
-          description: signUpError.message,
-          variant: "destructive",
-        });
-        return { error: signUpError };
+        // Navigate to home immediately
+        navigate("/home", { replace: true });
+
+        // Display success toast after navigation
+        setTimeout(() => {
+          toast({
+            title: "Success",
+            description: "Account created successfully",
+          });
+        }, 100);
+
+        onSuccess();
+        return { error: null };
       }
-
-      // On success, navigate immediately before other operations
-      navigate('/home', { replace: true });
-      
-      // Show success toast after navigation starts
-      setTimeout(() => {
-        toast({
-          title: "Success",
-          description: "Account created successfully",
-        });
-      }, 100);
-      
-      onSuccess();
-      return { error: null };
-
     } catch (err: any) {
       console.error("Unexpected Error:", err.message);
       toast({
@@ -72,6 +86,6 @@ export const useSignUp = (onSuccess: () => void) => {
 
   return {
     loading,
-    handleSignUp
+    handleSignUp,
   };
 };
