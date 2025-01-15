@@ -4,13 +4,14 @@ import { AuthHeader } from "./auth/AuthHeader";
 import { AuthForm } from "./auth/AuthForm";
 import { AuthFooter } from "./auth/AuthFooter";
 import { AUTH_CONFIG } from "@/config/auth";
+import { useNavigate } from "react-router-dom";
+import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 
 interface AuthModalProps {
   isOpen: boolean;
   onPasswordResetStart?: () => void;
   onPasswordResetComplete?: () => void;
   onClose?: () => void;
-  onGuestLogin?: () => void;
 }
 
 const AuthModal = ({
@@ -18,16 +19,15 @@ const AuthModal = ({
   onPasswordResetStart,
   onPasswordResetComplete,
   onClose,
-  onGuestLogin
 }: AuthModalProps) => {
+  const navigate = useNavigate();
+  const { initGuestSession } = useGuestSession();
   const [isLogin, setIsLogin] = useState(true);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
 
-  // Keep dialog open during password reset
   const keepOpen = isOpen || showPasswordReset;
 
-  // Get the appropriate title based on current state
   const getDialogTitle = () => {
     if (showPasswordReset) {
       switch (resetStep) {
@@ -44,48 +44,36 @@ const AuthModal = ({
     return isLogin ? "Log In" : "Sign Up";
   };
 
-  // Updated handler for back to login
   const handleBackToLogin = () => {
-    console.log('Back to login clicked');
-    setShowPasswordReset(false); // Reset password reset state
-    setResetStep('email'); // Reset step
-    setIsLogin(true); // Ensure we're in login mode
+    setShowPasswordReset(false);
+    setResetStep('email');
+    setIsLogin(true);
   };
 
-  // Handle password reset state changes
   const handlePasswordResetStart = () => {
-    console.log('Password reset started');
     setShowPasswordReset(true);
     setResetStep('email');
     onPasswordResetStart?.();
   };
 
   const handlePasswordResetComplete = () => {
-    console.log('Password reset completed');
     setShowPasswordReset(false);
     setResetStep('email');
     onPasswordResetComplete?.();
   };
 
-  // New handler for step changes
   const handleStepChange = (step: 'email' | 'otp' | 'password') => {
-    console.log('Step changed:', step);
     setResetStep(step);
-    // Ensure modal stays open during step transitions
     setShowPasswordReset(true);
   };
 
-  // Simplified guest login handler
   const handleGuestLogin = () => {
-    console.log('Guest login clicked');
-    onGuestLogin?.();
+    initGuestSession();
+    navigate('/home', { replace: true });
   };
 
-  // Handle auth toggle
   const handleAuthToggle = () => {
-    console.log('AuthModal toggle handler called');
     setIsLogin(!isLogin);
-    // Reset password reset state when toggling
     if (showPasswordReset) {
       setShowPasswordReset(false);
       setResetStep('email');
@@ -94,14 +82,8 @@ const AuthModal = ({
 
   return (
     <Dialog open={keepOpen} modal>
-      <DialogContent 
-        className="sm:max-w-[425px] bg-white text-black p-6"
-        aria-describedby="auth-modal-description"
-      >
+      <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
         <DialogTitle className="sr-only">{getDialogTitle()}</DialogTitle>
-        <div id="auth-modal-description" className="sr-only">
-          Authentication modal for login, signup, and guest access
-        </div>
         <div className="space-y-6">
           <AuthHeader 
             isLogin={isLogin} 

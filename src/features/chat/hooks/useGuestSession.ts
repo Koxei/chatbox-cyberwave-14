@@ -18,16 +18,14 @@ export const useGuestSession = () => {
   const [guestId, setGuestId] = useState<string | null>(null);
 
   const initGuestSession = () => {
-    // Check if session already exists
     const existingSession = localStorage.getItem('guest_session');
     if (existingSession) {
       const session = JSON.parse(existingSession);
       setGuestId(session.guestId);
       setIsGuest(true);
-      return session.guestId;
+      return;
     }
 
-    // Create new session
     const newGuestId = `guest_${Date.now()}`;
     const session: GuestSession = {
       guestId: newGuestId,
@@ -47,8 +45,6 @@ export const useGuestSession = () => {
     
     setGuestId(newGuestId);
     setIsGuest(true);
-    
-    return newGuestId;
   };
 
   const clearGuestSession = () => {
@@ -63,7 +59,7 @@ export const useGuestSession = () => {
     if (sessionStr) {
       const session: GuestSession = JSON.parse(sessionStr);
       const now = Date.now();
-      const expiryTime = 36 * 60 * 60 * 1000; // 36 hours
+      const expiryTime = 36 * 60 * 60 * 1000;
       
       if (now - session.createdAt > expiryTime) {
         clearGuestSession();
