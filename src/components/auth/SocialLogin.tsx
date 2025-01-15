@@ -10,14 +10,14 @@ export const SocialLogin = () => {
     
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: 'google', 
+        skipBrowserRedirect: true, // Use popup mode
         options: {
           redirectTo: AUTH_CONFIG.redirectURL,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent'
-          },
-          skipBrowserRedirect: true // Use popup mode
+          }
         }
       });
 
