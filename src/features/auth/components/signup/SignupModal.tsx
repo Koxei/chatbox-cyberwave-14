@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { SignupForm } from "./SignupForm";
+import { SignUpForm } from "./SignUpForm";
 import { AuthHeader } from "../shared/AuthHeader";
 import { AuthFooter } from "../shared/AuthFooter";
 
@@ -20,7 +20,7 @@ export const SignupModal = ({
         <DialogTitle className="sr-only">Sign Up</DialogTitle>
         <div className="space-y-6">
           <AuthHeader isLogin={false} showPasswordReset={false} />
-          <SignupForm onToggle={onToggleMode} />
+          <SignUpForm onToggle={onToggleMode} />
           <AuthFooter />
         </div>
       </DialogContent>
