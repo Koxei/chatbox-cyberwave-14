@@ -1,15 +1,17 @@
-// src/features/chat/components/messages/ChatMessage.tsx
 import React from "react";
-import { Message } from "@/types/chat";
 import { cn } from "@/lib/utils";
-import { MessageSquare, User } from "lucide-react";
 
 interface ChatMessageProps {
   isAI?: boolean;
   message: string;
+  type?: 'text' | 'image';  // Added type prop
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ 
+  isAI = false, 
+  message, 
+  type = 'text'  // Default to text type
+}) => {
   return (
     <div className="w-full p-4 mb-4 relative z-[100] bg-black bg-opacity-50">
       <div className={cn(
@@ -27,9 +29,22 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
             />
           ) : ">"}
         </span>
-        <p className="font-sans text-lg break-words flex-1 font-semibold">
-          {message}
-        </p>
+        
+        {/* Added conditional rendering based on message type */}
+        {type === 'image' ? (
+          <div className="flex-1">
+            <img 
+              src={message} 
+              alt="AI Generated Image" 
+              className="max-w-full rounded-lg border-2 border-aiMessage"
+              style={{ maxHeight: '400px', objectFit: 'contain' }}
+            />
+          </div>
+        ) : (
+          <p className="font-sans text-lg break-words flex-1 font-semibold">
+            {message}
+          </p>
+        )}
       </div>
     </div>
   );
