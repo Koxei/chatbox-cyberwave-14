@@ -52,7 +52,7 @@ export const useMessageHandler = (
           messages: [
             {
               role: "system",
-              content: "You are CHIXA, a 20-year-old female AI assistant..."
+              content: "You are ALICE, a 19-year-old female AI assistant..."
             },
             { role: "user", content: userMessage }
           ]

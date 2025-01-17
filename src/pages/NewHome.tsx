@@ -1,3 +1,4 @@
+// src/pages/NewHome.tsx
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
@@ -9,12 +10,9 @@ const NewHome = () => {
   const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword } = useAuth();
   const { isGuest, initGuestSession } = useGuestSession();
 
-  const handleGuestLogin = async () => {
-    console.log('Guest login clicked');
-    const success = await initGuestSession();
-    if (success) {
-      navigate('/home', { replace: true });
-    }
+  const handleGuestLogin = () => {
+    initGuestSession();
+    navigate('/home', { replace: true });
   };
 
   if (!isAuthenticated && !isGuest) {
@@ -37,6 +35,7 @@ const NewHome = () => {
 
   return (
     <div className="fixed inset-0 bg-deep-sea-blue">
+      {/* Chatbox Container - Centered in middle of screen */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div 
           className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
@@ -47,6 +46,7 @@ const NewHome = () => {
         </div>
       </div>
 
+      {/* Terminal Container - Centered at bottom of screen */}
       <div className="absolute bottom-8 left-0 right-0 flex justify-center">
         <div 
           className="flex flex-col items-center cursor-pointer transform transition-transform hover:scale-105"
