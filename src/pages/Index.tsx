@@ -101,7 +101,7 @@ setShowAuthModal(true);
 const handleGuestLogin = () => {
 
 const guestId = initGuestSession();
-if (guestId || isGuestInitialized) {
+if (guestId !== undefined || isGuestInitialized) {
   setIsGuestInitialized(true);
   setShowAuthModal(false);
   setShowStartButton(false);

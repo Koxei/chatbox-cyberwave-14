@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Chat, Message } from '../types/chat';
+import { Chat } from '@/types/chat';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useChat = () => {
@@ -14,7 +14,7 @@ export const useChat = () => {
       .order('created_at', { ascending: false });
 
     if (!error && data) {
-      setChats(data);
+      setChats(data as Chat[]);
     }
   }, []);
 
