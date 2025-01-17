@@ -75,6 +75,7 @@ const Home = () => {
     console.log("Initializing guest session...");
     initGuestSession();
     setShowAuthModal(false);
+    // No need to navigate since AuthModal is already in Home
   };
 
   if (!isAuthenticated && !isGuest) {
