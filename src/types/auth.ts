@@ -1,3 +1,17 @@
+export interface AuthState {
+  isAuthenticated: boolean;
+  showAuthModal: boolean;
+  isResettingPassword: boolean;
+}
+
+export interface AuthModalProps {
+  isOpen: boolean;
+  onPasswordResetStart?: () => void;
+  onPasswordResetComplete?: () => void;
+  onClose?: () => void;
+  onGuestLogin?: () => void;
+}
+
 export interface AuthFormProps {
   isLogin: boolean;
   onToggle: () => void;
