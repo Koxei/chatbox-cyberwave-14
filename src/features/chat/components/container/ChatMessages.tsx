@@ -1,32 +1,30 @@
-import React from "react";
-import { Message } from "@/types/chat";
-import { cn } from "@/lib/utils";
-import { MessageSquare, User } from "lucide-react";
+import React from 'react';
+import { Message } from '@/types/chat';
+import ChatMessage from '../messages/ChatMessage';
 
-interface ChatMessageProps {
-  isAI?: boolean;
-  message: string;
+interface ChatMessagesProps {
+  messages: Message[];
+  isLoading: boolean;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
+const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
   return (
-    <div className={`message ${isAI ? "message-ai" : "message-user"} relative z-30`}>
-      <div className="flex items-start gap-2">
-        <span className="font-arcade text-base flex-shrink-0">
-          {isAI ? (
-            <img 
-              src="/lovable-uploads/girl.png" 
-              alt="AI Avatar" 
-              width={35} 
-              height={35} 
-              className="w-[35px] h-[35px] flex-shrink-0 min-w-[35px] min-h-[35px]" 
-            />
-          ) : ">"}
-        </span>
-        <p className="font-sans text-base break-words flex-1">{message}</p>
-      </div>
+    <div className="relative z-30">
+      {messages.map((message, index) => (
+        <ChatMessage
+          key={message.id || index}
+          isAI={message.is_ai}
+          message={message.content}
+        />
+      ))}
+      {isLoading && (
+        <ChatMessage
+          isAI
+          message="Wait a second pwease. . ."
+        />
+      )}
     </div>
   );
 };
 
-export default ChatMessage;
+export default ChatMessages;
