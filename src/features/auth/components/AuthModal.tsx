@@ -12,6 +12,7 @@ interface AuthModalProps {
   onPasswordResetStart?: () => void;
   onPasswordResetComplete?: () => void;
   onClose?: () => void;
+  onGuestLogin?: () => void;
 }
 
 const AuthModal = ({
@@ -19,6 +20,7 @@ const AuthModal = ({
   onPasswordResetStart,
   onPasswordResetComplete,
   onClose,
+  onGuestLogin,
 }: AuthModalProps) => {
   const navigate = useNavigate();
   const { initGuestSession } = useGuestSession();
