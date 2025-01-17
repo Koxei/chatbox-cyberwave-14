@@ -11,7 +11,12 @@ export const useAuth = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event);
       if (event === 'SIGNED_IN') {
+        // Clear any guest session data when user signs in
+        localStorage.removeItem('guest_session');
+        localStorage.removeItem('guest_chat');
+        
         setIsAuthenticated(true);
         setShowAuthModal(false);
         setUserId(session?.user?.id || null);
@@ -28,6 +33,9 @@ export const useAuth = () => {
       if (session) {
         setUserId(session.user.id);
         setIsAuthenticated(true);
+        // Clear any guest session data on initial auth check
+        localStorage.removeItem('guest_session');
+        localStorage.removeItem('guest_chat');
       }
     };
     checkSession();

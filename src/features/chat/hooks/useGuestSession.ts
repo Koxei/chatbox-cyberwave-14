@@ -18,21 +18,28 @@ export const useGuestSession = () => {
   const [guestId, setGuestId] = useState<string | null>(null);
 
   const initGuestSession = () => {
-    const existingSession = localStorage.getItem('guest_session');
-    if (existingSession) {
-      const session = JSON.parse(existingSession);
-      setGuestId(session.guestId);
+    // Check if user is already authenticated
+    const authToken = localStorage.getItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
+    if (authToken) {
+      clearGuestSession();
+      return;
+    }
+
+    const existingSessionStr = localStorage.getItem('guest_session');
+    if (existingSessionStr) {
+      const existingGuestSession = JSON.parse(existingSessionStr);
+      setGuestId(existingGuestSession.guestId);
       setIsGuest(true);
       return;
     }
 
     const newGuestId = `guest_${Date.now()}`;
-    const session: GuestSession = {
+    const newGuestSession: GuestSession = {
       guestId: newGuestId,
       createdAt: Date.now()
     };
     
-    localStorage.setItem('guest_session', JSON.stringify(session));
+    localStorage.setItem('guest_session', JSON.stringify(newGuestSession));
     
     const guestChat: GuestChat = {
       id: `chat_${newGuestId}`,
@@ -57,11 +64,11 @@ export const useGuestSession = () => {
   const checkSessionExpiry = () => {
     const sessionStr = localStorage.getItem('guest_session');
     if (sessionStr) {
-      const session: GuestSession = JSON.parse(sessionStr);
+      const guestSession: GuestSession = JSON.parse(sessionStr);
       const now = Date.now();
-      const expiryTime = 36 * 60 * 60 * 1000;
+      const expiryTime = 36 * 60 * 60 * 1000; // 36 hours
       
-      if (now - session.createdAt > expiryTime) {
+      if (now - guestSession.createdAt > expiryTime) {
         clearGuestSession();
         return false;
       }
@@ -71,16 +78,23 @@ export const useGuestSession = () => {
   };
 
   useEffect(() => {
+    // Check if user is authenticated
+    const authToken = localStorage.getItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
+    if (authToken) {
+      clearGuestSession();
+      return;
+    }
+
     const sessionStr = localStorage.getItem('guest_session');
     if (sessionStr) {
-      const session: GuestSession = JSON.parse(sessionStr);
+      const guestSession: GuestSession = JSON.parse(sessionStr);
       if (checkSessionExpiry()) {
-        setGuestId(session.guestId);
+        setGuestId(guestSession.guestId);
         setIsGuest(true);
       }
     }
 
-    const interval = setInterval(checkSessionExpiry, 60000);
+    const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
     return () => clearInterval(interval);
   }, []);
 
