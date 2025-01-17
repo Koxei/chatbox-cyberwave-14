@@ -36,25 +36,23 @@ export const useAIResponse = (
       const data = await response.json();
       const aiResponse = data.choices[0].message.content;
 
-      // Check if this is a guest chatt
+      // Check if this is a guest chat
       const isGuestChat = chatId.startsWith('chat_guest_');
 
       if (isGuestChat) {
         // Handle guest AI response - keep in memory only
-        const newAiMessage = {
+        const newAiMessage: Message = {
           id: `msg_${Date.now()}`,
           content: aiResponse,
           is_ai: true,
           created_at: new Date().toISOString(),
           chat_id: chatId,
-          type: 'text'
+          type: 'text' as const
         };
         
-        // Update state directly without localStorage
         setMessages(prev => [...prev, newAiMessage]);
         return newAiMessage;
       } else {
-        // Handle authenticated user AI response (unchanged)
         if (!userId) return null;
 
         const { data: savedAiMessage, error: aiMessageError } = await supabase
@@ -64,7 +62,8 @@ export const useAIResponse = (
               content: aiResponse,
               is_ai: true,
               chat_id: chatId,
-              user_id: userId
+              user_id: userId,
+              type: 'text' as const
             }
           ])
           .select()
@@ -72,8 +71,13 @@ export const useAIResponse = (
 
         if (aiMessageError) throw aiMessageError;
 
-        setMessages(prev => [...prev, savedAiMessage]);
-        return savedAiMessage;
+        const typedMessage: Message = {
+          ...savedAiMessage,
+          type: 'text' as const
+        };
+
+        setMessages(prev => [...prev, typedMessage]);
+        return typedMessage;
       }
     } catch (error) {
       console.error('Error getting AI response:', error);

@@ -17,7 +17,14 @@ export const useChatSelection = () => {
         .order('created_at', { ascending: true });
 
       if (messagesError) throw messagesError;
-      setMessages(messagesData || []);
+      
+      // Ensure each message has the correct type
+      const typedMessages: Message[] = (messagesData || []).map(msg => ({
+        ...msg,
+        type: (msg.type === 'image' ? 'image' : 'text') as 'text' | 'image'
+      }));
+      
+      setMessages(typedMessages);
     } catch (error) {
       toast({
         title: "Error",
