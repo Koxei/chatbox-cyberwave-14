@@ -9,9 +9,10 @@ const NewHome = () => {
   const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword } = useAuth();
   const { isGuest, initGuestSession } = useGuestSession();
 
-  const handleGuestLogin = () => {
+  const handleGuestLogin = async () => {
     console.log('Handling guest login...');
-    if (initGuestSession()) {
+    const success = await initGuestSession();
+    if (success) {
       navigate('/home', { replace: true });
     }
   };

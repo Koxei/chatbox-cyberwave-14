@@ -17,11 +17,13 @@ export const useGuestSession = () => {
   const [isGuest, setIsGuest] = useState<boolean>(false);
   const [guestId, setGuestId] = useState<string | null>(null);
 
-  const initGuestSession = () => {
+  const initGuestSession = async () => {
     console.log('Initializing guest session...');
     const existingSession = localStorage.getItem('guest_session');
+    
     if (existingSession) {
       const session = JSON.parse(existingSession);
+      await Promise.resolve(); // Ensure state updates are batched
       setGuestId(session.guestId);
       setIsGuest(true);
       return true;
@@ -44,6 +46,7 @@ export const useGuestSession = () => {
     };
     localStorage.setItem('guest_chat', JSON.stringify(guestChat));
     
+    await Promise.resolve(); // Ensure state updates are batched
     setGuestId(newGuestId);
     setIsGuest(true);
     return true;
