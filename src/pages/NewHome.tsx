@@ -11,7 +11,9 @@ const NewHome = () => {
 
   const handleGuestLogin = () => {
     console.log('Handling guest login...');
-    initGuestSession();
+    if (initGuestSession()) {
+      navigate('/home', { replace: true });
+    }
   };
 
   if (!isAuthenticated && !isGuest) {
