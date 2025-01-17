@@ -1,3 +1,4 @@
+// src/features/chat/hooks/useMessageHandler.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +24,11 @@ export const useMessageHandler = (
     setIsLoading(true);
 
     try {
+      // Check if this is an image generation request
+      const isImageRequest = userMessage.toLowerCase().includes('generate image') || 
+                           userMessage.toLowerCase().includes('create image') ||
+                           userMessage.toLowerCase().includes('make image');
+
       // Save user message
       const { data: savedMessage, error: messageError } = await supabase
         .from('messages')
@@ -31,58 +37,90 @@ export const useMessageHandler = (
             content: userMessage,
             is_ai: false,
             chat_id: currentChat.id,
-            user_id: userId
+            user_id: userId,
+            type: 'text'  // User messages are always text
           }
         ])
         .select()
         .single();
 
       if (messageError) throw messageError;
-
       setMessages(prev => [...prev, savedMessage]);
 
-      // Get AI response
-      const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
-        },
-        body: JSON.stringify({
-          messages: [
+      // Handle image generation if requested
+      if (isImageRequest) {
+        // Extract the prompt from the message
+        const prompt = userMessage.replace(/generate image|create image|make image/i, '').trim();
+        
+        // Call the image generation edge function
+        const { data: imageData, error: imageError } = await supabase.functions
+          .invoke('generate-image', {
+            body: { prompt }
+          });
+
+        if (imageError) throw imageError;
+
+        // Save AI image response
+        const { data: savedAiMessage, error: aiMessageError } = await supabase
+          .from('messages')
+          .insert([
             {
-              role: "system",
-              content: "You are ALICE, a 19-year-old female AI assistant..."
-            },
-            { role: "user", content: userMessage }
-          ]
-        })
-      });
+              content: imageData.image,
+              is_ai: true,
+              chat_id: currentChat.id,
+              user_id: userId,
+              type: 'image'
+            }
+          ])
+          .select()
+          .single();
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (aiMessageError) throw aiMessageError;
+        setMessages(prev => [...prev, savedAiMessage]);
+      } else {
+        // Handle regular text response
+        const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "system",
+                content: "You are ALICE, a 19-year-old female AI assistant..."
+              },
+              { role: "user", content: userMessage }
+            ]
+          })
+        });
 
-      const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-      // Save AI response
-      const { data: savedAiMessage, error: aiMessageError } = await supabase
-        .from('messages')
-        .insert([
-          {
-            content: aiResponse,
-            is_ai: true,
-            chat_id: currentChat.id,
-            user_id: userId
-          }
-        ])
-        .select()
-        .single();
+        const data = await response.json();
+        const aiResponse = data.choices[0].message.content;
 
-      if (aiMessageError) throw aiMessageError;
+        // Save AI text response
+        const { data: savedAiMessage, error: aiMessageError } = await supabase
+          .from('messages')
+          .insert([
+            {
+              content: aiResponse,
+              is_ai: true,
+              chat_id: currentChat.id,
+              user_id: userId,
+              type: 'text'
+            }
+          ])
+          .select()
+          .single();
 
-      setMessages(prev => [...prev, savedAiMessage]);
+        if (aiMessageError) throw aiMessageError;
+        setMessages(prev => [...prev, savedAiMessage]);
+      }
 
-      // Update chat title after first exchange
+      // Update chat title after first exchange if needed
       if (savedMessage && !currentChat.title) {
         const { error: updateError } = await supabase
           .from('chats')
@@ -100,6 +138,7 @@ export const useMessageHandler = (
       }
 
     } catch (error) {
+      console.error('Error in handleSubmit:', error);
       toast({
         title: "Error",
         description: "Failed to get response. Please try again.",
@@ -117,3 +156,5 @@ export const useMessageHandler = (
     handleSubmit
   };
 };
+
+export default useMessageHandler;
