@@ -23,7 +23,8 @@ export const useMessageHandler = (
     setIsLoading(true);
 
     try {
-      // Save user message
+      const isImageCommand = userMessage.startsWith('/image');
+      
       const { data: savedMessage, error: messageError } = await supabase
         .from('messages')
         .insert([
@@ -31,72 +32,80 @@ export const useMessageHandler = (
             content: userMessage,
             is_ai: false,
             chat_id: currentChat.id,
-            user_id: userId
+            user_id: userId,
+            type: 'text'
           }
         ])
         .select()
         .single();
 
       if (messageError) throw messageError;
-
       setMessages(prev => [...prev, savedMessage]);
 
-      // Get AI response
-      const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
-        },
-        body: JSON.stringify({
-          messages: [
+      if (isImageCommand) {
+        const imagePrompt = userMessage.replace('/image', '').trim();
+        const response = await supabase.functions.invoke('generate-image', {
+          body: { prompt: imagePrompt }
+        });
+
+        if (response.error) throw response.error;
+
+        const { data: savedAiMessage, error: aiMessageError } = await supabase
+          .from('messages')
+          .insert([
             {
-              role: "system",
-              content: "You are ALICE, a 19-year-old female AI assistant..."
-            },
-            { role: "user", content: userMessage }
-          ]
-        })
-      });
+              content: `Generated image for: ${imagePrompt}`,
+              is_ai: true,
+              chat_id: currentChat.id,
+              user_id: userId,
+              type: 'image',
+              image_url: response.data.url
+            }
+          ])
+          .select()
+          .single();
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (aiMessageError) throw aiMessageError;
+        setMessages(prev => [...prev, savedAiMessage]);
+      } else {
+        const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
+          },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: "system",
+                content: "You are ALICE, a 19-year-old female AI assistant..."
+              },
+              { role: "user", content: userMessage }
+            ]
+          })
+        });
 
-      const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
-      // Save AI response
-      const { data: savedAiMessage, error: aiMessageError } = await supabase
-        .from('messages')
-        .insert([
-          {
-            content: aiResponse,
-            is_ai: true,
-            chat_id: currentChat.id,
-            user_id: userId
-          }
-        ])
-        .select()
-        .single();
+        const data = await response.json();
+        const aiResponse = data.choices[0].message.content;
 
-      if (aiMessageError) throw aiMessageError;
+        const { data: savedAiMessage, error: aiMessageError } = await supabase
+          .from('messages')
+          .insert([
+            {
+              content: aiResponse,
+              is_ai: true,
+              chat_id: currentChat.id,
+              user_id: userId,
+              type: 'text'
+            }
+          ])
+          .select()
+          .single();
 
-      setMessages(prev => [...prev, savedAiMessage]);
-
-      // Update chat title after first exchange
-      if (savedMessage && !currentChat.title) {
-        const { error: updateError } = await supabase
-          .from('chats')
-          .update({ title: userMessage.slice(0, 30) + '...' })
-          .eq('id', currentChat.id);
-
-        if (updateError) throw updateError;
-        
-        setChats(prev => prev.map(chat => 
-          chat.id === currentChat.id 
-            ? { ...chat, title: userMessage.slice(0, 30) + '...' }
-            : chat
-        ));
-        setCurrentChat(prev => prev ? { ...prev, title: userMessage.slice(0, 30) + '...' } : null);
+        if (aiMessageError) throw aiMessageError;
+        setMessages(prev => [...prev, savedAiMessage]);
       }
 
     } catch (error) {
