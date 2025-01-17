@@ -132,19 +132,31 @@
 }
 
 .message {
-  @apply w-full p-4 mb-4 bg-container animate-fade-in relative z-10;
+
+  @apply w-full p-4 mb-4 bg-container animate-fade-in relative z-20;
+  
   backdrop-filter: blur(5px);
+  
   border-radius: 8px;
-}
-
-.message-ai {
-  @apply border border-aiMessage text-aiMessage;
-}
-
-.message-user {
-  @apply border border-userMessage text-userMessage;
-}
-
-.message p {
-  @apply font-arcade text-xs leading-relaxed;
-}
+  
+  border-width: 2px;
+  
+  }
+  
+  .message-ai {
+  
+  @apply border-2 border-aiMessage text-aiMessage;
+  
+  }
+  
+  .message-user {
+  
+  @apply border-2 border-userMessage text-userMessage;
+  
+  }
+  
+  .message p {
+  
+  @apply font-arcade text-base leading-relaxed;
+  
+  }
