@@ -18,6 +18,13 @@ export const useGuestSession = () => {
   const [guestId, setGuestId] = useState<string | null>(null);
 
   const initGuestSession = () => {
+    // Check if user is already authenticated
+    const session = localStorage.getItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
+    if (session) {
+      clearGuestSession();
+      return;
+    }
+
     const existingSession = localStorage.getItem('guest_session');
     if (existingSession) {
       const session = JSON.parse(existingSession);
@@ -59,7 +66,7 @@ export const useGuestSession = () => {
     if (sessionStr) {
       const session: GuestSession = JSON.parse(sessionStr);
       const now = Date.now();
-      const expiryTime = 36 * 60 * 60 * 1000;
+      const expiryTime = 36 * 60 * 60 * 1000; // 36 hours
       
       if (now - session.createdAt > expiryTime) {
         clearGuestSession();
@@ -71,6 +78,13 @@ export const useGuestSession = () => {
   };
 
   useEffect(() => {
+    // Check if user is authenticated
+    const session = localStorage.getItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
+    if (session) {
+      clearGuestSession();
+      return;
+    }
+
     const sessionStr = localStorage.getItem('guest_session');
     if (sessionStr) {
       const session: GuestSession = JSON.parse(sessionStr);
@@ -80,7 +94,7 @@ export const useGuestSession = () => {
       }
     }
 
-    const interval = setInterval(checkSessionExpiry, 60000);
+    const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
     return () => clearInterval(interval);
   }, []);
 
