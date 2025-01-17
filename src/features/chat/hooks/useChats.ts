@@ -1,3 +1,4 @@
+// src/features/chat/hooks/useChats.ts
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -11,14 +12,19 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
   useEffect(() => {
     if (isGuest) {
-      // Load guest chat from localStorage
-      const guestChatStr = localStorage.getItem('guest_chat');
-      if (guestChatStr) {
-        const guestChat = JSON.parse(guestChatStr);
-        setChats([guestChat]);
-        setCurrentChat(guestChat);
-        setMessages(guestChat.messages);
-      }
+      // Initialize a new guest chat with empty messages array
+      const guestChat: Chat = {
+        id: `chat_guest_${Date.now()}`,
+        title: 'Guest Chat',
+        messages: [], // Initialize empty messages array
+        user_id: `guest_${Date.now()}`,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_guest: true
+      };
+      setChats([guestChat]);
+      setCurrentChat(guestChat);
+      setMessages([]); // Initialize empty messages array
     } else if (userId) {
       loadChats();
     }
@@ -111,23 +117,11 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
     }
   };
 
-  const updateGuestChat = (newMessages: Message[]) => {
-    if (!isGuest) return;
-
-    const guestChatStr = localStorage.getItem('guest_chat');
-    if (guestChatStr) {
-      const guestChat = JSON.parse(guestChatStr);
-      guestChat.messages = newMessages;
-      localStorage.setItem('guest_chat', JSON.stringify(guestChat));
-      setMessages(newMessages);
-    }
-  };
-
   return {
     chats,
     currentChat,
     messages,
-    setMessages: isGuest ? updateGuestChat : setMessages,
+    setMessages,
     loadChats,
     createNewChat,
     handleChatSelect: isGuest ? undefined : loadMessages
