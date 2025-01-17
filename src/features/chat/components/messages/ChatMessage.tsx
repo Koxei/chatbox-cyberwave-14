@@ -11,8 +11,11 @@ interface ChatMessageProps {
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
   return (
-    <div className={`message ${isAI ? "message-ai" : "message-user"} relative z-50`}>
-      <div className="flex items-start gap-2 relative z-50">
+    <div className="w-full p-4 mb-4 relative z-[100] bg-black bg-opacity-50">
+      <div className={cn(
+        "flex items-start gap-2 p-4 rounded-lg border-2",
+        isAI ? "border-aiMessage text-aiMessage" : "border-userMessage text-userMessage"
+      )}>
         <span className="font-arcade text-base flex-shrink-0">
           {isAI ? (
             <img 
@@ -24,7 +27,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
             />
           ) : ">"}
         </span>
-        <p className="font-sans text-base break-words flex-1 relative z-50 font-semibold">
+        <p className="font-sans text-lg break-words flex-1 font-semibold">
           {message}
         </p>
       </div>
