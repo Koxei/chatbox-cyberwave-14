@@ -28,23 +28,15 @@ export const useMessageSubmission = (
         content,
         is_ai: false,
         created_at: new Date().toISOString(),
-<<<<<<< HEAD
         chat_id: chatId,
         type: 'text'
-=======
-        chat_id: chatId
->>>>>>> b142570bbb0fdca28161903831e0d45053cdebfe
       };
 
       guestChat.messages = [...(guestChat.messages || []), newMessage];
       localStorage.setItem('guest_chat', JSON.stringify(guestChat));
       
       setMessages(prev => [...prev, newMessage]);
-<<<<<<< HEAD
       return newMessage; // Return the message object to trigger AI response
-=======
-      return newMessage;
->>>>>>> b142570bbb0fdca28161903831e0d45053cdebfe
     } else {
       // Handle authenticated user message
       if (!userId) return null;
