@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface GuestSession {
   guestId: string;
@@ -16,13 +17,16 @@ interface GuestChat {
 export const useGuestSession = () => {
   const [isGuest, setIsGuest] = useState<boolean>(false);
   const [guestId, setGuestId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const initGuestSession = () => {
+    console.log('Initializing guest session...');
     const existingSession = localStorage.getItem('guest_session');
     if (existingSession) {
       const session = JSON.parse(existingSession);
       setGuestId(session.guestId);
       setIsGuest(true);
+      navigate('/home', { replace: true });
       return;
     }
 
@@ -45,6 +49,7 @@ export const useGuestSession = () => {
     
     setGuestId(newGuestId);
     setIsGuest(true);
+    navigate('/home', { replace: true });
   };
 
   const clearGuestSession = () => {
