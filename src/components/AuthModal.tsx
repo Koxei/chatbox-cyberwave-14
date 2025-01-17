@@ -76,10 +76,14 @@ const AuthModal = ({
   };
 
   // Handle guest login
-  const handleGuestLogin = () => {
-    console.log('Guest login clicked');
+const handleGuestLogin = async () => {
+  console.log('Guest login clicked');
+  const success = await initGuestSession();
+  if (success) {
     onGuestLogin?.();
-  };
+  }
+};
+
 
   // Handle auth toggle
   const handleAuthToggle = () => {
