@@ -36,7 +36,7 @@ export const useAIResponse = (
       const data = await response.json();
       const aiResponse = data.choices[0].message.content;
 
-      // Check if this is a guest chat
+      // Check if this is a guest chatt
       const isGuestChat = chatId.startsWith('chat_guest_');
 
       if (isGuestChat) {
