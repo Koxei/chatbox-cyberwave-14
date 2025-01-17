@@ -15,7 +15,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
           key={message.id || index}
           isAI={message.is_ai}
           message={message.content}
-          imageUrl={message.image_url}
         />
       ))}
       {isLoading && (

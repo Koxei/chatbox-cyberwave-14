@@ -3,10 +3,9 @@ import React from "react";
 interface ChatMessageProps {
   isAI?: boolean;
   message: string;
-  imageUrl?: string;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message, imageUrl }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message }) => {
   return (
     <div className={`message ${isAI ? "message-ai" : "message-user"}`}>
       <div className="flex items-start gap-2">
@@ -21,17 +20,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ isAI = false, message, imageU
             />
           ) : ">"}
         </span>
-        <div className="flex flex-col gap-2">
-          <p className="font-sans">{message}</p>
-          {imageUrl && (
-            <img 
-              src={imageUrl} 
-              alt="Generated" 
-              className="rounded-lg max-w-[512px] w-full h-auto"
-              loading="lazy"
-            />
-          )}
-        </div>
+        <p className="font-sans">{message}</p>
       </div>
     </div>
   );

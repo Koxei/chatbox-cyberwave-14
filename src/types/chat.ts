@@ -12,5 +12,4 @@ export interface Message {
   is_ai: boolean;
   created_at: string;
   chat_id: string;
-  image_url?: string;
 }
