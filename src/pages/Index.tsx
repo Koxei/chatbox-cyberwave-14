@@ -1,27 +1,15 @@
-import { useState, useEffect } from "react"; // Added useEffect
-
+import { useState, useEffect } from "react";
 import Landing from "@/components/Landing";
-
 import AuthModal from "@/features/auth/components/AuthModal";
-
 import ChatHeader from "@/components/ChatHeader";
-
 import MatrixRain from "@/features/effects/MatrixRain";
-
 import ChatContainer from "@/features/chat/components/container/ChatContainer";
-
 import { useAuth } from "@/features/chat/hooks/useAuth";
-
 import { useChats } from "@/features/chat/hooks/useChats";
-
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
-
 import { useMessageSubmission } from "@/features/chat/hooks/message/useMessageSubmission";
-
 import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
-
 import { Chat } from "@/types/chat";
-
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
