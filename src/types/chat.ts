@@ -1,6 +1,7 @@
 export interface Chat {
   id: string;
   title: string;
+  user_id: string;
   is_guest: boolean;
   created_at: string;
   updated_at: string;
