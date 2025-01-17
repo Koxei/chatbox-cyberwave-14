@@ -19,6 +19,7 @@ export const useGuestSession = () => {
   const [isInitializing, setIsInitializing] = useState(false);
 
   const initGuestSession = async () => {
+<<<<<<< HEAD
     if (isInitializing) return false;
     
     try {
@@ -61,6 +62,40 @@ export const useGuestSession = () => {
     } finally {
       setIsInitializing(false);
     }
+=======
+    console.log('Initializing guest session...');
+    const existingSession = localStorage.getItem('guest_session');
+    
+    if (existingSession) {
+      const session = JSON.parse(existingSession);
+      await Promise.resolve(); // Ensure state updates are batched
+      setGuestId(session.guestId);
+      setIsGuest(true);
+      return true;
+    }
+
+    const newGuestId = `guest_${Date.now()}`;
+    const session: GuestSession = {
+      guestId: newGuestId,
+      createdAt: Date.now()
+    };
+    
+    localStorage.setItem('guest_session', JSON.stringify(session));
+    
+    const guestChat: GuestChat = {
+      id: `chat_${newGuestId}`,
+      title: 'Guest Chat',
+      messages: [],
+      isGuest: true,
+      createdAt: Date.now()
+    };
+    localStorage.setItem('guest_chat', JSON.stringify(guestChat));
+    
+    await Promise.resolve(); // Ensure state updates are batched
+    setGuestId(newGuestId);
+    setIsGuest(true);
+    return true;
+>>>>>>> 012d40434e1e4c68364b05d9b8bd333ce3897bdc
   };
 
   const clearGuestSession = () => {
