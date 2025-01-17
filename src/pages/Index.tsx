@@ -1,127 +1,160 @@
-// src/pages/Index.tsx
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; // Added useEffect
+
 import Landing from "@/components/Landing";
+
 import AuthModal from "@/features/auth/components/AuthModal";
+
 import ChatHeader from "@/components/ChatHeader";
+
 import MatrixRain from "@/features/effects/MatrixRain";
+
 import ChatContainer from "@/features/chat/components/container/ChatContainer";
+
 import { useAuth } from "@/features/chat/hooks/useAuth";
+
 import { useChats } from "@/features/chat/hooks/useChats";
+
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
+
 import { useMessageSubmission } from "@/features/chat/hooks/message/useMessageSubmission";
+
 import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
+
 import { Chat } from "@/types/chat";
+
 import { useNavigate } from "react-router-dom";
 
 const Index = () => {
-  const navigate = useNavigate();
-  const [showStartButton, setShowStartButton] = useState(true);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isGuestInitialized, setIsGuestInitialized] = useState(false);
 
-  const {
-    isAuthenticated,
-    showAuthModal,
-    setShowAuthModal,
-    isResettingPassword,
-    setIsResettingPassword,
-    userId
-  } = useAuth();
+const navigate = useNavigate();
 
-  const { isGuest, guestId, initGuestSession, clearGuestSession } = useGuestSession();
+const [showStartButton, setShowStartButton] = useState(true);
 
-  const {
-    chats,
-    currentChat,
-    messages,
-    setMessages,
-    loadChats,
-    createNewChat,
-    handleChatSelect
-  } = useChats(userId, isGuest);
+const [inputMessage, setInputMessage] = useState("");
 
-  const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
-  const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
+const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const sessionStr = localStorage.getItem('guest_session');
-    setIsGuestInitialized(!!sessionStr);
-  }, []);
+// Added state to track guest session initialization
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMessage.trim() || isLoading || !currentChat) return;
-    const userMessage = inputMessage.trim();
-    setInputMessage("");
-    setIsLoading(true);
-    try {
-      const savedMessage = await submitMessage(userMessage);
-      if (savedMessage) {
-        await getAIResponse(userMessage);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const [isGuestInitialized, setIsGuestInitialized] = useState(false);
 
-  const handleStartClick = () => {
-    setShowStartButton(false);
-    setShowAuthModal(true);
-  };
+const {
 
-  const handleGuestLogin = () => {
-    initGuestSession();
-    if (isGuestInitialized || guestId) {
-      setIsGuestInitialized(true);
-      setShowAuthModal(false);
-      setShowStartButton(false);
-      navigate('/home');
-    }
-  };
+isAuthenticated,
+showAuthModal,
+setShowAuthModal,
+isResettingPassword,
+setIsResettingPassword,
+userId
+} = useAuth();
 
-  if (showStartButton) {
-    return <Landing onStartClick={handleStartClick} />;
+const { isGuest, guestId, initGuestSession, clearGuestSession } = useGuestSession();
+
+const {
+
+chats,
+currentChat,
+messages,
+setMessages,
+loadChats,
+createNewChat,
+handleChatSelect
+} = useChats(userId, isGuest);
+
+const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
+
+const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
+
+// Added effect to check guest session on mount
+
+useEffect(() => {
+
+const sessionStr = localStorage.getItem('guest_session');
+setIsGuestInitialized(!!sessionStr);
+}, []);
+
+const handleSubmit = async (e: React.FormEvent) => {
+
+e.preventDefault();
+if (!inputMessage.trim() || isLoading || !currentChat) return;
+const userMessage = inputMessage.trim();
+setInputMessage("");
+setIsLoading(true);
+try {
+  const savedMessage = await submitMessage(userMessage);
+  if (savedMessage) {
+    await getAIResponse(userMessage);
   }
+} finally {
+  setIsLoading(false);
+}
+};
 
-  if (!isAuthenticated && !isGuest) {
-    return (
-      <div className="fixed inset-0 bg-black/80">
-        <AuthModal 
-          isOpen={true}
-          onPasswordResetStart={() => setIsResettingPassword(true)}
-          onPasswordResetComplete={() => {
-            setIsResettingPassword(false);
-            if (isAuthenticated) {
-              setShowAuthModal(false);
-            }
-          }}
-          onGuestLogin={handleGuestLogin}
-        />
-      </div>
-    );
-  }
+const handleStartClick = () => {
 
-  return (
-    <div className="chat-container p-4">
-      <MatrixRain />
-      <ChatHeader 
-        currentChat={currentChat}
-        chats={chats}
-        onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
-        onNewChat={createNewChat}
-        isAuthenticated={isAuthenticated}
-      />
-      <ChatContainer
-        currentChat={currentChat}
-        messages={messages}
-        isLoading={isLoading}
-        onSubmit={handleSubmit}
-        inputMessage={inputMessage}
-        setInputMessage={setInputMessage}
-      />
-    </div>
-  );
+setShowStartButton(false);
+setShowAuthModal(true);
+};
+
+// Updated guest login handler with initialization check
+
+const handleGuestLogin = () => {
+
+const guestId = initGuestSession();
+if (guestId || isGuestInitialized) {
+  setIsGuestInitialized(true);
+  setShowAuthModal(false);
+  setShowStartButton(false);
+  navigate('/home');
+}
+};
+
+if (showStartButton) {
+
+return <Landing onStartClick={handleStartClick} />;
+}
+
+if (!isAuthenticated && !isGuest) {
+
+return (
+  <div className="fixed inset-0 bg-black/80">
+    <AuthModal 
+      isOpen={true}
+      onPasswordResetStart={() => setIsResettingPassword(true)}
+      onPasswordResetComplete={() => {
+        setIsResettingPassword(false);
+        if (isAuthenticated) {
+          setShowAuthModal(false);
+        }
+      }}
+      onGuestLogin={handleGuestLogin}
+    />
+  </div>
+);
+}
+
+return (
+
+<div className="chat-container p-4">
+  <MatrixRain />
+  <ChatHeader 
+    currentChat={currentChat}
+    chats={chats}
+    onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
+    onNewChat={createNewChat}
+    isAuthenticated={isAuthenticated}
+  />
+  <ChatContainer
+    currentChat={currentChat}
+    messages={messages}
+    isLoading={isLoading}
+    onSubmit={handleSubmit}
+    inputMessage={inputMessage}
+    setInputMessage={setInputMessage}
+  />
+</div>
+);
+
 };
 
 export default Index;

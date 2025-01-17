@@ -10,7 +10,7 @@ interface AuthModalProps {
   onPasswordResetStart?: () => void;
   onPasswordResetComplete?: () => void;
   onClose?: () => void;
-  onGuestLogin?: () => void;  // Added this line
+  onGuestLogin?: () => void;
 }
 
 const AuthModal = ({
