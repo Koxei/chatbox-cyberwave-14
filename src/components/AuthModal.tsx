@@ -78,7 +78,6 @@ const AuthModal = ({
   // Handle guest login
   const handleGuestLogin = () => {
     console.log('Guest login clicked');
-    initGuestSession();
     onGuestLogin?.();
   };
 
