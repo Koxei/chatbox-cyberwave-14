@@ -1,3 +1,4 @@
+// src/pages/Home.tsx
 import { useState } from "react";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatHeader from "@/components/ChatHeader";
@@ -35,26 +36,43 @@ const Home = () => {
     handleChatSelect
   } = useChats(userId, isGuest);
 
+  console.log("Current messages:", messages);
+  console.log("Current chat:", currentChat);
+  console.log("Is authenticated:", isAuthenticated);
+  console.log("Is guest:", isGuest);
+
   const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
   const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading || !currentChat) return;
+    
+    console.log("Submitting message:", inputMessage);
+    console.log("Current chat ID:", currentChat.id);
+    
     const userMessage = inputMessage.trim();
     setInputMessage("");
     setIsLoading(true);
+    
     try {
+      console.log("Attempting to save message...");
       const savedMessage = await submitMessage(userMessage);
+      console.log("Message saved:", savedMessage);
+      
       if (savedMessage) {
+        console.log("Getting AI response...");
         await getAIResponse(userMessage);
       }
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGuestLogin = () => {
+    console.log("Initializing guest session...");
     initGuestSession();
     setShowAuthModal(false);
   };
