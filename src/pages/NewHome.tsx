@@ -10,7 +10,7 @@ const NewHome = () => {
   const { isGuest, initGuestSession } = useGuestSession();
 
   const handleGuestLogin = async () => {
-    console.log('Handling guest login...');
+    console.log('Guest login clicked');
     const success = await initGuestSession();
     if (success) {
       navigate('/home', { replace: true });
