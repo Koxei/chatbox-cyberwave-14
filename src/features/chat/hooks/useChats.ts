@@ -1,4 +1,3 @@
-// src/features/chat/hooks/useChats.ts
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -12,11 +11,10 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
   useEffect(() => {
     if (isGuest) {
-      // Initialize a new guest chat with empty messages array
+      // Initialize a new guest chat without messages array
       const guestChat: Chat = {
         id: `chat_guest_${Date.now()}`,
         title: 'Guest Chat',
-        messages: [], // Initialize empty messages array
         user_id: `guest_${Date.now()}`,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -24,7 +22,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
       };
       setChats([guestChat]);
       setCurrentChat(guestChat);
-      setMessages([]); // Initialize empty messages array
+      setMessages([]); // Initialize empty messages array separately
     } else if (userId) {
       loadChats();
     }
