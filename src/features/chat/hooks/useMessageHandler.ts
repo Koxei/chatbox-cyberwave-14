@@ -1,4 +1,3 @@
-// src/features/chat/hooks/useMessageHandler.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -24,7 +23,6 @@ export const useMessageHandler = (
     setIsLoading(true);
 
     try {
-      // Check if this is an image generation request
       const isImageRequest = userMessage.toLowerCase().includes('generate image') || 
                            userMessage.toLowerCase().includes('create image') ||
                            userMessage.toLowerCase().includes('make image');
@@ -38,21 +36,24 @@ export const useMessageHandler = (
             is_ai: false,
             chat_id: currentChat.id,
             user_id: userId,
-            type: 'text'  // User messages are always text
+            type: 'text' as const
           }
         ])
         .select()
         .single();
 
       if (messageError) throw messageError;
-      setMessages(prev => [...prev, savedMessage]);
+      
+      const typedUserMessage: Message = {
+        ...savedMessage,
+        type: 'text' as const
+      };
+      
+      setMessages(prev => [...prev, typedUserMessage]);
 
-      // Handle image generation if requested
       if (isImageRequest) {
-        // Extract the prompt from the message
         const prompt = userMessage.replace(/generate image|create image|make image/i, '').trim();
         
-        // Call the image generation edge function
         const { data: imageData, error: imageError } = await supabase.functions
           .invoke('generate-image', {
             body: { prompt }
@@ -60,7 +61,6 @@ export const useMessageHandler = (
 
         if (imageError) throw imageError;
 
-        // Save AI image response
         const { data: savedAiMessage, error: aiMessageError } = await supabase
           .from('messages')
           .insert([
@@ -69,16 +69,21 @@ export const useMessageHandler = (
               is_ai: true,
               chat_id: currentChat.id,
               user_id: userId,
-              type: 'image'
+              type: 'image' as const
             }
           ])
           .select()
           .single();
 
         if (aiMessageError) throw aiMessageError;
-        setMessages(prev => [...prev, savedAiMessage]);
+        
+        const typedAiMessage: Message = {
+          ...savedAiMessage,
+          type: 'image' as const
+        };
+        
+        setMessages(prev => [...prev, typedAiMessage]);
       } else {
-        // Handle regular text response
         const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
           method: 'POST',
           headers: {
@@ -101,7 +106,6 @@ export const useMessageHandler = (
         const data = await response.json();
         const aiResponse = data.choices[0].message.content;
 
-        // Save AI text response
         const { data: savedAiMessage, error: aiMessageError } = await supabase
           .from('messages')
           .insert([
@@ -110,17 +114,22 @@ export const useMessageHandler = (
               is_ai: true,
               chat_id: currentChat.id,
               user_id: userId,
-              type: 'text'
+              type: 'text' as const
             }
           ])
           .select()
           .single();
 
         if (aiMessageError) throw aiMessageError;
-        setMessages(prev => [...prev, savedAiMessage]);
+        
+        const typedAiMessage: Message = {
+          ...savedAiMessage,
+          type: 'text' as const
+        };
+        
+        setMessages(prev => [...prev, typedAiMessage]);
       }
 
-      // Update chat title after first exchange if needed
       if (savedMessage && !currentChat.title) {
         const { error: updateError } = await supabase
           .from('chats')

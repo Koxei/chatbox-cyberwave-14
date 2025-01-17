@@ -11,7 +11,6 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
   useEffect(() => {
     if (isGuest) {
-      // Initialize a new guest chat without messages array
       const guestChat: Chat = {
         id: `chat_guest_${Date.now()}`,
         title: 'Guest Chat',
@@ -22,7 +21,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
       };
       setChats([guestChat]);
       setCurrentChat(guestChat);
-      setMessages([]); // Initialize empty messages array separately
+      setMessages([]);
     } else if (userId) {
       loadChats();
     }
@@ -65,51 +64,18 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         .order('created_at', { ascending: true });
 
       if (messagesError) throw messagesError;
-      setMessages(messagesData || []);
+      
+      // Ensure each message has the correct type
+      const typedMessages: Message[] = (messagesData || []).map(msg => ({
+        ...msg,
+        type: (msg.type === 'image' ? 'image' : 'text') as 'text' | 'image'
+      }));
+      
+      setMessages(typedMessages);
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to load messages. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const createNewChat = async () => {
-    if (isGuest) {
-      toast({
-        title: "Guest Mode",
-        description: "Create new chat is not available in guest mode.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!userId) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to create a chat.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      const { data: newChat, error } = await supabase
-        .from('chats')
-        .insert([{ user_id: userId, title: 'New Chat' }])
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setChats(prev => [newChat, ...prev]);
-      setCurrentChat(newChat);
-      setMessages([]);
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create new chat. Please try again.",
         variant: "destructive",
       });
     }
@@ -121,7 +87,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
     messages,
     setMessages,
     loadChats,
-    createNewChat,
+    createNewChat: undefined,
     handleChatSelect: isGuest ? undefined : loadMessages
   };
 };
