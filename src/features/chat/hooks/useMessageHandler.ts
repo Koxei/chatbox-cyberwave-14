@@ -16,6 +16,8 @@ export const useMessageHandler = (
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('handleSubmit triggered with message:', inputMessage);
+
     e.preventDefault();
     if (!inputMessage.trim() || isLoading || !currentChat || !userId) return;
 
