@@ -1,4 +1,3 @@
-// src/features/chat/hooks/useMessageHandler.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -24,25 +23,17 @@ export const useMessageHandler = (
     setIsLoading(true);
 
     try {
-      // CHANGE #1: Move image detection before any API calls
+      // Step 1: Check if this is an image generation request
       const imageCommandRegex = /^(generate|create|make)\s+image\s+/i;
       const isImageRequest = imageCommandRegex.test(userMessage);
       
-      // CHANGE #2: Add immediate logging to verify detection
       console.log('Message detection:', {
         message: userMessage,
         isImageRequest,
         matchResult: userMessage.match(imageCommandRegex)
       });
 
-      // CHANGE #3: Extract prompt early if it's an image request
-      let prompt = '';
-      if (isImageRequest) {
-        prompt = userMessage.replace(imageCommandRegex, '').trim();
-        console.log('Extracted prompt:', prompt);
-      }
-
-      // Save user message
+      // Step 2: Save user message first
       const { data: savedMessage, error: messageError } = await supabase
         .from('messages')
         .insert([
@@ -51,7 +42,7 @@ export const useMessageHandler = (
             is_ai: false,
             chat_id: currentChat.id,
             user_id: userId,
-            type: 'text' as const
+            type: 'text'
           }
         ])
         .select()
@@ -59,111 +50,94 @@ export const useMessageHandler = (
 
       if (messageError) throw messageError;
 
-      const typedUserMessage: Message = {
-        ...savedMessage,
-        type: 'text' as const
-      };
-      
-      setMessages(prev => [...prev, typedUserMessage]);
+      setMessages(prev => [...prev, { ...savedMessage, type: 'text' }]);
 
-      // CHANGE #4: Add logging before branching
-      console.log('Processing message:', {
-        isImageRequest,
-        hasPrompt: Boolean(prompt),
-        messageType: isImageRequest ? 'image' : 'text'
-      });
+      // Step 3: Handle image generation if requested
+      if (isImageRequest) {
+        const prompt = userMessage.replace(imageCommandRegex, '').trim();
+        console.log('Processing image request with prompt:', prompt);
 
-      if (isImageRequest && prompt) {
-        console.log('Starting image generation for prompt:', prompt);
-        
-        const { data: imageData, error: imageError } = await supabase.functions
-          .invoke('generate-image', {
-            body: { prompt }
-          });
+        if (prompt) {
+          try {
+            const { data: imageData, error: imageError } = await supabase.functions
+              .invoke('generate-image', {
+                body: { prompt }
+              });
 
-        console.log('Image generation response:', imageData);
-        
-        if (imageError) {
-          console.error('Image generation error:', imageError);
-          throw imageError;
+            if (imageError) throw imageError;
+
+            console.log('Image generation successful:', imageData);
+
+            const { data: savedAiMessage, error: aiMessageError } = await supabase
+              .from('messages')
+              .insert([
+                {
+                  content: imageData.image,
+                  is_ai: true,
+                  chat_id: currentChat.id,
+                  user_id: userId,
+                  type: 'image'
+                }
+              ])
+              .select()
+              .single();
+
+            if (aiMessageError) throw aiMessageError;
+
+            setMessages(prev => [...prev, { ...savedAiMessage, type: 'image' }]);
+            return; // Exit early after successful image generation
+          } catch (imageGenError) {
+            console.error('Image generation failed:', imageGenError);
+            throw imageGenError;
+          }
         }
-
-        const { data: savedAiMessage, error: aiMessageError } = await supabase
-          .from('messages')
-          .insert([
-            {
-              content: imageData.image,
-              is_ai: true,
-              chat_id: currentChat.id,
-              user_id: userId,
-              type: 'image' as const
-            }
-          ])
-          .select()
-          .single();
-
-        if (aiMessageError) throw aiMessageError;
-
-        const typedAiMessage: Message = {
-          ...savedAiMessage,
-          type: 'image' as const
-        };
-        
-        setMessages(prev => [...prev, typedAiMessage]);
-      } else {
-        // CHANGE #5: Log when falling back to text response
-        console.log('Falling back to text response:', {
-          reason: isImageRequest ? 'empty prompt' : 'not an image request'
-        });
-
-        const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
-          },
-          body: JSON.stringify({
-            messages: [
-              {
-                role: "system",
-                content: "You are ALICE, a 19-year-old female AI assistant..."
-              },
-              { role: "user", content: userMessage }
-            ]
-          })
-        });
-
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-
-        const data = await response.json();
-        const aiResponse = data.choices[0].message.content;
-
-        const { data: savedAiMessage, error: aiMessageError } = await supabase
-          .from('messages')
-          .insert([
-            {
-              content: aiResponse,
-              is_ai: true,
-              chat_id: currentChat.id,
-              user_id: userId,
-              type: 'text' as const
-            }
-          ])
-          .select()
-          .single();
-
-        if (aiMessageError) throw aiMessageError;
-
-        const typedAiMessage: Message = {
-          ...savedAiMessage,
-          type: 'text' as const
-        };
-        
-        setMessages(prev => [...prev, typedAiMessage]);
       }
 
+      // Step 4: Default to text response if not an image request or if image generation failed
+      console.log('Proceeding with text response');
+      
+      const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "system",
+              content: "You are ALICE, a 19-year-old female AI assistant..."
+            },
+            { role: "user", content: userMessage }
+          ]
+        })
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      const data = await response.json();
+      const aiResponse = data.choices[0].message.content;
+
+      const { data: savedAiMessage, error: aiMessageError } = await supabase
+        .from('messages')
+        .insert([
+          {
+            content: aiResponse,
+            is_ai: true,
+            chat_id: currentChat.id,
+            user_id: userId,
+            type: 'text'
+          }
+        ])
+        .select()
+        .single();
+
+      if (aiMessageError) throw aiMessageError;
+
+      setMessages(prev => [...prev, { ...savedAiMessage, type: 'text' }]);
+
       // Update chat title if needed
-      if (savedMessage && !currentChat.title) {
+      if (!currentChat.title) {
         const { error: updateError } = await supabase
           .from('chats')
           .update({ title: userMessage.slice(0, 30) + '...' })
