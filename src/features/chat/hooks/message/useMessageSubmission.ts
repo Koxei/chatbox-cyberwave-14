@@ -18,7 +18,7 @@ export const useMessageSubmission = (
 
     if (isGuestChat) {
       // Handle guest message - keep in memory only
-      const newMessage = {
+      const newMessage: Message = {
         id: `msg_${Date.now()}`,
         content,
         is_ai: false,
@@ -49,8 +49,13 @@ export const useMessageSubmission = (
 
         if (messageError) throw messageError;
 
-        setMessages(prev => [...prev, savedMessage]);
-        return savedMessage;
+        const typedMessage: Message = {
+          ...savedMessage,
+          type: savedMessage.type as 'text' | 'image'
+        };
+
+        setMessages(prev => [...prev, typedMessage]);
+        return typedMessage;
       } catch (error) {
         console.error('Error submitting message:', error);
         toast({
@@ -66,5 +71,4 @@ export const useMessageSubmission = (
   return { submitMessage };
 };
 
-// Make sure to export as default as well
 export default useMessageSubmission;

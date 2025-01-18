@@ -15,14 +15,14 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, isLoading }) => {
           key={message.id || index}
           isAI={message.is_ai}
           message={message.content}
-          type={message.type}  // Added type prop
+          type={message.type || 'text'}  // Added default value
         />
       ))}
       {isLoading && (
         <ChatMessage
           isAI
           message="Wait a second pwease. . ."
-          type="text"  // Added explicit text type for loading message
+          type="text"
         />
       )}
     </div>

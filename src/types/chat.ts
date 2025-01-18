@@ -13,4 +13,5 @@ export interface Message {
   is_ai: boolean;
   created_at: string;
   chat_id: string;
+  type?: 'text' | 'image';  // Added type property
 }
