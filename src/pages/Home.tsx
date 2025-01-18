@@ -1,4 +1,3 @@
-// src/pages/Home.tsx
 import { useState } from "react";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatHeader from "@/components/ChatHeader";
@@ -7,14 +6,10 @@ import ChatContainer from "@/features/chat/components/container/ChatContainer";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useChats } from "@/features/chat/hooks/useChats";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
-import { useMessageSubmission } from "@/features/chat/hooks/message/useMessageSubmission";
-import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
+import { useMessageHandler } from "@/features/chat/hooks/useMessageHandler";
 import { Chat } from "@/types/chat";
 
 const Home = () => {
-  const [inputMessage, setInputMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
   const {
     isAuthenticated,
     showAuthModal,
@@ -41,35 +36,18 @@ const Home = () => {
   console.log("Is authenticated:", isAuthenticated);
   console.log("Is guest:", isGuest);
 
-  const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
-  const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputMessage.trim() || isLoading || !currentChat) return;
-    
-    console.log("SUBMITTING MESSAGE:", inputMessage);
-    console.log("Current chat ID:", currentChat.id);
-    
-    const userMessage = inputMessage.trim();
-    setInputMessage("");
-    setIsLoading(true);
-    
-    try {
-      console.log("Attempting to save message...");
-      const savedMessage = await submitMessage(userMessage);
-      console.log("Message saved:", savedMessage);
-      
-      if (savedMessage) {
-        console.log("Getting AI response...");
-        await getAIResponse(userMessage);
-      }
-    } catch (error) {
-      console.error("Error in handleSubmit:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const {
+    inputMessage,
+    setInputMessage,
+    isLoading,
+    handleSubmit
+  } = useMessageHandler(
+    userId,
+    currentChat,
+    setMessages,
+    chats,
+    setCurrentChat
+  );
 
   const handleGuestLogin = () => {
     console.log("Initializing guest session...");
