@@ -1,3 +1,4 @@
+// src/features/chat/hooks/useMessageHandler.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -23,17 +24,18 @@ export const useMessageHandler = (
     setIsLoading(true);
 
     try {
-      // Step 1: Check if this is an image generation request
+      // CHANGE #1: Detect image request first, before any API calls
       const imageCommandRegex = /^(generate|create|make)\s+image\s+/i;
       const isImageRequest = imageCommandRegex.test(userMessage);
       
-      console.log('Message detection:', {
+      // CHANGE #2: Add debug logs for image detection
+      console.log('Image Request Detection:', {
         message: userMessage,
         isImageRequest,
         matchResult: userMessage.match(imageCommandRegex)
       });
 
-      // Step 2: Save user message first
+      // Save user message first
       const { data: savedMessage, error: messageError } = await supabase
         .from('messages')
         .insert([
@@ -42,7 +44,7 @@ export const useMessageHandler = (
             is_ai: false,
             chat_id: currentChat.id,
             user_id: userId,
-            type: 'text'
+            type: 'text' as const
           }
         ])
         .select()
@@ -50,52 +52,66 @@ export const useMessageHandler = (
 
       if (messageError) throw messageError;
 
-      setMessages(prev => [...prev, { ...savedMessage, type: 'text' }]);
+      const typedUserMessage: Message = {
+        ...savedMessage,
+        type: 'text' as const
+      };
+      
+      setMessages(prev => [...prev, typedUserMessage]);
 
-      // Step 3: Handle image generation if requested
+      // CHANGE #3: Handle image generation if detected
       if (isImageRequest) {
+        console.log('Processing image request...');
         const prompt = userMessage.replace(imageCommandRegex, '').trim();
-        console.log('Processing image request with prompt:', prompt);
+        
+        if (!prompt) {
+          throw new Error('No image prompt provided');
+        }
 
-        if (prompt) {
-          try {
-            const { data: imageData, error: imageError } = await supabase.functions
-              .invoke('generate-image', {
-                body: { prompt }
-              });
+        console.log('Generating image with prompt:', prompt);
+        
+        try {
+          const { data: imageData, error: imageError } = await supabase.functions
+            .invoke('generate-image', {
+              body: { prompt }
+            });
 
-            if (imageError) throw imageError;
+          console.log('Image generation response:', imageData);
+          
+          if (imageError) throw imageError;
 
-            console.log('Image generation successful:', imageData);
+          // Save AI image response
+          const { data: savedAiMessage, error: aiMessageError } = await supabase
+            .from('messages')
+            .insert([
+              {
+                content: imageData.image,
+                is_ai: true,
+                chat_id: currentChat.id,
+                user_id: userId,
+                type: 'image' as const
+              }
+            ])
+            .select()
+            .single();
 
-            const { data: savedAiMessage, error: aiMessageError } = await supabase
-              .from('messages')
-              .insert([
-                {
-                  content: imageData.image,
-                  is_ai: true,
-                  chat_id: currentChat.id,
-                  user_id: userId,
-                  type: 'image'
-                }
-              ])
-              .select()
-              .single();
+          if (aiMessageError) throw aiMessageError;
 
-            if (aiMessageError) throw aiMessageError;
-
-            setMessages(prev => [...prev, { ...savedAiMessage, type: 'image' }]);
-            return; // Exit early after successful image generation
-          } catch (imageGenError) {
-            console.error('Image generation failed:', imageGenError);
-            throw imageGenError;
-          }
+          const typedAiMessage: Message = {
+            ...savedAiMessage,
+            type: 'image' as const
+          };
+          
+          setMessages(prev => [...prev, typedAiMessage]);
+          return; // Exit early after successful image generation
+        } catch (imageError) {
+          console.error('Image generation failed:', imageError);
+          throw imageError;
         }
       }
 
-      // Step 4: Default to text response if not an image request or if image generation failed
-      console.log('Proceeding with text response');
-      
+      // CHANGE #4: Only proceed with text response if not an image request
+      console.log('Processing text response...');
       const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
         method: 'POST',
         headers: {
@@ -126,7 +142,7 @@ export const useMessageHandler = (
             is_ai: true,
             chat_id: currentChat.id,
             user_id: userId,
-            type: 'text'
+            type: 'text' as const
           }
         ])
         .select()
@@ -134,10 +150,15 @@ export const useMessageHandler = (
 
       if (aiMessageError) throw aiMessageError;
 
-      setMessages(prev => [...prev, { ...savedAiMessage, type: 'text' }]);
+      const typedAiMessage: Message = {
+        ...savedAiMessage,
+        type: 'text' as const
+      };
+      
+      setMessages(prev => [...prev, typedAiMessage]);
 
       // Update chat title if needed
-      if (!currentChat.title) {
+      if (savedMessage && !currentChat.title) {
         const { error: updateError } = await supabase
           .from('chats')
           .update({ title: userMessage.slice(0, 30) + '...' })
