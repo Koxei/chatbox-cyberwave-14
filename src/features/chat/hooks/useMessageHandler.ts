@@ -24,11 +24,10 @@ export const useMessageHandler = (
     setIsLoading(true);
 
     try {
-      // CHANGE #1: Enhanced image command detection with more flexible patterns
+      // CHANGE #1: Enhanced image command detection
       const imageCommandRegex = /^(generate|create|make)\s+image\s*(?:of|:)?\s*/i;
       const isImageRequest = imageCommandRegex.test(userMessage);
       
-      // CHANGE #2: Detailed logging for command detection
       console.log('Command Analysis:', {
         originalMessage: userMessage,
         isImageRequest,
@@ -59,25 +58,28 @@ export const useMessageHandler = (
       
       setMessages(prev => [...prev, typedUserMessage]);
 
-      // CHANGE #3: Enhanced prompt extraction and validation
+      // CHANGE #2: Enhanced prompt validation and error handling
       if (isImageRequest) {
-        // Extract prompt by removing the command prefix
         const prompt = userMessage.replace(imageCommandRegex, '').trim();
         
-        // CHANGE #4: Detailed logging for prompt extraction
         console.log('Prompt Extraction:', {
           originalMessage: userMessage,
           extractedPrompt: prompt,
           promptLength: prompt.length
         });
 
+        // CHANGE #3: Improved empty prompt handling with user feedback
         if (!prompt) {
-          console.log('No prompt found after command');
-          throw new Error('Please provide a description of the image you want to generate');
+          console.error('Image generation skipped: Prompt is empty');
+          toast({
+            title: "Invalid Input",
+            description: "Please provide details for the image you want to generate.",
+            variant: "destructive",
+          });
+          return;
         }
 
-        // CHANGE #5: Log the final prompt before API call
-        console.log('Sending prompt to image generation:', prompt);
+        console.log('Starting image generation with prompt:', prompt);
 
         const { data: imageData, error: imageError } = await supabase.functions
           .invoke('generate-image', {
@@ -113,10 +115,9 @@ export const useMessageHandler = (
         };
         
         setMessages(prev => [...prev, typedAiMessage]);
-        return; // Exit early after successful image generation
+        return;
       }
 
-      // Only proceed with text response if not an image request
       console.log('Processing as text response');
       const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
         method: 'POST',
