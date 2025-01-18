@@ -48,7 +48,7 @@ const Home = () => {
     e.preventDefault();
     if (!inputMessage.trim() || isLoading || !currentChat) return;
     
-    console.log("Submitting message:", inputMessage);
+    console.log("SUBMITTING MESSAGE:", inputMessage);
     console.log("Current chat ID:", currentChat.id);
     
     const userMessage = inputMessage.trim();
