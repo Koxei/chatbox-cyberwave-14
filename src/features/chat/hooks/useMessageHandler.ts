@@ -1,8 +1,23 @@
 // src/features/chat/hooks/useMessageHandler.ts
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useMessageSubmission } from "./message/useMessageSubmission";
+import { useAIResponse } from "./message/useAIResponse";
 import { Chat, Message } from "@/types/chat";
+import { useToast } from "@/hooks/use-toast";
+
+interface AIMessage {
+  role: string;
+  content: string;
+}
+
+interface AIResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+}
 
 export const useMessageHandler = (
   userId: string | null,
@@ -15,16 +30,36 @@ export const useMessageHandler = (
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Import the submission and AI response hooks
+  const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
+  const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('handleSubmit triggered with message:', inputMessage);
-    if (!inputMessage.trim() || isLoading || !currentChat || !userId) return;
+    
+    if (!inputMessage.trim() || isLoading || !currentChat) {
+      console.log('Validation failed:', { 
+        hasInput: !!inputMessage.trim(), 
+        isLoading, 
+        hasChat: !!currentChat 
+      });
+      return;
+    }
 
     const userMessage = inputMessage.trim();
     setInputMessage("");
     setIsLoading(true);
 
     try {
+      // Handle guest session
+      const isGuestChat = currentChat.id.startsWith('chat_guest_');
+      console.log('Session type:', isGuestChat ? 'guest' : 'authenticated');
+
+      if (!userId && !isGuestChat) {
+        throw new Error('User not authenticated and not in guest session');
+      }
+
       // CHANGE #1: Enhanced image command detection
       const imageCommandRegex = /^(generate|create|make)\s+image\s*(?:of|:)?\s*/i;
       const isImageRequest = imageCommandRegex.test(userMessage);
@@ -35,31 +70,13 @@ export const useMessageHandler = (
         regexMatch: userMessage.match(imageCommandRegex)
       });
 
-      // Save user message first
-      const { data: savedMessage, error: messageError } = await supabase
-        .from('messages')
-        .insert([
-          {
-            content: userMessage,
-            is_ai: false,
-            chat_id: currentChat.id,
-            user_id: userId,
-            type: 'text' as const
-          }
-        ])
-        .select()
-        .single();
+      // First save the user message using submitMessage
+      const savedMessage = await submitMessage(userMessage);
+      if (!savedMessage) {
+        throw new Error('Failed to save message');
+      }
 
-      if (messageError) throw messageError;
-
-      const typedUserMessage: Message = {
-        ...savedMessage,
-        type: 'text' as const
-      };
-      
-      setMessages(prev => [...prev, typedUserMessage]);
-
-      // CHANGE #2: Enhanced prompt validation and error handling
+      // Handle image generation if it's an image request
       if (isImageRequest) {
         const prompt = userMessage.replace(imageCommandRegex, '').trim();
         
@@ -69,7 +86,6 @@ export const useMessageHandler = (
           promptLength: prompt.length
         });
 
-        // CHANGE #3: Improved empty prompt handling with user feedback
         if (!prompt) {
           console.error('Image generation skipped: Prompt is empty');
           toast({
@@ -94,85 +110,74 @@ export const useMessageHandler = (
           throw imageError;
         }
 
-        const { data: savedAiMessage, error: aiMessageError } = await supabase
-          .from('messages')
-          .insert([
-            {
-              content: imageData.image,
-              is_ai: true,
-              chat_id: currentChat.id,
-              user_id: userId,
-              type: 'image' as const
-            }
-          ])
-          .select()
-          .single();
+        // Save the AI image response
+        const savedAiMessage = await submitMessage(imageData.image, 'image');
+        if (!savedAiMessage) {
+          throw new Error('Failed to save AI image message');
+        }
 
-        if (aiMessageError) throw aiMessageError;
-
-        const typedAiMessage: Message = {
-          ...savedAiMessage,
-          type: 'image' as const
-        };
+      } else {
+        console.log('Processing as text response');
         
-        setMessages(prev => [...prev, typedAiMessage]);
-        return;
-      }
-
-      console.log('Processing as text response');
-      const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBxemhucGd3aGN1eGFkdXZ4YW5zIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNjI1MzkyNiwiZXhwIjoyMDUxODI5OTI2fQ.gfsuMi2O2QFzpixTfAhFKalWmL0mZxxYa8pxJ4kGbGM',
-        },
-        body: JSON.stringify({
-          messages: [
-            {
-              role: "system",
-              content: "You are ALICE, a 19-year-old female AI assistant..."
+        if (isGuestChat) {
+          // Handle guest chat response
+          const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${process.env.SUPABASE_ANON_KEY}`,
             },
-            { role: "user", content: userMessage }
-          ]
-        })
-      });
+            body: JSON.stringify({
+              messages: [
+                {
+                  role: "system",
+                  content: "You are ALICE, a 19-year-old female AI assistant..."
+                },
+                { role: "user", content: userMessage }
+              ]
+            })
+          });
 
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          if (!response.ok) {
+            throw new Error('Failed to get AI response');
+          }
 
-      const data = await response.json();
-      const aiResponse = data.choices[0].message.content;
+          const data: AIResponse = await response.json();
+          const aiResponse = data.choices[0].message.content;
 
-      const { data: savedAiMessage, error: aiMessageError } = await supabase
-        .from('messages')
-        .insert([
-          {
+          // For guest sessions, we update messages in memory
+          setMessages(prev => [...prev, {
+            id: `guest_msg_${Date.now()}`,
             content: aiResponse,
             is_ai: true,
             chat_id: currentChat.id,
-            user_id: userId,
-            type: 'text' as const
+            created_at: new Date().toISOString(),
+            type: 'text'
+          }]);
+        } else {
+          // Get regular AI text response for authenticated users
+          const aiResponse = await getAIResponse(userMessage);
+          if (!aiResponse) {
+            throw new Error('Failed to get AI response');
           }
-        ])
-        .select()
-        .single();
-
-      if (aiMessageError) throw aiMessageError;
-
-      const typedAiMessage: Message = {
-        ...savedAiMessage,
-        type: 'text' as const
-      };
-      
-      setMessages(prev => [...prev, typedAiMessage]);
+        }
+      }
 
       // Update chat title if needed
-      if (savedMessage && !currentChat.title) {
-        const { error: updateError } = await supabase
-          .from('chats')
-          .update({ title: userMessage.slice(0, 30) + '...' })
-          .eq('id', currentChat.id);
+      if (!currentChat.title || currentChat.title === 'New Chat') {
+        console.log('Updating chat title...');
+        
+        if (!isGuestChat) {
+          const { error: updateError } = await supabase
+            .from('chats')
+            .update({ title: userMessage.slice(0, 30) + '...' })
+            .eq('id', currentChat.id);
 
-        if (updateError) throw updateError;
+          if (updateError) {
+            console.error('Error updating chat title:', updateError);
+            throw updateError;
+          }
+        }
         
         setChats(prev => prev.map(chat => 
           chat.id === currentChat.id 
@@ -180,6 +185,7 @@ export const useMessageHandler = (
             : chat
         ));
         setCurrentChat(prev => prev ? { ...prev, title: userMessage.slice(0, 30) + '...' } : null);
+        console.log('Chat title updated successfully');
       }
 
     } catch (error) {
