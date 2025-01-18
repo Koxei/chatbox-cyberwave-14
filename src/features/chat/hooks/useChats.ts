@@ -83,7 +83,9 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
   return {
     chats,
+    setChats,
     currentChat,
+    setCurrentChat,
     messages,
     setMessages,
     loadChats,
