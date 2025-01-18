@@ -24,16 +24,23 @@ export const useMessageHandler = (
     setIsLoading(true);
 
     try {
-      // Enhanced image request detection with more specific patterns
+      // CHANGE #1: Move image detection before any API calls
       const imageCommandRegex = /^(generate|create|make)\s+image\s+/i;
       const isImageRequest = imageCommandRegex.test(userMessage);
       
-      // Debug logs for image request detection
-      console.log('Message analysis:', {
-        originalMessage: userMessage,
+      // CHANGE #2: Add immediate logging to verify detection
+      console.log('Message detection:', {
+        message: userMessage,
         isImageRequest,
         matchResult: userMessage.match(imageCommandRegex)
       });
+
+      // CHANGE #3: Extract prompt early if it's an image request
+      let prompt = '';
+      if (isImageRequest) {
+        prompt = userMessage.replace(imageCommandRegex, '').trim();
+        console.log('Extracted prompt:', prompt);
+      }
 
       // Save user message
       const { data: savedMessage, error: messageError } = await supabase
@@ -59,16 +66,16 @@ export const useMessageHandler = (
       
       setMessages(prev => [...prev, typedUserMessage]);
 
-      if (isImageRequest) {
-        console.log('Image generation path triggered');
-        // Extract prompt by removing the command prefix
-        const prompt = userMessage.replace(imageCommandRegex, '').trim();
-        console.log('Extracted image prompt:', prompt);
+      // CHANGE #4: Add logging before branching
+      console.log('Processing message:', {
+        isImageRequest,
+        hasPrompt: Boolean(prompt),
+        messageType: isImageRequest ? 'image' : 'text'
+      });
 
-        if (!prompt) {
-          throw new Error('No image prompt provided');
-        }
-
+      if (isImageRequest && prompt) {
+        console.log('Starting image generation for prompt:', prompt);
+        
         const { data: imageData, error: imageError } = await supabase.functions
           .invoke('generate-image', {
             body: { prompt }
@@ -104,7 +111,11 @@ export const useMessageHandler = (
         
         setMessages(prev => [...prev, typedAiMessage]);
       } else {
-        console.log('Text response path triggered');
+        // CHANGE #5: Log when falling back to text response
+        console.log('Falling back to text response:', {
+          reason: isImageRequest ? 'empty prompt' : 'not an image request'
+        });
+
         const response = await fetch('https://pqzhnpgwhcuxaduvxans.supabase.co/functions/v1/ai-chatbot', {
           method: 'POST',
           headers: {
