@@ -23,7 +23,9 @@ const Home = () => {
 
   const {
     chats,
+    setChats,
     currentChat,
+    setCurrentChat,
     messages,
     setMessages,
     loadChats,
@@ -45,7 +47,7 @@ const Home = () => {
     userId,
     currentChat,
     setMessages,
-    chats,
+    setChats,
     setCurrentChat
   );
 
