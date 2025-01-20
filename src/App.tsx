@@ -9,7 +9,9 @@ import Home from "@/pages/Home";
 import NewHome from "@/pages/NewHome";
 import Login from "@/pages/Login";
 import SharedLayout from "@/components/layouts/SharedLayout";
+import NewHomeLayout from "@/components/layouts/NewHomeLayout";
 import TerminalPage from "@/pages/TerminalPage";
+import AppOverlay from "@/components/layouts/AppOverlay";
 
 const queryClient = new QueryClient();
 
@@ -23,8 +25,20 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/home" element={<NewHomeLayout />}>
+              <Route index element={<NewHome />} />
+              <Route path="chatbox" element={
+                <AppOverlay title="Chatbox">
+                  <Home />
+                </AppOverlay>
+              } />
+              <Route path="terminal" element={
+                <AppOverlay title="Terminal">
+                  <TerminalPage />
+                </AppOverlay>
+              } />
+            </Route>
             <Route element={<SharedLayout />}>
-              <Route path="/home" element={<NewHome />} />
               <Route path="/chatbox" element={<Home />} />
               <Route path="/terminal" element={<TerminalPage />} />
             </Route>
