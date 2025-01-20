@@ -38,14 +38,12 @@ const NewHome = () => {
       name: "Chatbox",
       icon: <MessageSquare className="w-12 h-12" />,
       path: "/chatbox",
-      description: "Chat with AI",
       gradient: "from-cyan-500/30 to-blue-500/30"
     },
     {
       name: "Terminal",
       icon: <TerminalIcon className="w-12 h-12" />,
       path: "/terminal",
-      description: "Command Interface",
       gradient: "from-purple-500/30 to-pink-500/30"
     }
   ];
@@ -64,36 +62,27 @@ const NewHome = () => {
               onClick={() => navigate(app.path)}
               className="group relative cursor-pointer"
             >
-              {/* Enhanced bubble container with dynamic shadow and animations */}
+              {/* Enhanced bubble container with shadow */}
               <div className="relative transform transition-all duration-300 group-hover:-translate-y-4">
-                {/* Dynamic shadow that responds to hover */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-4/5 h-4 bg-black/20 rounded-full blur-xl transition-all duration-300 group-hover:scale-90 group-hover:opacity-70"></div>
+                {/* Shadow layer */}
+                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-3 bg-black/30 rounded-full blur-xl transition-all duration-300 group-hover:scale-75 group-hover:opacity-50"></div>
                 
                 {/* Outer glow layer */}
-                <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${app.gradient} blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-300 animate-bubble-pulse`}></div>
+                <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${app.gradient} blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-300`}></div>
                 
-                {/* Main bubble with enhanced glass effect */}
-                <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-8 border border-white/10 shadow-lg transition-all duration-300 animate-float">
+                {/* Main bubble with glass effect */}
+                <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-8 border border-white/10 shadow-lg transition-all duration-300">
                   {/* Bubble highlight effect */}
                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"></div>
                   
                   {/* Inner glow effect */}
                   <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent via-white/5 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
-                  {/* Content */}
-                  <div className="relative flex flex-col items-center space-y-4">
-                    {/* Icon container with enhanced glow */}
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <div className="relative text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
-                        {app.icon}
-                      </div>
-                    </div>
-                    
-                    {/* Text with enhanced visibility */}
-                    <div className="text-center">
-                      <h3 className="text-xl font-semibold text-white mb-1 drop-shadow-lg">{app.name}</h3>
-                      <p className="text-sm text-cyan-300/80 drop-shadow">{app.description}</p>
+                  {/* Icon container with enhanced glow */}
+                  <div className="relative flex items-center justify-center">
+                    <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
+                      {app.icon}
                     </div>
                   </div>
                 </div>
