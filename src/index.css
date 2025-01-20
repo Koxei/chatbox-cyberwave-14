@@ -11,7 +11,6 @@
   }
 }
 
-
 .chat-container {
   @apply w-full max-w-3xl mx-auto flex flex-col;
   max-width: 1000px;
@@ -148,4 +147,21 @@
 
 .message p {
   @apply font-sans text-base leading-relaxed break-words;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 15s ease infinite;
+  background-size: 200% 200%;
 }
