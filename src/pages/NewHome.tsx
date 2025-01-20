@@ -56,7 +56,7 @@ const NewHome = () => {
         style={{ backgroundImage: "url('/lovable-uploads/73e97728-d0f0-4a4f-8e49-34667bc28380.png')" }}
       />
       
-      {/* Content container - moved to bottom */}
+      {/* Content container - at bottom */}
       <div className="relative z-10 min-h-screen flex flex-col justify-end pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-4">
           {apps.map((app) => (
@@ -66,28 +66,24 @@ const NewHome = () => {
               className="group relative cursor-pointer"
             >
               {/* Shadow layer */}
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-4 bg-black rounded-full blur-md opacity-80 transition-all duration-300 group-hover:scale-75 group-hover:opacity-40 z-0"></div>
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full blur-lg opacity-80 transition-all duration-300 group-hover:scale-75 group-hover:opacity-60 z-0"></div>
               
-              {/* Bubble container with shadow */}
+              {/* Bubble container with new image */}
               <div className="relative z-10 transform transition-all duration-300 group-hover:-translate-y-4">
-                {/* Outer glow layer */}
-                <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${app.gradient} blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-300`}></div>
-                
-                {/* Main bubble with glass effect */}
-                <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-8 border border-white/10 shadow-lg transition-all duration-300">
-                  {/* Bubble highlight effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"></div>
-                  
-                  {/* Inner glow effect */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent via-white/5 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  {/* Icon container with enhanced glow */}
-                  <div className="relative flex items-center justify-center">
-                    <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="relative text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
-                      {app.icon}
-                    </div>
+                {/* Icon container positioned behind bubble */}
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <div className="text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
+                    {app.icon}
                   </div>
+                </div>
+                
+                {/* Bubble image */}
+                <div className="relative w-32 h-32 z-20">
+                  <img 
+                    src="/lovable-uploads/95016ec6-cadc-4408-a74c-c30ae449770e.png"
+                    alt="bubble"
+                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
                 </div>
               </div>
             </div>
