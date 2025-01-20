@@ -66,7 +66,7 @@ const NewHome = () => {
               className="group relative cursor-pointer"
             >
               {/* Shadow layer */}
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-4 bg-black rounded-full blur-md opacity-20 transition-all duration-300 group-hover:scale-75 group-hover:opacity-40 z-0"></div>
+              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-4 bg-black rounded-full blur-md opacity-80 transition-all duration-300 group-hover:scale-75 group-hover:opacity-40 z-0"></div>
               
               {/* Bubble container with shadow */}
               <div className="relative z-10 transform transition-all duration-300 group-hover:-translate-y-4">
