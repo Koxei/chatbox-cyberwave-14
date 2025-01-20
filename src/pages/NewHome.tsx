@@ -64,30 +64,36 @@ const NewHome = () => {
               onClick={() => navigate(app.path)}
               className="group relative cursor-pointer"
             >
-              {/* Bubble container */}
-              <div className="relative transform transition-all duration-300 group-hover:translate-y-[-8px]">
-                {/* Outer glow */}
-                <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${app.gradient} blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300`}></div>
+              {/* Enhanced bubble container with dynamic shadow and animations */}
+              <div className="relative transform transition-all duration-300 group-hover:-translate-y-4">
+                {/* Dynamic shadow that responds to hover */}
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-4/5 h-4 bg-black/20 rounded-full blur-xl transition-all duration-300 group-hover:scale-90 group-hover:opacity-70"></div>
                 
-                {/* Main bubble */}
-                <div className="relative bg-black/20 backdrop-blur-xl rounded-full p-8 border border-white/10 shadow-lg transform transition-all duration-300">
-                  {/* Glass effect overlay */}
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/5 to-transparent"></div>
+                {/* Outer glow layer */}
+                <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${app.gradient} blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-300 animate-bubble-pulse`}></div>
+                
+                {/* Main bubble with enhanced glass effect */}
+                <div className="relative bg-white/5 backdrop-blur-xl rounded-full p-8 border border-white/10 shadow-lg transition-all duration-300 animate-float">
+                  {/* Bubble highlight effect */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/20 via-transparent to-transparent opacity-50"></div>
+                  
+                  {/* Inner glow effect */}
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-t from-transparent via-white/5 to-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   
                   {/* Content */}
                   <div className="relative flex flex-col items-center space-y-4">
-                    {/* Icon container with glow */}
+                    {/* Icon container with enhanced glow */}
                     <div className="relative">
-                      <div className="absolute inset-0 bg-cyan-500/20 blur-xl rounded-full transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      <div className="absolute inset-0 bg-cyan-500/20 blur-2xl rounded-full transform scale-150 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       <div className="relative text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
                         {app.icon}
                       </div>
                     </div>
                     
-                    {/* Text */}
+                    {/* Text with enhanced visibility */}
                     <div className="text-center">
-                      <h3 className="text-xl font-semibold text-white mb-1">{app.name}</h3>
-                      <p className="text-sm text-cyan-300/80">{app.description}</p>
+                      <h3 className="text-xl font-semibold text-white mb-1 drop-shadow-lg">{app.name}</h3>
+                      <p className="text-sm text-cyan-300/80 drop-shadow">{app.description}</p>
                     </div>
                   </div>
                 </div>

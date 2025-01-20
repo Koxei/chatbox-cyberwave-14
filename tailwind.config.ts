@@ -33,6 +33,8 @@ export default {
       animation: {
         "fade-in": "fadeIn 0.5s ease-out",
         "gradient-shift": "gradient-shift 15s ease infinite",
+        "float": "float 3s ease-in-out infinite",
+        "bubble-pulse": "bubble-pulse 4s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -42,6 +44,14 @@ export default {
         "gradient-shift": {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "bubble-pulse": {
+          "0%, 100%": { transform: "scale(1)", opacity: "0.9" },
+          "50%": { transform: "scale(1.02)", opacity: "1" },
         },
       },
     },
