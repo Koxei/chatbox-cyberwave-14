@@ -10,7 +10,6 @@ import NewHome from "@/pages/NewHome";
 import Login from "@/pages/Login";
 import SharedLayout from "@/components/layouts/SharedLayout";
 import TerminalPage from "@/pages/TerminalPage";
-import GlitchTransition from "@/components/transitions/GlitchTransition";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +20,6 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <GlitchTransition />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
