@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import html2canvas from 'html2canvas';
 
 export const GlitchTransition = () => {
   const location = useLocation();
