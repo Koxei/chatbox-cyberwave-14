@@ -1,7 +1,10 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { MessageSquare, Terminal as TerminalIcon } from 'lucide-react';
 
 const NewHomeLayout = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="fixed inset-0 bg-deep-sea-blue overflow-hidden">
       {/* Background image */}
