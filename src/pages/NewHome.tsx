@@ -62,11 +62,11 @@ const NewHome = () => {
               onClick={() => navigate(app.path)}
               className="group relative cursor-pointer"
             >
-              {/* Enhanced bubble container with shadow */}
+              {/* Shadow layer */}
+              <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-32 h-4 bg-black rounded-full blur-xl opacity-30 transition-all duration-300 group-hover:scale-75 group-hover:opacity-20"></div>
+              
+              {/* Bubble container with shadow */}
               <div className="relative transform transition-all duration-300 group-hover:-translate-y-4">
-                {/* Shadow layer */}
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-3 bg-black/30 rounded-full blur-xl transition-all duration-300 group-hover:scale-75 group-hover:opacity-50"></div>
-                
                 {/* Outer glow layer */}
                 <div className={`absolute inset-0 rounded-full bg-gradient-to-br ${app.gradient} blur-2xl opacity-50 group-hover:opacity-75 transition-opacity duration-300`}></div>
                 
