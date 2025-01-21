@@ -85,32 +85,34 @@ return (
 }
 
 return (
+
   <>
-    {/* New full-screen background overlay */}
-    <div className="absolute inset-0 bg-black/30 pointer-events-none" />
-    
-    {/* Chat container with relative positioning */}
-    <div className="relative z-10">
-      <div className="chat-container">
-        <ChatHeader 
-          currentChat={currentChat}
-          chats={chats}
-          onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
-          onNewChat={createNewChat}
-          isAuthenticated={isAuthenticated}
-        />
-        <ChatContainer
-          currentChat={currentChat}
-          messages={messages}
-          isLoading={isLoading}
-          onSubmit={handleSubmit}
-          inputMessage={inputMessage}
-          setInputMessage={setInputMessage}
-        />
-      </div>
+  
+  {/* New full-screen background overlay */}
+  <div className="fixed inset-0 bg-black/30 pointer-events-none" />
+  {/* Chat container with relative positioning */}
+  <div className="relative z-10">
+    <div className="chat-container">
+      <ChatHeader 
+        currentChat={currentChat}
+        chats={chats}
+        onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
+        onNewChat={createNewChat}
+        isAuthenticated={isAuthenticated}
+      />
+      <ChatContainer
+        currentChat={currentChat}
+        messages={messages}
+        isLoading={isLoading}
+        onSubmit={handleSubmit}
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+      />
     </div>
+  </div>
   </>
-);
+  
+  );
 
 
 };
