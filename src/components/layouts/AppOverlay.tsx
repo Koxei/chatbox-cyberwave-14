@@ -11,7 +11,7 @@ const AppOverlay = ({ children, title }: AppOverlayProps) => {
   const navigate = useNavigate();
 
   return (
-    <div className="animate-fade-in bg-black/80 backdrop-blur-sm rounded-lg border border-aiMessage shadow-lg overflow-hidden">
+    <div className="animate-fade-in bg-black/80 backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b border-aiMessage">
         <h2 className="text-aiMessage font-arcade text-sm">{title}</h2>
         <button
