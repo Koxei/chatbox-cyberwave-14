@@ -1,64 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { X } from 'lucide-react';
+import React from 'react';
 
-interface AppOverlayProps {
-  children: React.ReactNode;
-  title?: string;
-}
+import { Outlet, useNavigate } from 'react-router-dom';
 
-const AppOverlay = ({ children, title }: AppOverlayProps) => {
-  const navigate = useNavigate();
-  const [isClosing, setIsClosing] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+import { MessageSquare, Terminal as TerminalIcon } from 'lucide-react';
 
-  useEffect(() => {
-    // Delay setting visibility to true to ensure mount animation works
-    const timer = setTimeout(() => setIsVisible(true), 50);
-    return () => clearTimeout(timer);
-  }, []);
+const NewHomeLayout = () => {
 
-  const handleClose = () => {
-    setIsClosing(true);
-    setIsVisible(false);
-    
-    // Navigate after animation completes, with a slight delay
-    setTimeout(() => {
-      navigate('/home', { replace: true });
-    }, 300); // Match animation duration
-  };
+const navigate = useNavigate();
 
-  return (
-    <>
-      {/* Transition layer that stays mounted longer */}
-      <div 
-        className={`fixed inset-0 bg-black/30 backdrop-blur-xl transition-all duration-300 ease-in-out z-[40] ${
-          isVisible && !isClosing ? 'opacity-100' : 'opacity-0'
-        }`}
-        style={{ visibility: isVisible || isClosing ? 'visible' : 'hidden' }}
-      />
-      
-      {/* Content container with visibility transition */}
-      <div 
-        className={`transition-all duration-300 ease-in-out backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden z-[50] relative ${
-          isVisible && !isClosing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-        }`}
-        style={{ visibility: isVisible || isClosing ? 'visible' : 'hidden' }}
-      >
-        <div className="flex items-center justify-end p-4">
-          <button
-            onClick={handleClose}
-            className="text-aiMessage hover:text-white transition-colors"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
-        <div className="p-4">
-          {children}
-        </div>
+return (
+
+<div className="fixed inset-0 bg-deep-sea-blue overflow-hidden">
+  {/* Background image with proper opacity */}
+  <div 
+    className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90"
+    style={{ backgroundImage: "url('/lovable-uploads/73e97728-d0f0-4a4f-8e49-34667bc28380.png')" }}
+  />
+  {/* Content container - fixed at bottom */}
+  <div className="relative z-10 min-h-screen flex flex-col justify-end pb-16">
+    <div className="container mx-auto px-4">
+      <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto">
+        {/* Chatbox App */}
+        <button
+          onClick={() => navigate('/home/chatbox')}
+          className="group relative cursor-pointer flex items-center justify-center focus:outline-none"
+        >
+          <div className="text-cyan-500 transform transition-transform duration-300 group-hover:scale-110 group-focus:scale-110">
+            <MessageSquare className="w-12 h-12" />
+          </div>
+        </button>
+        {/* Terminal App */}
+        <button
+          onClick={() => navigate('/home/terminal')}
+          className="group relative cursor-pointer flex items-center justify-center focus:outline-none"
+        >
+          <div className="text-purple-500 transform transition-transform duration-300 group-hover:scale-110 group-focus:scale-110">
+            <TerminalIcon className="w-12 h-12" />
+          </div>
+        </button>
       </div>
-    </>
-  );
+    </div>
+  </div>
+  {/* Overlay container for nested routes */}
+  <div className="fixed inset-0 z-20">
+    <div className="container mx-auto h-full flex items-center justify-center">
+      <div className="w-full max-w-2xl">
+        <Outlet />
+      </div>
+    </div>
+  </div>
+</div>
+);
+
 };
 
-export default AppOverlay;
+export default NewHomeLayout;
+
