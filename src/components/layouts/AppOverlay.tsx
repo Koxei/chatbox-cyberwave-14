@@ -23,22 +23,22 @@ const handleClose = () => {
 navigate('/home');
 };
 
-// Get the current path
+// Get the exact current path
 
 const currentPath = location.pathname;
 
-// Determine which app should be rendered based on the path
+// Determine which app should be rendered based on exact path matching
 
 const shouldRenderChatbox = currentPath === '/home/chatbox';
 
 const shouldRenderTerminal = currentPath === '/home/terminal';
 
-// Only render if we're on the correct path for this overlay
+// Only render if we're on the correct path for this specific overlay
 
 const shouldRender =
 
-(shouldRenderChatbox && title === "Chatbox") ||
-(shouldRenderTerminal && title?.toLowerCase().includes('terminal'));
+(shouldRenderChatbox && title === "Chatbox") || 
+(shouldRenderTerminal && title === "CYBERPUNK TERMINAL");
 if (!shouldRender) return null;
 
 return (
@@ -61,4 +61,3 @@ return (
 };
 
 export default AppOverlay;
-
