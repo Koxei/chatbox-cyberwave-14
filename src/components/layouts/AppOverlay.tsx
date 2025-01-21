@@ -1,5 +1,3 @@
-// src/components/layouts/AppOverlay.tsx
-
 import React, { useState, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
@@ -27,8 +25,8 @@ useEffect(() => {
 if (isClosing) {
   const timer = setTimeout(() => {
     setShouldRender(false);
-    navigate('/home');
-  }, 500);
+    navigate('/newhome');  // Direct navigation to /newhome instead of /home
+  }, 270);
   return () => clearTimeout(timer);
 }
 }, [isClosing, navigate]);
@@ -73,4 +71,3 @@ return (
 };
 
 export default AppOverlay;
-
