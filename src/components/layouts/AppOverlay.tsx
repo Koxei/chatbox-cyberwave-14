@@ -18,22 +18,24 @@ const navigate = useNavigate();
 
 return (
 
-<div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
-<div className="flex items-center justify-
-end
- p-4
-">
-    <button
-      onClick={() => navigate('/home')}
-      className="text-aiMessage hover:text-white transition-colors"
-    >
-      <X className="h-5 w-5" />
-    </button>
+<>
+  {/* Full-screen overlay */}
+  <div className="fixed inset-0 bg-black/30 pointer-events-none" />
+  {/* Content container */}
+  <div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
+    <div className="flex items-center justify-end p-4">
+      <button
+        onClick={() => navigate('/home')}
+        className="text-aiMessage hover:text-white transition-colors"
+      >
+        <X className="h-5 w-5" />
+      </button>
+    </div>
+    <div className="p-4">
+      {children}
+    </div>
   </div>
-  <div className="p-4">
-    {children}
-  </div>
-</div>
+</>
 );
 
 };
