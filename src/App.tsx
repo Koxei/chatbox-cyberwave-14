@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
 import Landing from "@/components/Landing";
-import Home from "@/pages/Home";
+import ChatboxPage from "@/pages/ChatboxPage";
 import NewHome from "@/pages/NewHome";
 import Login from "@/pages/Login";
 import SharedLayout from "@/components/layouts/SharedLayout";
@@ -29,7 +29,7 @@ const App = () => (
               <Route index element={<NewHome />} />
               <Route path="chatbox" element={
                 <AppOverlay title="Chatbox">
-                  <Home />
+                  <ChatboxPage />
                 </AppOverlay>
               } />
               <Route path="terminal" element={
@@ -39,7 +39,7 @@ const App = () => (
               } />
             </Route>
             <Route element={<SharedLayout />}>
-              <Route path="/chatbox" element={<Home />} />
+              <Route path="/chatbox" element={<ChatboxPage />} />
               <Route path="/terminal" element={<TerminalPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
