@@ -23,18 +23,22 @@ const handleClose = () => {
 navigate('/home');
 };
 
-// Determine which app is currently open
+// Get the current path
 
-const isTerminal = location.pathname.includes('terminal');
+const currentPath = location.pathname;
 
-const isChatbox = location.pathname.includes('chatbox');
+// Determine which app should be rendered based on the path
 
-// Only render the content if it matches the current route
+const shouldRenderChatbox = currentPath === '/home/chatbox';
+
+const shouldRenderTerminal = currentPath === '/home/terminal';
+
+// Only render if we're on the correct path for this overlay
 
 const shouldRender =
 
-(isTerminal && title?.toLowerCase().includes('terminal')) ||
-(isChatbox && title === "Chatbox");
+(shouldRenderChatbox && title === "Chatbox") ||
+(shouldRenderTerminal && title?.toLowerCase().includes('terminal'));
 if (!shouldRender) return null;
 
 return (
@@ -57,3 +61,4 @@ return (
 };
 
 export default AppOverlay;
+
