@@ -21,7 +21,7 @@ const AppOverlay = ({ children }: AppOverlayProps) => {
   if (!isValidRoute) return null;
 
   return (
-    <div className="animate-fade-in rounded-lg border border-red-500 overflow-hidden relative">
+    <div className="animate-fade-in rounded-lg border border-green-500 overflow-hidden relative">
       <div className="flex items-center justify-end p-4">
         <button
           onClick={handleClose}
