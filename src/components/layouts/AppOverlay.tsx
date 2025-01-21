@@ -19,8 +19,7 @@ const navigate = useNavigate();
 return (
 
 <div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
-  <div className="flex items-center justify-between p-4 border-b border-aiMessage">
-    <h2 className="text-aiMessage font-arcade text-sm">{title}</h2>
+  <div className="flex items-center justify-end p-4">
     <button
       onClick={() => navigate('/home')}
       className="text-aiMessage hover:text-white transition-colors"
