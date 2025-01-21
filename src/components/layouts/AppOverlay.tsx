@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -18,22 +18,41 @@ const navigate = useNavigate();
 
 const [isClosing, setIsClosing] = useState(false);
 
+const [shouldRender, setShouldRender] = useState(true);
+
+useEffect(() => {
+
+if (isClosing) {
+  const timer = setTimeout(() => {
+    setShouldRender(false);
+    navigate('/home');
+  }, 270);
+  return () => clearTimeout(timer);
+}
+}, [isClosing, navigate]);
+
 const handleClose = () => {
 
 setIsClosing(true);
-// Navigate slightly before animationd completes to prevent flash
-setTimeout(() => {
-  navigate('/home');
-}, 230); // Slightly shorter than the animfation duration
 };
+
+if (!shouldRender) return null;
 
 return (
 
 <>
-  {/* Full-screen overlay witeh ganimation */}
-  <div className={`fixed inset-0 backdrop-blur-xl bg-black/30 pointer-events-none ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} />
+  {/* Full-screen overlay with animation */}
+  <div 
+    className={`fixed inset-0 backdrop-blur-xl bg-black/30 z-[40] ${
+      isClosing ? 'animate-fade-out' : 'animate-fade-in'
+    }`} 
+  />
   {/* Content container */}
-  <div className={`${isClosing ? 'animate-fade-out' : 'animate-fade-in'} backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden`}>
+  <div 
+    className={`${
+      isClosing ? 'animate-fade-out' : 'animate-fade-in'
+    } backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden z-[50] relative`}
+  >
     <div className="flex items-center justify-end p-4">
       <button
         onClick={handleClose}
@@ -52,3 +71,4 @@ return (
 };
 
 export default AppOverlay;
+
