@@ -31,8 +31,8 @@ export default {
         sans: ["Inter", "sans-serif"],
       },
       animation: {
-        "fade-in": "fadeIn 0.5s ease-out",
-        "fade-out": "fadeOut 0.5s ease-out",
+        "fade-in": "fadeIn 0.3s ease-out",
+        "fade-out": "fadeOut 0.3s ease-out",
         "gradient-shift": "gradient-shift 15s ease infinite",
       },
       keyframes: {

@@ -24,7 +24,7 @@ setIsClosing(true);
 // Navigate slightly before animation completes to prevent flash
 setTimeout(() => {
   navigate('/home');
-}, 450); // Slightly shorter than the animation duration
+}, 450); // Slightly shorter than the animfation duration
 };
 
 return (
