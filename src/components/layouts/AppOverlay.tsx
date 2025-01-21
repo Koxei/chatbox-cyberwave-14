@@ -1,15 +1,13 @@
 // src/components/layouts/AppOverlay.tsx
-
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 
 interface AppOverlayProps {
   children: React.ReactNode;
-  title?: string;
 }
 
-const AppOverlay = ({ children, title }: AppOverlayProps) => {
+const AppOverlay = ({ children }: AppOverlayProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -17,14 +15,10 @@ const AppOverlay = ({ children, title }: AppOverlayProps) => {
     navigate('/home');
   };
 
-  const currentPath = location.pathname;
-
-  // Determine which app to show based on the current path
-  const shouldShowChatbox = currentPath === '/home/chatbox';
-  const shouldShowTerminal = currentPath === '/home/terminal';
-
   // Only render if we're on either the chatbox or terminal route
-  if (!shouldShowChatbox && !shouldShowTerminal) return null;
+  const isValidRoute = location.pathname === '/home/chatbox' || location.pathname === '/home/terminal';
+  
+  if (!isValidRoute) return null;
 
   return (
     <div className="animate-fade-in rounded-lg border border-red-500 overflow-hidden relative">
