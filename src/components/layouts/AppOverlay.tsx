@@ -1,6 +1,4 @@
-// src/components/layouts/AppOverlay.tsx
-
-import React, { useState } from 'react';
+import React from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -20,6 +18,7 @@ const navigate = useNavigate();
 
 const handleClose = () => {
 
+// Navigate immediately, just like the forward navigation
 navigate('/home');
 };
 
@@ -28,7 +27,7 @@ return (
 <>
   {/* Full-screen overlay with only fade-in animation */}
   <div 
-    className="fixed inset-0 backdrop-blur-md bg-black/30 z-[40] animate-fade-in"
+    className="fixed inset-0 backdrop-blur-xl bg-black/30 z-[40] animate-fade-in"
   />
   {/* Content container */}
   <div 
@@ -52,4 +51,3 @@ return (
 };
 
 export default AppOverlay;
-
