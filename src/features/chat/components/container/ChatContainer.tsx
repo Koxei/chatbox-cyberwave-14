@@ -22,7 +22,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   setInputMessage,
 }) => {
   return (
-    <div className="relative z-30 flex flex-col h-full bg-black/10 backdrop-blur-sm">
+    <div className="relative z-30 flex flex-col h-full">
       <main className="flex-1 overflow-y-auto px-4 pb-4">
         <ChatMessages 
           messages={messages} 
