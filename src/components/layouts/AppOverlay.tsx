@@ -32,7 +32,7 @@ return (
   />
   {/* Content container */}
   <div 
-    className="animate-fade-in backdrop-blur-md rounded-lg border border-red-500 shadow-lg overflow-hidden z-[50] relative"
+    className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden z-[50] relative"
   >
     <div className="flex items-center justify-end p-4">
       <button
