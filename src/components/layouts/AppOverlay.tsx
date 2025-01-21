@@ -25,7 +25,7 @@ useEffect(() => {
 if (isClosing) {
   const timer = setTimeout(() => {
     setShouldRender(false);
-    navigate('/newhome');  // Direct navigation to /newhome instead of /home
+    navigate('/home');
   }, 270);
   return () => clearTimeout(timer);
 }
@@ -41,13 +41,11 @@ if (!shouldRender) return null;
 return (
 
 <>
-  {/* Full-screen overlay with animation */}
   <div 
     className={`fixed inset-0 backdrop-blur-xl bg-black/30 z-[40] ${
       isClosing ? 'animate-fade-out' : 'animate-fade-in'
     }`} 
   />
-  {/* Content container */}
   <div 
     className={`${
       isClosing ? 'animate-fade-out' : 'animate-fade-in'
@@ -71,3 +69,4 @@ return (
 };
 
 export default AppOverlay;
+
