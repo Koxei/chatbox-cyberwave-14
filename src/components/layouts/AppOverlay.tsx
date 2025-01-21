@@ -20,7 +20,9 @@ return (
 
 <>
   {/* Full-screen doverlay */}
-  <div className="fixed inset-0 bg-black/30 pointer-events-none" />
+  // In AppOverlay.tsx
+<div className="fixed inset-0 bg-black/30 backdrop-blur-xl pointer-events-none" />
+
   {/* Content container */}
   <div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
     <div className="flex items-center justify-end p-4">
