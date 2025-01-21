@@ -28,7 +28,7 @@ if (isClosing) {
   const timer = setTimeout(() => {
     setShouldRender(false);
     navigate('/home');
-  }, 270);
+  }, 500);
   return () => clearTimeout(timer);
 }
 }, [isClosing, navigate]);
