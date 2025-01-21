@@ -16,8 +16,6 @@
   max-width: 1000px;
   height: 90vh;
   position: relative;
-  border: 2px solid #ff0000; /* Red border for development */
-  border-radius: 12px;
   background: transparent;
 }
 
