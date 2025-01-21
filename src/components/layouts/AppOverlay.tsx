@@ -21,7 +21,7 @@ const [isClosing, setIsClosing] = useState(false);
 const handleClose = () => {
 
 setIsClosing(true);
-// Navigate slightly before animation completes to prevent flash
+// Navigate slightly before animationd completes to prevent flash
 setTimeout(() => {
   navigate('/home');
 }, 450); // Slightly shorter than the animfation duration
