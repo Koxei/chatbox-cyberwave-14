@@ -22,7 +22,8 @@ return (
 
 <>
   {/* Full-screen overlay with slower fade-in */}
-  <div className="fixed inset-0 backdrop-blur-xl pointer-events-none transition-all duration-500 animate-[fade-in_0.5s_ease-out]" />
+  <div className="fixed inset-0 backdrop-blur-xl bg-black/30 pointer-events-none opacity-0 animate-[fade-in_0.5s_ease-out] !opacity-100" />
+
 
   {/* Content container */}
   <div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
