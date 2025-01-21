@@ -19,10 +19,8 @@ const navigate = useNavigate();
 return (
 
 <>
-  {/* Full-screen doverlay */}
-  // In AppOverlay.tsx
-<div className="fixed inset-0 backdrop-blur-md pointer-events-none" />
-
+  {/* Full-screen overlay with slower fade-in */}
+  <div className="fixed inset-0 backdrop-blur-xl pointer-events-none animate-[fade-in_0.5s_ease-out]" />
   {/* Content container */}
   <div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
     <div className="flex items-center justify-end p-4">
