@@ -1,3 +1,5 @@
+// src/components/layouts/AppOverlay.tsx
+
 import React from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -23,22 +25,16 @@ const handleClose = () => {
 navigate('/home');
 };
 
-// Get the exact current path
+// Get the current path
 
 const currentPath = location.pathname;
 
-// Determine which app should be rendered based on exact path matching
-
-const shouldRenderChatbox = currentPath === '/home/chatbox';
-
-const shouldRenderTerminal = currentPath === '/home/terminal';
-
-// Only render if we're on the correct path for this specific overlay
+// Check if we should render based on the current path and title
 
 const shouldRender =
 
-(shouldRenderChatbox && title === "Chatbox") || 
-(shouldRenderTerminal && title === "CYBERPUNK TERMINAL");
+(currentPath === '/home/chatbox' && title === "Chatbox") ||
+(currentPath === '/home/terminal' && title === "CYBERPUNK TERMINAL");
 if (!shouldRender) return null;
 
 return (
@@ -61,3 +57,4 @@ return (
 };
 
 export default AppOverlay;
+
