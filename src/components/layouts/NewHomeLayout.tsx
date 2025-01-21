@@ -7,9 +7,9 @@ const NewHomeLayout = () => {
 
   return (
     <div className="fixed inset-0 bg-deep-sea-blue overflow-hidden">
-      {/* Background image */}
+      {/* Background image with adjusted opacity */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-50"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
         style={{ backgroundImage: "url('/lovable-uploads/73e97728-d0f0-4a4f-8e49-34667bc28380.png')" }}
       />
       
@@ -20,56 +20,20 @@ const NewHomeLayout = () => {
             {/* Chatbox App */}
             <div
               onClick={() => navigate('/home/chatbox')}
-              className="group relative cursor-pointer"
+              className="group relative cursor-pointer flex items-center justify-center"
             >
-              {/* Shadow layer */}
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full blur-lg opacity-80 transition-all duration-300 group-hover:scale-75 group-hover:opacity-60 z-0"></div>
-              
-              {/* Bubble container */}
-              <div className="relative z-10 transform transition-all duration-300 group-hover:-translate-y-4">
-                {/* Icon container */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
-                    <MessageSquare className="w-12 h-12" />
-                  </div>
-                </div>
-                
-                {/* Bubble image */}
-                <div className="relative w-32 h-32 z-20">
-                  <img 
-                    src="/lovable-uploads/95016ec6-cadc-4408-a74c-c30ae449770e.png"
-                    alt="bubble"
-                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
+              <div className="text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
+                <MessageSquare className="w-12 h-12" />
               </div>
             </div>
 
             {/* Terminal App */}
             <div
               onClick={() => navigate('/home/terminal')}
-              className="group relative cursor-pointer"
+              className="group relative cursor-pointer flex items-center justify-center"
             >
-              {/* Shadow layer */}
-              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full blur-lg opacity-80 transition-all duration-300 group-hover:scale-75 group-hover:opacity-60 z-0"></div>
-              
-              {/* Bubble container */}
-              <div className="relative z-10 transform transition-all duration-300 group-hover:-translate-y-4">
-                {/* Icon container */}
-                <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <div className="text-purple-500 transform transition-transform duration-300 group-hover:scale-110">
-                    <TerminalIcon className="w-12 h-12" />
-                  </div>
-                </div>
-                
-                {/* Bubble image */}
-                <div className="relative w-32 h-32 z-20">
-                  <img 
-                    src="/lovable-uploads/95016ec6-cadc-4408-a74c-c30ae449770e.png"
-                    alt="bubble"
-                    className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
+              <div className="text-purple-500 transform transition-transform duration-300 group-hover:scale-110">
+                <TerminalIcon className="w-12 h-12" />
               </div>
             </div>
           </div>
