@@ -19,7 +19,7 @@ const navigate = useNavigate();
 return (
 
 <>
-  {/* Full-screen overlay */}
+  {/* Full-screen doverlay */}
   <div className="fixed inset-0 bg-black/30 pointer-events-none" />
   {/* Content container */}
   <div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
