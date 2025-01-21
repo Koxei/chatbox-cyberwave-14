@@ -87,8 +87,7 @@ return (
 return (
   <>
     {/* New full-screen background overlay */}
-    <div className="absolute inset-0 !w-screen !h-screen bg-black/10 pointer-events-none" />
-
+    <div className="fixed inset-0 bg-black/30 pointer-events-none" />
     
     {/* Chat container with relative positioning */}
     <div className="relative z-10">
