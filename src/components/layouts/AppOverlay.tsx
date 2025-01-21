@@ -30,7 +30,7 @@ setTimeout(() => {
 return (
 
 <>
-  {/* Full-screen overlay with ganimation */}
+  {/* Full-screen overlay witeh ganimation */}
   <div className={`fixed inset-0 backdrop-blur-xl bg-black/30 pointer-events-none ${isClosing ? 'animate-fade-out' : 'animate-fade-in'}`} />
   {/* Content container */}
   <div className={`${isClosing ? 'animate-fade-out' : 'animate-fade-in'} backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden`}>
