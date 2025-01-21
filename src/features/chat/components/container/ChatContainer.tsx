@@ -29,7 +29,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           isLoading={isLoading} 
         />
         {!currentChat && (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
+          <div className="flex flex-col items-center justify-center h-full text-userMessage">
             <PlusCircle className="w-12 h-12 mb-4" />
             <p className="text-lg">Start a new chat</p>
           </div>

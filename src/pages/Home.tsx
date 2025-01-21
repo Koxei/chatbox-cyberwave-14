@@ -1,7 +1,6 @@
 import { useState } from "react";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatHeader from "@/components/ChatHeader";
-import MatrixRain from "@/features/effects/MatrixRain";
 import ChatContainer from "@/features/chat/components/container/ChatContainer";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useChats } from "@/features/chat/hooks/useChats";
@@ -77,7 +76,6 @@ const Home = () => {
 
   return (
     <div className="chat-container p-4">
-      <MatrixRain />
       <ChatHeader 
         currentChat={currentChat}
         chats={chats}
