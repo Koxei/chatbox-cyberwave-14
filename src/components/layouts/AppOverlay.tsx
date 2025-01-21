@@ -21,7 +21,7 @@ return (
 <>
   {/* Full-screen doverlay */}
   // In AppOverlay.tsx
-<div className="fixed inset-0 bg-black/30 backdrop-blur-xl pointer-events-none" />
+<div className="fixed inset-0 bg-black/30 backdrop-blur-md pointer-events-none" />
 
   {/* Content container */}
   <div className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden">
