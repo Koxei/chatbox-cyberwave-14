@@ -1,58 +1,76 @@
-import React from 'react';
+// src/components/layouts/AppOverlay.tsx
 
-import { Outlet, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 
-import { MessageSquare, Terminal as TerminalIcon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const NewHomeLayout = () => {
+import { X } from 'lucide-react';
+
+interface AppOverlayProps {
+
+children: React.ReactNode;
+
+title?: string;
+
+}
+
+const AppOverlay = ({ children, title }: AppOverlayProps) => {
 
 const navigate = useNavigate();
 
+const [isClosing, setIsClosing] = useState(false);
+
+const [shouldRender, setShouldRender] = useState(true);
+
+useEffect(() => {
+
+if (isClosing) {
+  const timer = setTimeout(() => {
+    setShouldRender(false);
+    navigate('/home');
+  }, 270);
+  return () => clearTimeout(timer);
+}
+}, [isClosing, navigate]);
+
+const handleClose = () => {
+
+setIsClosing(true);
+};
+
+if (!shouldRender) return null;
+
 return (
 
-<div className="fixed inset-0 bg-deep-sea-blue overflow-hidden">
-  {/* Background image with proper opacity */}
+<>
+  {/* Full-screen overlay with animation */}
   <div 
-    className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-90"
-    style={{ backgroundImage: "url('/lovable-uploads/73e97728-d0f0-4a4f-8e49-34667bc28380.png')" }}
+    className={`fixed inset-0 backdrop-blur-xl bg-black/30 z-[40] ${
+      isClosing ? 'animate-fade-out' : 'animate-fade-in'
+    }`} 
   />
-  {/* Content container - fixed at bottom */}
-  <div className="relative z-10 min-h-screen flex flex-col justify-end pb-16">
-    <div className="container mx-auto px-4">
-      <div className="grid grid-cols-2 gap-8 max-w-lg mx-auto">
-        {/* Chatbox App */}
-        <button
-          onClick={() => navigate('/home/chatbox')}
-          className="group relative cursor-pointer flex items-center justify-center focus:outline-none"
-        >
-          <div className="text-cyan-500 transform transition-transform duration-300 group-hover:scale-110 group-focus:scale-110">
-            <MessageSquare className="w-12 h-12" />
-          </div>
-        </button>
-        {/* Terminal App */}
-        <button
-          onClick={() => navigate('/home/terminal')}
-          className="group relative cursor-pointer flex items-center justify-center focus:outline-none"
-        >
-          <div className="text-purple-500 transform transition-transform duration-300 group-hover:scale-110 group-focus:scale-110">
-            <TerminalIcon className="w-12 h-12" />
-          </div>
-        </button>
-      </div>
+  {/* Content container */}
+  <div 
+    className={`${
+      isClosing ? 'animate-fade-out' : 'animate-fade-in'
+    } backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden z-[50] relative`}
+  >
+    <div className="flex items-center justify-end p-4">
+      <button
+        onClick={handleClose}
+        className="text-aiMessage hover:text-white transition-colors"
+      >
+        <X className="h-5 w-5" />
+      </button>
+    </div>
+    <div className="p-4">
+      {children}
     </div>
   </div>
-  {/* Overlay container for nested routes */}
-  <div className="fixed inset-0 z-20">
-    <div className="container mx-auto h-full flex items-center justify-center">
-      <div className="w-full max-w-2xl">
-        <Outlet />
-      </div>
-    </div>
-  </div>
-</div>
+</>
 );
 
 };
 
-export default NewHomeLayout;
+export default AppOverlay;
 
