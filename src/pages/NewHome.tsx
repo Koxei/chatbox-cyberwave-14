@@ -2,8 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import AuthModal from "@/features/auth/components/AuthModal";
-import { Terminal as TerminalIcon } from "lucide-react";
-import { MessageSquare } from "lucide-react";
 
 const NewHome = () => {
   const navigate = useNavigate();
@@ -33,54 +31,7 @@ const NewHome = () => {
     );
   }
 
-  const apps = [
-    {
-      name: "Chatbox",
-      icon: <MessageSquare className="w-12 h-12" />,
-      path: "/home/chatbox",
-      gradient: "from-cyan-500/30 to-blue-500/30"
-    },
-    {
-      name: "Terminal",
-      icon: <TerminalIcon className="w-12 h-12" />,
-      path: "/home/terminal",
-      gradient: "from-purple-500/30 to-pink-500/30"
-    }
-  ];
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto px-4">
-      {apps.map((app) => (
-        <div
-          key={app.name}
-          onClick={() => navigate(app.path)}
-          className="group relative cursor-pointer"
-        >
-          {/* Shadow layer */}
-          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-28 h-6 bg-black rounded-full blur-lg opacity-80 transition-all duration-300 group-hover:scale-75 group-hover:opacity-60 z-0"></div>
-          
-          {/* Bubble container with new image */}
-          <div className="relative z-10 transform transition-all duration-300 group-hover:-translate-y-4">
-            {/* Icon container positioned behind bubble */}
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="text-cyan-500 transform transition-transform duration-300 group-hover:scale-110">
-                {app.icon}
-              </div>
-            </div>
-            
-            {/* Bubble image */}
-            <div className="relative w-32 h-32 z-20">
-              <img 
-                src="/lovable-uploads/95016ec6-cadc-4408-a74c-c30ae449770e.png"
-                alt="bubble"
-                className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-              />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
+  return null; // The layout will handle rendering the apps
 };
 
 export default NewHome;
