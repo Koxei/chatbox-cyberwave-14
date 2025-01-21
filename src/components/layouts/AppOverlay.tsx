@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
 
 interface AppOverlayProps {
@@ -9,10 +9,22 @@ interface AppOverlayProps {
 
 const AppOverlay = ({ children, title }: AppOverlayProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClose = () => {
     navigate('/home');
   };
+
+  // Determine which app is currently open
+  const isTerminal = location.pathname.includes('terminal');
+  const isChatbox = location.pathname.includes('chatbox');
+
+  // Only render the content if it matches the current route
+  const shouldRender = 
+    (isTerminal && title === "Terminal") || 
+    (isChatbox && title === "Chatbox");
+
+  if (!shouldRender) return null;
 
   return (
     <div className="animate-fade-in rounded-lg border border-red-500 overflow-hidden relative">
