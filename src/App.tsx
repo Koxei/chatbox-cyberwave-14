@@ -1,53 +1,63 @@
+src/App.tsx
+
+undefined
 import { Toaster } from "@/components/ui/toaster";
+
 import { Toaster as Sonner } from "@/components/ui/sonner";
+
 import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
 import { ErrorBoundary } from "@/shared/components/ErrorBoundary";
+
 import Landing from "@/components/Landing";
+
 import ChatboxPage from "@/pages/ChatboxPage";
+
 import NewHome from "@/pages/NewHome";
+
 import Login from "@/pages/Login";
+
 import SharedLayout from "@/components/layouts/SharedLayout";
+
 import NewHomeLayout from "@/components/layouts/NewHomeLayout";
+
 import TerminalPage from "@/pages/TerminalPage";
+
 import AppOverlay from "@/components/layouts/AppOverlay";
 
 const queryClient = new QueryClient();
 
 const App = () => (
-  <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<NewHomeLayout />}>
-              <Route index element={<NewHome />} />
-              <Route path="chatbox" element={
-                <AppOverlay title="Chatbox">
-                  <ChatboxPage />
-                </AppOverlay>
-              } />
-              <Route path="terminal" element={
-                <AppOverlay title="Terminal">
-                  <TerminalPage />
-                </AppOverlay>
-              } />
-            </Route>
-            <Route element={<SharedLayout />}>
-              <Route path="/chatbox" element={<ChatboxPage />} />
-              <Route path="/terminal" element={<TerminalPage />} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </ErrorBoundary>
+
+<ErrorBoundary>
+<QueryClientProvider client={queryClient}>
+  <TooltipProvider>
+    <Toaster />
+    <Sonner />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/home" element={<NewHomeLayout />}>
+          <Route index element={<NewHome />} />
+          <Route path="chatbox" element={<ChatboxPage />} />
+          <Route path="terminal" element={<TerminalPage />} />
+        </Route>
+        <Route element={<SharedLayout />}>
+          <Route path="/chatbox" element={<ChatboxPage />} />
+          <Route path="/terminal" element={<TerminalPage />} />
+        </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  </TooltipProvider>
+</QueryClientProvider>
+</ErrorBoundary>
 );
 
 export default App;
+
