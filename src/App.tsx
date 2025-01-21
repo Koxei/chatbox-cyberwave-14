@@ -27,8 +27,16 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/home" element={<NewHomeLayout />}>
               <Route index element={<NewHome />} />
-              <Route path="chatbox" element={<Home />} />
-              <Route path="terminal" element={<TerminalPage />} />
+              <Route path="chatbox" element={
+                <AppOverlay title="Chatbox">
+                  <Home />
+                </AppOverlay>
+              } />
+              <Route path="terminal" element={
+                <AppOverlay title="Terminal">
+                  <TerminalPage />
+                </AppOverlay>
+              } />
             </Route>
             <Route element={<SharedLayout />}>
               <Route path="/chatbox" element={<Home />} />
