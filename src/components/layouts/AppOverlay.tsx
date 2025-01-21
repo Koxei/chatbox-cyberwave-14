@@ -28,11 +28,11 @@ return (
 <>
   {/* Full-screen overlay with only fade-in animation */}
   <div 
-    className="fixed inset-0 backdrop-blur-xl bg-black/30 z-[40] animate-fade-in"
+    className="fixed inset-0 backdrop-blur-md bg-black/30 z-[40] animate-fade-in"
   />
   {/* Content container */}
   <div 
-    className="animate-fade-in backdrop-blur-sm rounded-lg border border-red-500 shadow-lg overflow-hidden z-[50] relative"
+    className="animate-fade-in backdrop-blur-md rounded-lg border border-red-500 shadow-lg overflow-hidden z-[50] relative"
   >
     <div className="flex items-center justify-end p-4">
       <button
