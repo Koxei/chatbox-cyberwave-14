@@ -1,5 +1,3 @@
-// src/components/layouts/AppOverlay.tsx
-
 import React from 'react';
 
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -35,7 +33,7 @@ const isChatbox = location.pathname.includes('chatbox');
 
 const shouldRender =
 
-(isTerminal && title?.toLowerCase().includes('terminal')) || 
+(isTerminal && title?.toLowerCase().includes('terminal')) ||
 (isChatbox && title === "Chatbox");
 if (!shouldRender) return null;
 
@@ -59,4 +57,3 @@ return (
 };
 
 export default AppOverlay;
-
