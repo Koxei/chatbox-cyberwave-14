@@ -22,14 +22,14 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   setInputMessage,
 }) => {
   return (
-    <div className="relative z-30 flex flex-col h-full">
+    <div className="relative z-30 flex flex-col h-full bg-black/10 backdrop-blur-sm">
       <main className="flex-1 overflow-y-auto px-4 pb-4">
         <ChatMessages 
           messages={messages} 
           isLoading={isLoading} 
         />
         {!currentChat && (
-          <div className="flex flex-col items-center justify-center h-full text-gray-400">
+          <div className="flex flex-col items-center justify-center h-full text-userMessage">
             <PlusCircle className="w-12 h-12 mb-4" />
             <p className="text-lg">Start a new chat</p>
           </div>
