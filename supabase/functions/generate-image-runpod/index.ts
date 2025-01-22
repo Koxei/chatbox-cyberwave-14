@@ -69,13 +69,14 @@ serve(async (req) => {
 
     console.log('Generation started with ID:', id);
 
-    // Poll for the result
+    // Poll for the result with increased timeout
     let result = null;
     let attempts = 0;
-    const maxAttempts = 30; // 30 seconds timeout
+    const maxAttempts = 120; // Increased to 120 seconds timeout
+    const pollInterval = 1000; // 1 second between checks
 
     while (!result && attempts < maxAttempts) {
-      console.log(`Checking status attempt ${attempts + 1}...`);
+      console.log(`Checking status attempt ${attempts + 1}/${maxAttempts}...`);
       
       const statusResponse = await fetch(`https://api.runpod.ai/v2/mc5goz5ibjjq6p/status/${id}`, {
         headers: {
@@ -97,18 +98,28 @@ serve(async (req) => {
         break;
       } else if (statusData.status === 'FAILED') {
         throw new Error(`Image generation failed. Status data: ${JSON.stringify(statusData)}`);
+      } else if (statusData.status === 'IN_QUEUE' || statusData.status === 'IN_PROGRESS') {
+        console.log(`Job status: ${statusData.status}`);
+      } else {
+        console.log(`Unknown status: ${statusData.status}`);
       }
 
       attempts++;
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between checks
+      if (attempts < maxAttempts) {
+        await new Promise(resolve => setTimeout(resolve, pollInterval));
+      }
     }
 
     if (!result) {
-      throw new Error('Image generation timed out after 30 seconds');
+      const timeoutError = new Error(`Image generation timed out after ${maxAttempts} seconds`);
+      console.error('Timeout error:', timeoutError);
+      throw timeoutError;
     }
 
     if (!result.output?.image) {
-      throw new Error(`No image in output. Full result: ${JSON.stringify(result)}`);
+      const outputError = new Error(`No image in output. Full result: ${JSON.stringify(result)}`);
+      console.error('Output error:', outputError);
+      throw outputError;
     }
 
     console.log('Successfully generated image');
@@ -132,7 +143,8 @@ serve(async (req) => {
       JSON.stringify({ 
         success: false, 
         error: error.message,
-        details: error.stack
+        details: error.stack,
+        timestamp: new Date().toISOString()
       }),
       { 
         status: 500, 
