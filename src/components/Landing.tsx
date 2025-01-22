@@ -47,7 +47,7 @@ const Landing = ({ onStartClick }: LandingProps) => {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[#333333]/10">
+    <div className="h-screen w-screen flex items-center justify-center bg-[#333333]">
       <Button 
         onClick={handleClick}
         className="px-8 py-6 text-lg"
