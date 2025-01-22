@@ -1,4 +1,3 @@
-// src/components/layouts/AppOverlay.tsx
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { X } from 'lucide-react';
@@ -15,13 +14,18 @@ const AppOverlay = ({ children }: AppOverlayProps) => {
     navigate('/home');
   };
 
-  // Only render if we're on either the chatbox or terminal route
-  const isValidRoute = location.pathname === '/home/chatbox' || location.pathname === '/home/terminal';
+  // Determine which route we're on
+  const isChatboxRoute = location.pathname === '/home/chatbox';
+  const isTerminalRoute = location.pathname === '/home/terminal';
   
-  if (!isValidRoute) return null;
+  // Only render if we're on either route
+  if (!isChatboxRoute && !isTerminalRoute) return null;
+
+  // Set border color based on route
+  const borderColorClass = isChatboxRoute ? 'border-green-500' : 'border-red-500';
 
   return (
-    <div className="animate-fade-in rounded-lg border border-green-500 overflow-hidden relative">
+    <div className={`animate-fade-in rounded-lg border ${borderColorClass} overflow-hidden relative`}>
       <div className="flex items-center justify-end p-4">
         <button
           onClick={handleClose}
