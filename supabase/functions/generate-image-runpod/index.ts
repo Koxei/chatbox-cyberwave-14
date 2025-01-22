@@ -22,7 +22,7 @@ serve(async (req) => {
     }
 
     // First, send the request to generate the image
-    const response = await fetch('https://api.runpod.ai/v2/stable-diffusion-v1/run', {
+    const response = await fetch('https://api.runpod.ai/v2/mc5goz5ibjjq6p/run', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ serve(async (req) => {
     const maxAttempts = 30; // 30 seconds timeout
 
     while (!result && attempts < maxAttempts) {
-      const statusResponse = await fetch(`https://api.runpod.ai/v2/stable-diffusion-v1/status/${id}`, {
+      const statusResponse = await fetch(`https://api.runpod.ai/v2/mc5goz5ibjjq6p/status/${id}`, {
         headers: {
           'Authorization': RUNPOD_API_KEY
         }
