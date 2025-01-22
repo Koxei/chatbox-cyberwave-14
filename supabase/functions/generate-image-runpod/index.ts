@@ -21,6 +21,8 @@ serve(async (req) => {
       throw new Error('RUNPOD_API_KEY is not set');
     }
 
+    console.log('Initiating RunPod request...');
+
     // First, send the request to generate the image
     const response = await fetch('https://api.runpod.ai/v2/mc5goz5ibjjq6p/run', {
       method: 'POST',
@@ -41,13 +43,30 @@ serve(async (req) => {
       })
     });
 
+    console.log('RunPod API Response Status:', response.status);
+    
+    // Log the raw response text for debugging
+    const responseText = await response.text();
+    console.log('RunPod API Raw Response:', responseText);
+
     if (!response.ok) {
-      const error = await response.json();
-      console.error('Runpod API error:', error);
-      throw new Error(`Runpod API error: ${error.message}`);
+      throw new Error(`RunPod API HTTP error! status: ${response.status}, response: ${responseText}`);
     }
 
-    const { id } = await response.json();
+    // Parse the response text as JSON
+    let jsonResponse;
+    try {
+      jsonResponse = JSON.parse(responseText);
+    } catch (parseError) {
+      console.error('Failed to parse RunPod response as JSON:', parseError);
+      throw new Error(`Invalid JSON response from RunPod: ${responseText}`);
+    }
+
+    const { id } = jsonResponse;
+    if (!id) {
+      throw new Error(`No job ID received from RunPod. Response: ${responseText}`);
+    }
+
     console.log('Generation started with ID:', id);
 
     // Poll for the result
@@ -56,6 +75,8 @@ serve(async (req) => {
     const maxAttempts = 30; // 30 seconds timeout
 
     while (!result && attempts < maxAttempts) {
+      console.log(`Checking status attempt ${attempts + 1}...`);
+      
       const statusResponse = await fetch(`https://api.runpod.ai/v2/mc5goz5ibjjq6p/status/${id}`, {
         headers: {
           'Authorization': RUNPOD_API_KEY
@@ -63,17 +84,19 @@ serve(async (req) => {
       });
 
       if (!statusResponse.ok) {
-        throw new Error('Failed to check generation status');
+        const statusText = await statusResponse.text();
+        console.error('Status check failed:', statusText);
+        throw new Error(`Failed to check generation status: ${statusResponse.status}, response: ${statusText}`);
       }
 
       const statusData = await statusResponse.json();
-      console.log('Status check attempt', attempts + 1, ':', statusData.status);
+      console.log('Status check response:', JSON.stringify(statusData, null, 2));
 
       if (statusData.status === 'COMPLETED') {
         result = statusData;
         break;
       } else if (statusData.status === 'FAILED') {
-        throw new Error('Image generation failed');
+        throw new Error(`Image generation failed. Status data: ${JSON.stringify(statusData)}`);
       }
 
       attempts++;
@@ -81,7 +104,11 @@ serve(async (req) => {
     }
 
     if (!result) {
-      throw new Error('Image generation timed out');
+      throw new Error('Image generation timed out after 30 seconds');
+    }
+
+    if (!result.output?.image) {
+      throw new Error(`No image in output. Full result: ${JSON.stringify(result)}`);
     }
 
     console.log('Successfully generated image');
@@ -104,7 +131,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message 
+        error: error.message,
+        details: error.stack
       }),
       { 
         status: 500, 
