@@ -1,3 +1,4 @@
+// src/components/Landing.tsx
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -46,7 +47,7 @@ const Landing = ({ onStartClick }: LandingProps) => {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center">
+    <div className="h-screen w-screen flex items-center justify-center bg-[#333333]/10">
       <Button 
         onClick={handleClick}
         className="px-8 py-6 text-lg"
