@@ -1,6 +1,6 @@
+// src/components/layouts/AppOverlay.tsx
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { X } from 'lucide-react';
 
 interface AppOverlayProps {
   children: React.ReactNode;
@@ -9,10 +9,6 @@ interface AppOverlayProps {
 const AppOverlay = ({ children }: AppOverlayProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const handleClose = () => {
-    navigate('/home');
-  };
 
   // Determine which route we're on
   const isChatboxRoute = location.pathname === '/home/chatbox';
@@ -26,14 +22,6 @@ const AppOverlay = ({ children }: AppOverlayProps) => {
 
   return (
     <div className={`animate-fade-in rounded-lg border ${borderColorClass} overflow-hidden relative`}>
-      <div className="flex items-center justify-end p-4">
-        <button
-          onClick={handleClose}
-          className="text-aiMessage hover:text-white transition-colors"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
       <div className="p-4">
         {children}
       </div>
