@@ -1,11 +1,10 @@
+// src/features/auth/components/AuthModal.tsx
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { AuthHeader } from "./auth/AuthHeader";
 import { AuthForm } from "./auth/AuthForm";
 import { AuthFooter } from "./auth/AuthFooter";
 import { AUTH_CONFIG } from "@/config/auth";
-import { useNavigate } from "react-router-dom";
-import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -20,16 +19,16 @@ const AuthModal = ({
   onPasswordResetStart,
   onPasswordResetComplete,
   onClose,
-  onGuestLogin,
+  onGuestLogin
 }: AuthModalProps) => {
-  const navigate = useNavigate();
-  const { initGuestSession } = useGuestSession();
   const [isLogin, setIsLogin] = useState(true);
   const [showPasswordReset, setShowPasswordReset] = useState(false);
   const [resetStep, setResetStep] = useState<'email' | 'otp' | 'password'>('email');
 
+  // Keep dialog open during password reset
   const keepOpen = isOpen || showPasswordReset;
 
+  // Get the appropriate title based on current state
   const getDialogTitle = () => {
     if (showPasswordReset) {
       switch (resetStep) {
@@ -47,34 +46,39 @@ const AuthModal = ({
   };
 
   const handleBackToLogin = () => {
+    console.log('Back to login clicked');
     setShowPasswordReset(false);
     setResetStep('email');
     setIsLogin(true);
   };
 
   const handlePasswordResetStart = () => {
+    console.log('Password reset started');
     setShowPasswordReset(true);
     setResetStep('email');
     onPasswordResetStart?.();
   };
 
   const handlePasswordResetComplete = () => {
+    console.log('Password reset completed');
     setShowPasswordReset(false);
     setResetStep('email');
     onPasswordResetComplete?.();
   };
 
   const handleStepChange = (step: 'email' | 'otp' | 'password') => {
+    console.log('Step changed:', step);
     setResetStep(step);
     setShowPasswordReset(true);
   };
 
   const handleGuestLogin = () => {
-    initGuestSession();
-    navigate('/home', { replace: true });
+    console.log('Guest login clicked');
+    onGuestLogin?.();
   };
 
   const handleAuthToggle = () => {
+    console.log('AuthModal toggle handler called');
     setIsLogin(!isLogin);
     if (showPasswordReset) {
       setShowPasswordReset(false);
@@ -84,7 +88,7 @@ const AuthModal = ({
 
   return (
     <Dialog open={keepOpen} modal>
-      <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
+      <DialogContent className="sm:max-w-[425px] bg-white/90 text-black p-6">
         <DialogTitle className="sr-only">{getDialogTitle()}</DialogTitle>
         <div className="space-y-6">
           <AuthHeader 
