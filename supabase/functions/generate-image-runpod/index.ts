@@ -6,14 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-interface RunpodResponse {
-  id: string;
-  status: string;
-  output: {
-    image: string;
-  };
-}
-
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -39,12 +31,12 @@ serve(async (req) => {
       body: JSON.stringify({
         input: {
           prompt: prompt,
+          negative_prompt: "bad quality, worst quality, low quality, normal quality, lowres, low resolution, blurry, text, watermark, signature, error",
+          num_inference_steps: 30,
+          guidance_scale: 7.5,
           width: 512,
           height: 512,
-          num_outputs: 1,
-          num_inference_steps: 50,
-          guidance_scale: 7.5,
-          scheduler: "DDIM"
+          num_outputs: 1
         }
       })
     });
@@ -59,7 +51,7 @@ serve(async (req) => {
     console.log('Generation started with ID:', id);
 
     // Poll for the result
-    let result: RunpodResponse | null = null;
+    let result = null;
     let attempts = 0;
     const maxAttempts = 30; // 30 seconds timeout
 
