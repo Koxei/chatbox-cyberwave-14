@@ -1,8 +1,10 @@
+// src/pages/TerminalPage.tsx
 import { Terminal } from "@/components/Terminal/Terminal";
+import AppOverlay from "@/components/layouts/AppOverlay";
 
 const TerminalPage = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-deep-sea-blue">
+    <div className="flex items-center justify-center p-4">
       <Terminal />
     </div>
   );
