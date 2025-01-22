@@ -1,6 +1,8 @@
+// src/components/Terminal/Terminal.tsx
 import { useState, useRef, useEffect } from "react";
-import { Terminal as TerminalIcon } from "lucide-react";
+import { Terminal as TerminalIcon, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 interface TerminalLine {
   content: string;
@@ -8,6 +10,7 @@ interface TerminalLine {
 }
 
 export const Terminal = () => {
+  const navigate = useNavigate();
   const [lines, setLines] = useState<TerminalLine[]>([
     { content: "Welcome! Follow the instructions for more information below:" },
     { content: "- Press (Q) and 'Enter' for Social Links." },
@@ -16,6 +19,10 @@ export const Terminal = () => {
   const [input, setInput] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const terminalRef = useRef<HTMLDivElement>(null);
+
+  const handleClose = () => {
+    navigate('/home');
+  };
 
   useEffect(() => {
     if (terminalRef.current) {
@@ -67,9 +74,17 @@ export const Terminal = () => {
 
   return (
     <div className="w-full max-w-3xl mx-auto p-4 h-[80vh] flex flex-col bg-black/90 rounded-lg border border-cyan-500/30">
-      <div className="flex items-center gap-2 p-2 border-b border-cyan-500/30">
-        <TerminalIcon className="w-4 h-4 text-cyan-500" />
-        <span className="text-cyan-500 font-arcade text-sm">CYBERPUNK TERMINAL</span>
+      <div className="flex items-center justify-between p-2 border-b border-cyan-500/30">
+        <div className="flex items-center gap-2">
+          <TerminalIcon className="w-4 h-4 text-cyan-500" />
+          <span className="text-cyan-500 font-arcade text-sm">CYBERPUNK TERMINAL</span>
+        </div>
+        <button
+          onClick={handleClose}
+          className="text-cyan-500 hover:text-white transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
       </div>
       
       <div 
