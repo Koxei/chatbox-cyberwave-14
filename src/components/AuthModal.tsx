@@ -94,7 +94,7 @@ const AuthModal = ({
 
   return (
     <Dialog open={keepOpen} modal>
-      <DialogContent className="sm:max-w-[425px] bg-white text-black p-6">
+      <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm text-black p-6">
         <DialogTitle className="sr-only">{getDialogTitle()}</DialogTitle>
         <div className="space-y-6">
           <AuthHeader 
