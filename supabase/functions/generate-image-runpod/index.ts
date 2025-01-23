@@ -24,7 +24,7 @@ serve(async (req) => {
     console.log('Initiating RunPod request...');
 
     // First, send the request to generate the image
-    const response = await fetch('https://api.runpod.ai/v2/mc5goz5ibjjq6p/run', {
+    const response = await fetch('https://api.runpod.ai/v2/2vvk82526ipjyi/run', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -72,13 +72,13 @@ serve(async (req) => {
     // Poll for the result with increased timeout
     let result = null;
     let attempts = 0;
-    const maxAttempts = 120; // Increased to 120 seconds timeout
+    const maxAttempts = 120; // 120 seconds timeout
     const pollInterval = 1000; // 1 second between checks
 
     while (!result && attempts < maxAttempts) {
       console.log(`Checking status attempt ${attempts + 1}/${maxAttempts}...`);
       
-      const statusResponse = await fetch(`https://api.runpod.ai/v2/mc5goz5ibjjq6p/status/${id}`, {
+      const statusResponse = await fetch(`https://api.runpod.ai/v2/2vvk82526ipjyi/status/${id}`, {
         headers: {
           'Authorization': RUNPOD_API_KEY
         }
