@@ -18,6 +18,18 @@ serve(async (req) => {
     const { prompt } = await req.json();
     console.log('Received prompt:', prompt);
 
+    // First, check if the API is accessible
+    try {
+      const healthCheck = await fetch(`${SD_API_URL}/healthcheck`);
+      if (!healthCheck.ok) {
+        throw new Error(`API health check failed: ${healthCheck.status}`);
+      }
+      console.log('API health check passed');
+    } catch (error) {
+      console.error('API health check failed:', error);
+      throw new Error('Stable Diffusion API is not accessible');
+    }
+
     // Prepare the request body for Automatic1111 API
     const requestBody = {
       prompt: prompt,
@@ -27,23 +39,29 @@ serve(async (req) => {
       width: 512,
       height: 512,
       sampler_name: "DPM++ 2M Karras",
-      batch_size: 1
+      batch_size: 1,
+      n_iter: 1,
+      seed: -1,
+      enable_hr: false,
+      denoising_strength: 0.7,
+      restore_faces: true
     };
 
     console.log('Sending request to Stable Diffusion API:', JSON.stringify(requestBody));
 
-    // Make request to your Stable Diffusion instance
+    // Make request to Stable Diffusion instance
     const response = await fetch(`${SD_API_URL}/sdapi/v1/txt2img`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
       body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('Stable Diffusion API error:', errorText);
+      console.error('Stable Diffusion API error response:', errorText);
       throw new Error(`Stable Diffusion API error: ${response.status} - ${errorText}`);
     }
 
@@ -51,6 +69,7 @@ serve(async (req) => {
     console.log('Successfully received response from Stable Diffusion API');
 
     if (!data.images || data.images.length === 0) {
+      console.error('No images in response:', data);
       throw new Error('No images in response from Stable Diffusion API');
     }
 
