@@ -1,0 +1,31 @@
+build:
+  gpu: true
+  cuda: "11.8"
+  python_version: "3.11"
+  python_packages:
+    - "torch==2.1.2"
+    - "diffusers==0.24.0"
+    - "transformers==4.36.2"
+    - "accelerate==0.25.0"
+    - "safetensors==0.4.1"
+    - "xformers==0.0.23.post1"
+    - "huggingface-hub==0.19.4"
+    - "opencv-python-headless==4.8.1.78"
+    - "scipy==1.11.4"
+    - "ftfy==6.1.1"
+    - "numpy==1.26.2"
+    - "pillow==10.1.0"
+    - "tqdm==4.66.1"
+    - "omegaconf==2.3.0"  # Added this line
+  system_packages:
+    - "libgl1-mesa-glx"
+    - "libglib2.0-0"
+    - "wget"
+    - "git"
+  run:
+    - mkdir -p models
+    - mkdir -p lora
+    - cp aniverse_ponyXL.safetensors models/
+    - cp 748cmSDXL.safetensors lora/
+
+predict: "predict.py:Predictor"
