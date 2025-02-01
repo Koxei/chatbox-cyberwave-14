@@ -36,24 +36,26 @@ serve(async (req) => {
     }
 
     console.log("Starting image generation with prompt:", prompt)
-    const output = await replicate.run(
-      "koxei/aniverse-xl", // Updated model identifier
+    
+    // Create a prediction using the deployments API
+    let prediction = await replicate.deployments.predictions.create(
+      "koxei",  // owner
+      "test1",  // deployment name
       {
         input: {
           prompt: prompt,
-          negative_prompt: "bad quality, worst quality, low quality, normal quality, lowres, low resolution, blurry, text, watermark, signature, error",
-          num_inference_steps: 30,
-          guidance_scale: 7.5,
-          width: 512,
-          height: 512,
-          num_outputs: 1
+          negative_prompt: "bad quality, worst quality, low quality, normal quality, lowres, low resolution, blurry, text, watermark, signature, error"
         }
       }
     );
 
-    console.log("Generation completed:", output)
+    // Wait for the prediction to complete
+    console.log("Waiting for prediction to complete...");
+    prediction = await replicate.wait(prediction);
+    console.log("Prediction completed:", prediction);
+
     return new Response(
-      JSON.stringify({ output }),
+      JSON.stringify({ output: prediction.output }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
 
