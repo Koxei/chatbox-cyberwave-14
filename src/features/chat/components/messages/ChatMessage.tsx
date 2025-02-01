@@ -14,7 +14,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   return (
     <div className={cn(
-      "max-w-[70%] p-4 mb-4 relative z-[100]",
+      "max-w-[70%] inline-block mb-4 relative z-[100]",
       isAI ? "ml-0 mr-auto" : "ml-auto mr-0"
     )}>
       <div className={cn(
