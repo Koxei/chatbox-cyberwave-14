@@ -85,8 +85,8 @@ return (
 }
 
 return (
-  <>
-  {/* Chat container with relative positioning */}
+
+<>
   <div className="relative z-10">
     <div className="chat-container">
       <ChatHeader 
@@ -106,8 +106,9 @@ return (
       />
     </div>
   </div>
-  </>
-  );
+</>
+);
+
 };
 
 export default Home;
