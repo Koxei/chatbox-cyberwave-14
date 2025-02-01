@@ -40,6 +40,7 @@ serve(async (req) => {
 
     console.log("Starting image generation with prompt:", prompt)
     
+    // Create a prediction using the deployments API
     let prediction = await replicate.deployments.predictions.create(
       "koxei",  // owner
       "test1",  // deployment name
@@ -51,6 +52,7 @@ serve(async (req) => {
       }
     );
 
+    // Wait for the prediction to complete
     console.log("Waiting for prediction to complete...");
     prediction = await replicate.wait(prediction);
     console.log("Prediction completed:", prediction);
