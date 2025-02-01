@@ -15,11 +15,11 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   return (
 <div className={cn(
   "p-4 mb-4 relative z-[100] flex",
-  isAI ? "ml-0 mr-auto" : "ml-auto mr-0"
+  isAI ? "justify-start" : "justify-end" // Ensures AI messages are left and user messages are right
 )}>
   <div className={cn(
-    "flex items-start gap-2 p-4 rounded-lg border-2 bg-black bg-opacity-50 inline-block",
-    "max-w-[70%]", // Ensures max width is 70%
+    "flex items-start gap-2 p-4 rounded-lg border-2 bg-black bg-opacity-50",
+    "inline-block max-w-[70%]", // Dynamic width with max limit
     isAI ? "border-aiMessage text-aiMessage" : "border-userMessage text-userMessage"
   )}>
     <span className="font-arcade text-base flex-shrink-0">
@@ -50,6 +50,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     )}
   </div>
 </div>
+
 
   );
 };
