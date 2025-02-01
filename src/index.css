@@ -18,7 +18,7 @@
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  width: 0.3rem; /* Thin scrollbar */
+  width: 0.1rem; /* Thin scrollbar */
 }
 
 ::-webkit-scrollbar-track {
@@ -27,7 +27,7 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.3); /* Black with 30% opacity */
-  border-radius: 0.25rem; /* Soft rounded edges */
+  border-radius: 0.75rem; /* Soft rounded edges */
 }
 
 ::-webkit-scrollbar-button {
