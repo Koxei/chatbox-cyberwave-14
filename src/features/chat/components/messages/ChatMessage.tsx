@@ -26,7 +26,7 @@ return (
 
 <div className={cn(
   "p-4 mb-4 relative z-[100] flex",
-  isAI ? "justify-start" : "justify-end" // Ensures AI messages are left and user messages are right
+  isAI ? "justify-start" : "justify-end" // Ensures AI messages are left and user messages are rights
 )}>
   <div className={cn(
     "flex items-start gap-2 p-4 rounded-lg border-2 bg-black bg-opacity-50",
