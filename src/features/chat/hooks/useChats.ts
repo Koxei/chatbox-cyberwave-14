@@ -39,17 +39,50 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
       if (chatsError) throw chatsError;
 
-      setChats(chatsData || []);
-      if (chatsData && chatsData.length > 0) {
-        setCurrentChat(chatsData[0]);
-        await loadMessages(chatsData[0].id);
+      // If no chats exist, create a new one
+      if (!chatsData || chatsData.length === 0) {
+        const newChat = await createNewChat();
+        if (newChat) {
+          setChats([newChat]);
+          setCurrentChat(newChat);
+          setMessages([]);
+        }
+        return;
       }
+
+      // Otherwise load existing chats
+      setChats(chatsData);
+      setCurrentChat(chatsData[0]);
+      await loadMessages(chatsData[0].id);
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to load chats. Please try again.",
         variant: "destructive",
       });
+    }
+  };
+
+  const createNewChat = async () => {
+    if (isGuest || !userId) return null;
+
+    try {
+      const { data: newChat, error: createError } = await supabase
+        .from('chats')
+        .insert([{ user_id: userId }])
+        .select()
+        .single();
+
+      if (createError) throw createError;
+
+      return newChat;
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create new chat. Please try again.",
+        variant: "destructive",
+      });
+      return null;
     }
   };
 
@@ -65,7 +98,6 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
       if (messagesError) throw messagesError;
       
-      // Ensure each message has the correct type
       const typedMessages: Message[] = (messagesData || []).map(msg => ({
         ...msg,
         type: (msg.type === 'image' ? 'image' : 'text') as 'text' | 'image'
@@ -89,7 +121,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
     messages,
     setMessages,
     loadChats,
-    createNewChat: undefined,
+    createNewChat,
     handleChatSelect: isGuest ? undefined : loadMessages
   };
 };
