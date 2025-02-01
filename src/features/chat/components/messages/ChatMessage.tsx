@@ -18,7 +18,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       isAI ? "ml-0 mr-auto" : "ml-auto mr-0"
     )}>
       <div className={cn(
-        "flex items-start gap-2 p-4 rounded-lg border-2 bg-black bg-opacity-50 w-fit",
+        "flex items-start gap-2 p-4 rounded-lg border-2 bg-black bg-opacity-50",
         isAI ? "border-aiMessage text-aiMessage" : "border-userMessage text-userMessage"
       )}>
         <span className="font-arcade text-base flex-shrink-0">
