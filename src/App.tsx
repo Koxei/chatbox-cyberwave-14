@@ -8,7 +8,6 @@ import Landing from "@/components/Landing";
 import ChatboxPage from "@/pages/ChatboxPage";
 import NewHome from "@/pages/NewHome";
 import Login from "@/pages/Login";
-import SharedLayout from "@/components/layouts/SharedLayout";
 import NewHomeLayout from "@/components/layouts/NewHomeLayout";
 import TerminalPage from "@/pages/TerminalPage";
 import AppOverlay from "@/components/layouts/AppOverlay";
@@ -29,10 +28,6 @@ const App = () => (
               <Route index element={<NewHome />} />
               <Route path="chatbox" element={<AppOverlay><ChatboxPage /></AppOverlay>} />
               <Route path="terminal" element={<AppOverlay><TerminalPage /></AppOverlay>} />
-            </Route>
-            <Route element={<SharedLayout />}>
-              <Route path="/chatbox" element={<ChatboxPage />} />
-              <Route path="/terminal" element={<TerminalPage />} />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
