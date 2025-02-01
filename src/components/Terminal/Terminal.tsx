@@ -73,7 +73,7 @@ export const Terminal = () => {
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 h-[80vh] flex flex-col bg-black/90 rounded-lg border border-cyan-500/30">
+    <div className="w-full max-w-3xl mx-auto p-4 h-[80vh] flex flex-col rounded-lg border border-cyan-500/30">
       <div className="flex items-center justify-between p-2 border-b border-cyan-500/30">
         <div className="flex items-center gap-2">
           <TerminalIcon className="w-4 h-4 text-cyan-500" />
