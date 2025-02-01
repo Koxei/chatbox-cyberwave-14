@@ -1,18 +1,29 @@
-import React from "react";
+mport React from "react";
+
 import { cn } from "@/lib/utils";
 
 interface ChatMessageProps {
-  isAI?: boolean;
-  message: string;
-  type?: 'text' | 'image';
+
+isAI?: boolean;
+
+message: string;
+
+type?: 'text' | 'image';
+
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ 
-  isAI = false, 
-  message, 
-  type = 'text'
+const ChatMessage: React.FC<ChatMessageProps> = ({
+
+isAI = false,
+
+message,
+
+type = 'text'
+
 }) => {
-  return (
+
+return (
+
 <div className={cn(
   "p-4 mb-4 relative z-[100] flex",
   isAI ? "justify-start" : "justify-end" // Ensures AI messages are left and user messages are right
@@ -33,7 +44,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         />
       ) : ">"}
     </span>
-    
     {type === 'image' ? (
       <div className="flex-1">
         <img 
@@ -50,9 +60,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
     )}
   </div>
 </div>
+);
 
-
-  );
 };
 
 export default ChatMessage;
