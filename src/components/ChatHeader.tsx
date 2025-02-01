@@ -73,40 +73,38 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
         >
           <X className="h-5 w-5" />
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <span className="sr-only">Open menu</span>
-              •••
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
-            {isAuthenticated && (
-              <>
-                <DropdownMenuItem>
-                  <History className="mr-2 h-4 w-4" />
-                  <span>History</span>
-                  <DropdownMenu>
-                    <DropdownMenuContent>
-                      {chats.map((chat) => (
-                        <DropdownMenuItem
-                          key={chat.id}
-                          onClick={() => onChatSelect(chat)}
-                        >
-                          {chat.title}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {isAuthenticated && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <span className="sr-only">Open menu</span>
+                •••
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuItem>
+                <History className="mr-2 h-4 w-4" />
+                <span>History</span>
+                <DropdownMenu>
+                  <DropdownMenuContent>
+                    {chats.map((chat) => (
+                      <DropdownMenuItem
+                        key={chat.id}
+                        onClick={() => onChatSelect(chat)}
+                      >
+                        {chat.title}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );
