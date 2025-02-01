@@ -67,12 +67,23 @@ export const useMessageHandler = (
         regexMatch: userMessage.match(imageCommandRegex)
       });
 
+      // Check if this is an image request from a guest user
+      if (isImageRequest && isGuestChat) {
+        toast({
+          title: "Feature not available",
+          description: "Please log in to use image generation.",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const savedMessage = await submitMessage(userMessage);
       if (!savedMessage) {
         throw new Error('Failed to save message');
       }
 
-      if (isImageRequest) {
+      if (isImageRequest && !isGuestChat) {
         const prompt = userMessage.replace(imageCommandRegex, '').trim();
         
         console.log('Image generation request:', {
