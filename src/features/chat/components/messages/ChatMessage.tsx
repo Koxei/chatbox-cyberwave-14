@@ -13,9 +13,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   type = 'text'
 }) => {
   return (
-    <div className="w-full p-4 mb-4 relative z-[100] bg-black bg-opacity-50">
+    <div className={cn(
+      "max-w-[70%] p-4 mb-4 relative z-[100]",
+      isAI ? "ml-0 mr-auto" : "ml-auto mr-0"
+    )}>
       <div className={cn(
-        "flex items-start gap-2 p-4 rounded-lg border-2",
+        "flex items-start gap-2 p-4 rounded-lg border-2 bg-black bg-opacity-50",
         isAI ? "border-aiMessage text-aiMessage" : "border-userMessage text-userMessage"
       )}>
         <span className="font-arcade text-base flex-shrink-0">
