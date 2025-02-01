@@ -12,13 +12,13 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    backdrop-filter: blur(16px);
+    backdrop-filter: blur(1rem);
   }
 }
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px; /* Thin scrollbar */
+  width: 0.3rem; /* Thin scrollbar */
 }
 
 ::-webkit-scrollbar-track {
@@ -27,13 +27,13 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.3); /* Black with 30% opacity */
-  border-radius: 4px; /* Soft rounded edges */
+  border-radius: 0.25rem; /* Soft rounded edges */
 }
 
 ::-webkit-scrollbar-button {
   background-color: rgba(0, 0, 0, 0.3); /* Match thumb style */
-  border-radius: 4px;
-  height: 4px; /* Small buttons */
+  border-radius: 0.25rem;
+  height: 0.25rem; /* Small buttons */
 }
 
 /* Firefox scrollbar styling */
@@ -44,7 +44,7 @@
 
 .chat-container {
   @apply w-full max-w-3xl mx-auto flex flex-col;
-  max-width: 1000px;
+  max-width: 62.5rem;
   height: 90vh;
   position: relative;
   background: transparent;
@@ -53,8 +53,8 @@
 
 .message {
   @apply w-full p-4 mb-4 relative z-30;
-  border-radius: 8px;
-  border-width: 2px;
+  border-radius: 0.5rem;
+  border-width: 0.125rem;
 }
 
 .message-ai {
