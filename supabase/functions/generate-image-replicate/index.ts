@@ -37,7 +37,7 @@ serve(async (req) => {
 
     console.log("Starting image generation with prompt:", prompt)
     const output = await replicate.run(
-      "ciekawe320/aniverse-pony-xl", // Your model's identifier
+      "koxei/aniverse-xl", // Updated model identifier
       {
         input: {
           prompt: prompt,
