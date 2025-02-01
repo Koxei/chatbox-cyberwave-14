@@ -30,7 +30,7 @@ return (
 )}>
   <div className={cn(
     "flex items-start gap-2 p-4 rounded-lg border-2 bg-black bg-opacity-50",
-    "inline-block max-w-[70%]", // Dynamic width with max limits
+    "inline-block max-w-[70%]", // Dynamic width with max limitsd
     isAI ? "border-aiMessage text-aiMessage" : "border-userMessage text-userMessage"
   )}>
     <span className="font-arcade text-base flex-shrink-0">
