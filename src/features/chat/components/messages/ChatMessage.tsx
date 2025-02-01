@@ -4,13 +4,13 @@ import { cn } from "@/lib/utils";
 interface ChatMessageProps {
   isAI?: boolean;
   message: string;
-  type?: 'text' | 'image';  // Added type prop
+  type?: 'text' | 'image';
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ 
   isAI = false, 
   message, 
-  type = 'text'  // Default to text type
+  type = 'text'
 }) => {
   return (
     <div className="w-full p-4 mb-4 relative z-[100] bg-black bg-opacity-50">
@@ -30,7 +30,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           ) : ">"}
         </span>
         
-        {/* Added conditional rendering based on message type */}
         {type === 'image' ? (
           <div className="flex-1">
             <img 

@@ -77,7 +77,7 @@ export const useMessageHandler = (
         
         console.log('Image generation request:', {
           prompt,
-          useRunpod: true
+          useReplicate: true
         });
 
         if (!prompt) {
@@ -90,18 +90,19 @@ export const useMessageHandler = (
         }
 
         const { data: imageData, error: imageError } = await supabase.functions
-          .invoke('generate-image-runpod', {
+          .invoke('generate-image-replicate', {
             body: { prompt }
           });
 
-        console.log('Runpod image generation response:', imageData);
+        console.log('Replicate image generation response:', imageData);
         
         if (imageError) {
           console.error('Image generation error:', imageError);
           throw imageError;
         }
 
-        const savedAiMessage = await submitMessage(imageData.image, 'image');
+        const imageUrl = Array.isArray(imageData.output) ? imageData.output[0] : imageData.output;
+        const savedAiMessage = await submitMessage(imageUrl, 'image');
         if (!savedAiMessage) {
           throw new Error('Failed to save AI image message');
         }
@@ -131,7 +132,7 @@ export const useMessageHandler = (
             throw new Error('Failed to get AI response');
           }
 
-          const data: AIResponse = await response.json();
+          const data = await response.json();
           const aiResponse = data.choices[0].message.content;
 
           setMessages(prev => [...prev, {
