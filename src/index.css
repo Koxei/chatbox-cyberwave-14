@@ -24,6 +24,7 @@
   height: 90vh;
   position: relative;
   background: transparent;
+  overflow: hidden; /* Prevent outer scrolling */
 }
 
 .message {
