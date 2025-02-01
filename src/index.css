@@ -16,7 +16,31 @@
   }
 }
 
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px; /* Thin scrollbar */
+}
 
+::-webkit-scrollbar-track {
+  background: transparent; /* Transparent track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3); /* Black with 30% opacity */
+  border-radius: 4px; /* Soft rounded edges */
+}
+
+::-webkit-scrollbar-button {
+  background-color: rgba(0, 0, 0, 0.3); /* Match thumb style */
+  border-radius: 4px;
+  height: 4px; /* Small buttons */
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
 
 .chat-container {
   @apply w-full max-w-3xl mx-auto flex flex-col;
