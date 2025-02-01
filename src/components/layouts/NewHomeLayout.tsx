@@ -18,7 +18,7 @@ return (
   {/* Background image with proper opacity and transition */}
   <div 
     className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${
-      isAppOpen ? 'blur-xl brightness-50' : ''
+      isAppOpen ? 'blur brightness-50' : ''
     }`}
     style={{ backgroundImage: "url('/lovable-uploads/73e97728-d0f0-4a4f-8e49-34667bc28380.png')" }}
   />
