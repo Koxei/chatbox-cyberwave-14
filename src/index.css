@@ -18,7 +18,7 @@
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  width: 0.1rem; /* Thin scrollbar */
+  width: 2px; /* Thin scrollbar */
 }
 
 ::-webkit-scrollbar-track {
