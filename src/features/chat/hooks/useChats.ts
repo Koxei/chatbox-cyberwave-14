@@ -113,6 +113,17 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
     }
   };
 
+  const handleChatSelect = async (chatId: string) => {
+    if (isGuest) return;
+    
+    // Find the selected chat from the chats array
+    const selectedChat = chats.find(chat => chat.id === chatId);
+    if (selectedChat) {
+      setCurrentChat(selectedChat);
+      await loadMessages(chatId);
+    }
+  };
+
   return {
     chats,
     setChats,
@@ -122,6 +133,6 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
     setMessages,
     loadChats,
     createNewChat,
-    handleChatSelect: isGuest ? undefined : loadMessages
+    handleChatSelect
   };
 };
