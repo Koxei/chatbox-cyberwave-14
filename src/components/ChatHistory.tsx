@@ -10,12 +10,12 @@ interface ChatHistoryProps {
 const ChatHistory = ({ chats, onChatSelect }: ChatHistoryProps) => {
   return (
     <ScrollArea className="h-[80vh]">
-      <div className="space-y-4 p-4">
+      <div className="space-y-4">
         {chats.map((chat) => (
           <div
             key={chat.id}
             onClick={() => onChatSelect(chat)}
-            className="p-4 rounded-lg backdrop-blur-[2px] hover:bg-black/10 transition-colors cursor-pointer"
+            className="rounded-lg backdrop-blur-[2px] hover:bg-black/10 transition-colors cursor-pointer text-left"
           >
             <h3 className="text-aiMessage font-arcade text-sm truncate">
               {chat.title}
