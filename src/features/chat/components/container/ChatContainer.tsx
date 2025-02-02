@@ -10,6 +10,7 @@ interface ChatContainerProps {
   onSubmit: (e: React.FormEvent) => Promise<void>;
   inputMessage: string;
   setInputMessage: (message: string) => void;
+  isAuthenticated?: boolean;
 }
 
 const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -19,10 +20,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   onSubmit,
   inputMessage,
   setInputMessage,
+  isAuthenticated = true,
 }) => {
   return (
     <div className="relative z-30 flex flex-col h-full">
-      <div className="flex flex-col h-full max-w-3xl mx-auto w-full border-2 border-red-500">
+      <div className={`flex flex-col h-full max-w-3xl mx-auto w-full border-2 ${isAuthenticated ? 'border-red-500' : 'border-yellow-400'}`}>
         <main className="flex-1 overflow-y-auto px-4 pb-4">
           <ChatMessages 
             messages={messages} 

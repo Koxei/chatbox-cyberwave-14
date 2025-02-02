@@ -37,6 +37,7 @@ const GuestChatbox = ({
             onSubmit={onSubmit}
             inputMessage={inputMessage}
             setInputMessage={setInputMessage}
+            isAuthenticated={false}
           />
         </div>
       </div>

@@ -43,6 +43,7 @@ const AuthenticatedChatbox = ({
             onSubmit={onSubmit}
             inputMessage={inputMessage}
             setInputMessage={setInputMessage}
+            isAuthenticated={true}
           />
         </div>
       </div>
