@@ -83,13 +83,7 @@ const Home = () => {
     <>
       <div className="relative z-10">
         <div className="chat-container">
-          <ChatHeader 
-            currentChat={currentChat}
-            chats={chats}
-            onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
-            onNewChat={handleNewChat}
-            isAuthenticated={isAuthenticated}
-          />
+          <ChatHeader />
           <ChatContainer
             currentChat={currentChat}
             messages={messages}

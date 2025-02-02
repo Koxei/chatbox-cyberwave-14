@@ -1,12 +1,24 @@
-// src/components/layouts/AppOverlay.tsx
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import ChatControls from '../ChatControls';
 
 interface AppOverlayProps {
   children: React.ReactNode;
+  currentChat?: any;
+  chats?: any[];
+  onChatSelect?: (chat: any) => void;
+  onNewChat?: () => void;
+  isAuthenticated?: boolean;
 }
 
-const AppOverlay = ({ children }: AppOverlayProps) => {
+const AppOverlay = ({ 
+  children, 
+  currentChat, 
+  chats = [], 
+  onChatSelect = () => {}, 
+  onNewChat = () => {}, 
+  isAuthenticated = false 
+}: AppOverlayProps) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -22,6 +34,15 @@ const AppOverlay = ({ children }: AppOverlayProps) => {
 
   return (
     <div className={`animate-fade-in rounded-lg border ${borderColorClass} overflow-hidden relative`}>
+      {isChatboxRoute && (
+        <ChatControls
+          currentChat={currentChat}
+          chats={chats}
+          onChatSelect={onChatSelect}
+          onNewChat={onNewChat}
+          isAuthenticated={isAuthenticated}
+        />
+      )}
       <div className="p-4">
         {children}
       </div>
