@@ -33,8 +33,9 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   };
 
   const loadChats = async () => {
-    // Early return for guest users to prevent database queries
+    // Skip ALL database operations for guest users
     if (isGuest) {
+      initializeGuestChat();
       return;
     }
     
