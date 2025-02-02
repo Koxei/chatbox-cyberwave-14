@@ -1,166 +1,138 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Chat, Message } from "@/types/chat";
+import { Chat } from "@/types/chat";
+import { toast } from "@/hooks/use-toast";
 
 export const useChats = (userId: string | null, isGuest: boolean) => {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const { toast } = useToast();
+  const [messages, setMessages] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (isGuest) {
-      initializeGuestChat();
-    } else if (userId) {
-      loadChats();
+  const loadChats = useCallback(async () => {
+    try {
+      // For guest users, we'll use local storage instead of database
+      if (isGuest) {
+        const guestChatStr = localStorage.getItem('guest_chat');
+        if (guestChatStr) {
+          const guestChat = JSON.parse(guestChatStr);
+          setChats([guestChat]);
+          setCurrentChat(guestChat);
+        }
+        setIsLoading(false);
+        return;
+      }
+
+      // Only proceed with database query for authenticated users
+      if (!userId || userId.startsWith('guest_')) {
+        setIsLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("chats")
+        .select("*")
+        .eq("user_id", userId)
+        .order("updated_at", { ascending: false });
+
+      if (error) {
+        console.error("Error loading chats:", error);
+        throw error;
+      }
+
+      setChats(data || []);
+      if (data && data.length > 0) {
+        setCurrentChat(data[0]);
+      }
+    } catch (error: any) {
+      console.error("Error loading chats:", error);
+      toast({
+        title: "Error loading chats",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   }, [userId, isGuest]);
 
-  const initializeGuestChat = () => {
-    const timestamp = new Date().toISOString();
-    const guestChat: Chat = {
-      id: 'guest-chat',
-      title: 'Guest Chat',
-      user_id: 'guest',
-      created_at: timestamp,
-      updated_at: timestamp,
-      is_guest: true
-    };
-    setChats([guestChat]);
-    setCurrentChat(guestChat);
-    setMessages([]);
-  };
-
-  const loadChats = async () => {
-    // Skip ALL database operations for guest users
-    if (isGuest) {
-      initializeGuestChat();
-      return;
-    }
-    
-    // Only proceed with database operations for authenticated users with valid UUID
-    if (!userId) {
-      return;
-    }
-
-    try {
-      const { data: chatsData, error: chatsError } = await supabase
-        .from('chats')
-        .select('*')
-        .eq('user_id', userId)
-        .order('updated_at', { ascending: false });
-
-      if (chatsError) {
-        console.error('Error loading chats:', chatsError);
-        toast({
-          title: "Error",
-          description: "Failed to load chats. Please try again.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!chatsData || chatsData.length === 0) {
-        const newChat = await createNewChat();
-        if (newChat) {
-          setChats([newChat]);
-          setCurrentChat(newChat);
-          setMessages([]);
-        }
-        return;
-      }
-
-      setChats(chatsData);
-      setCurrentChat(chatsData[0]);
-      await loadMessages(chatsData[0].id);
-    } catch (error) {
-      console.error('Error in loadChats:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load chats. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
   const createNewChat = async () => {
-    if (isGuest || !userId) return null;
-
     try {
-      const { data: newChat, error: createError } = await supabase
-        .from('chats')
+      if (isGuest) {
+        const newGuestChat = {
+          id: `chat_${Date.now()}`,
+          title: 'Guest Chat',
+          messages: [],
+          isGuest: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        localStorage.setItem('guest_chat', JSON.stringify(newGuestChat));
+        setChats([newGuestChat]);
+        return newGuestChat;
+      }
+
+      if (!userId || userId.startsWith('guest_')) return null;
+
+      const { data, error } = await supabase
+        .from("chats")
         .insert([{ user_id: userId }])
         .select()
         .single();
 
-      if (createError) {
-        console.error('Error creating new chat:', createError);
-        toast({
-          title: "Error",
-          description: "Failed to create new chat. Please try again.",
-          variant: "destructive",
-        });
-        return null;
-      }
+      if (error) throw error;
 
-      return newChat;
-    } catch (error) {
-      console.error('Error in createNewChat:', error);
+      setChats((prevChats) => [data, ...prevChats]);
+      return data;
+    } catch (error: any) {
+      console.error("Error creating new chat:", error);
       toast({
-        title: "Error",
-        description: "Failed to create new chat. Please try again.",
+        title: "Error creating new chat",
+        description: error.message,
         variant: "destructive",
       });
       return null;
     }
   };
 
-  const loadMessages = async (chatId: string) => {
-    if (isGuest) return;
-
+  const handleChatSelect = async (chatId: string) => {
     try {
-      const { data: messagesData, error: messagesError } = await supabase
-        .from('messages')
-        .select('*')
-        .eq('chat_id', chatId)
-        .order('created_at', { ascending: true });
-
-      if (messagesError) {
-        console.error('Error loading messages:', messagesError);
-        toast({
-          title: "Error",
-          description: "Failed to load messages. Please try again.",
-          variant: "destructive",
-        });
+      if (isGuest) {
+        const guestChatStr = localStorage.getItem('guest_chat');
+        if (guestChatStr) {
+          const guestChat = JSON.parse(guestChatStr);
+          setCurrentChat(guestChat);
+          setMessages(guestChat.messages || []);
+        }
         return;
       }
-      
-      const typedMessages: Message[] = (messagesData || []).map(msg => ({
-        ...msg,
-        type: (msg.type === 'image' ? 'image' : 'text') as 'text' | 'image'
-      }));
-      
-      setMessages(typedMessages);
-    } catch (error) {
-      console.error('Error in loadMessages:', error);
+
+      const selectedChat = chats.find((chat) => chat.id === chatId);
+      if (selectedChat) {
+        setCurrentChat(selectedChat);
+        // Load messages for the selected chat
+        const { data: messages, error } = await supabase
+          .from("messages")
+          .select("*")
+          .eq("chat_id", chatId)
+          .order("created_at", { ascending: true });
+
+        if (error) throw error;
+        setMessages(messages || []);
+      }
+    } catch (error: any) {
+      console.error("Error selecting chat:", error);
       toast({
-        title: "Error",
-        description: "Failed to load messages. Please try again.",
+        title: "Error selecting chat",
+        description: error.message,
         variant: "destructive",
       });
     }
   };
 
-  const handleChatSelect = async (chatId: string) => {
-    if (isGuest) return;
-    
-    const selectedChat = chats.find(chat => chat.id === chatId);
-    if (selectedChat) {
-      setCurrentChat(selectedChat);
-      await loadMessages(chatId);
-    }
-  };
+  useEffect(() => {
+    loadChats();
+  }, [loadChats]);
 
   return {
     chats,
@@ -169,8 +141,9 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
     setCurrentChat,
     messages,
     setMessages,
+    isLoading,
     loadChats,
     createNewChat,
-    handleChatSelect
+    handleChatSelect,
   };
 };
