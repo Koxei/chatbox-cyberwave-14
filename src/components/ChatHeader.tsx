@@ -99,42 +99,49 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
         >
           <X className="h-5 w-5" />
         </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <span className="sr-only">Open menu</span>
-              •••
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
-            {isAuthenticated && (
-              <>
-                <DropdownMenuItem onClick={onNewChat}>
-                  <MessageCirclePlus className="mr-2 h-4 w-4" />
-                  <span>New Chat</span>
-                </DropdownMenuItem>
-                <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-                  <SheetTrigger asChild>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                      <History className="mr-2 h-4 w-4" />
-                      <span>History</span>
-                    </DropdownMenuItem>
-                  </SheetTrigger>
-                  <SheetContent>
-                    <SheetHeader>
-                      <SheetTitle className="text-aiMessage font-arcade px-4 mt-5">Chat History</SheetTitle>
-                    </SheetHeader>
-                    <ChatHistory chats={chats} onChatSelect={handleChatSelect} />
-                  </SheetContent>
-                </Sheet>
-              </>
-            )}
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <span className="sr-only">Open menu</span>
+                •••
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuItem onClick={onNewChat}>
+                <MessageCirclePlus className="mr-2 h-4 w-4" />
+                <span>New Chat</span>
+              </DropdownMenuItem>
+              <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+                <SheetTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <History className="mr-2 h-4 w-4" />
+                    <span>History</span>
+                  </DropdownMenuItem>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle className="text-aiMessage font-arcade px-4 mt-5">Chat History</SheetTitle>
+                  </SheetHeader>
+                  <ChatHistory chats={chats} onChatSelect={handleChatSelect} />
+                </SheetContent>
+              </Sheet>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleLogout}
+            className="text-userMessage hover:text-white transition-colors"
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
+        )}
       </div>
     </div>
   );
