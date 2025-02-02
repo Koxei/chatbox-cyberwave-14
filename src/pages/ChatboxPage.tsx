@@ -79,7 +79,7 @@ const ChatboxPage = () => {
   }
 
   return (
-    <>
+    <div className="relative w-full h-full">
       <ChatControls
         currentChat={currentChat}
         chats={chats}
@@ -100,7 +100,7 @@ const ChatboxPage = () => {
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
