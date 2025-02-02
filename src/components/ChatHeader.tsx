@@ -1,3 +1,13 @@
+import { Chat } from "@/types/chat";
+
+interface ChatHeaderProps {
+  currentChat: Chat | null;
+  chats: Chat[];
+  onChatSelect: (chat: Chat) => void;
+  onNewChat: () => void;
+  isAuthenticated: boolean;
+}
+
 const ChatHeader = () => {
   return (
     <div className="flex justify-between items-center p-4">
