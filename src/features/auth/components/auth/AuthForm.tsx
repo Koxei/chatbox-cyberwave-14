@@ -75,11 +75,12 @@ export const AuthForm = ({
     }
   };
 
-  const handleGuestLogin = (e: React.MouseEvent) => {
+  const handleGuestLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (onGuestLogin) {
-      onGuestLogin();
-      navigate('/home', { replace: true });
+      onGuestLogin(); // Call the guest login handler first
+      await new Promise(resolve => setTimeout(resolve, 0)); // Allow state updates to process
+      navigate('/home', { replace: true }); // Navigate after state updates
     }
   };
 
