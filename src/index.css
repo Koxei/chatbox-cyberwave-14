@@ -44,7 +44,7 @@
 
 .chat-container {
   @apply w-full mx-auto flex flex-col;
-  max-width: 62.5rem;
+  max-width: 80rem;
   height: 90vh;
   position: relative;
   background: transparent;
