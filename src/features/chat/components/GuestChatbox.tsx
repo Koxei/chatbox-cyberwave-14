@@ -8,7 +8,7 @@ interface GuestChatboxProps {
   isLoading: boolean;
   inputMessage: string;
   setInputMessage: (message: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent) => Promise<void>;
 }
 
 const GuestChatbox = ({

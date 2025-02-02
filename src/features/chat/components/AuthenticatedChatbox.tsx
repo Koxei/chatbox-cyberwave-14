@@ -9,7 +9,7 @@ interface AuthenticatedChatboxProps {
   isLoading: boolean;
   inputMessage: string;
   setInputMessage: (message: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: React.FormEvent) => Promise<void>;
   onChatSelect: (chat: Chat) => void;
   onNewChat: () => void;
 }
