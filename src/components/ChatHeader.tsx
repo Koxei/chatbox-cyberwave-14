@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { History, LogOut, Plus, X } from "lucide-react";
+import { History, LogOut, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Chat } from "@/types/chat";
@@ -60,16 +60,6 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
     <div className="flex justify-between items-center p-4">
       <div className="flex items-center gap-2 flex-1 justify-center">
         <h1 className="text-xl font-bold">Chat</h1>
-        {isAuthenticated && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onNewChat}
-            className="text-userMessage"
-          >
-            <Plus className="h-5 w-5" />
-          </Button>
-        )}
       </div>
       <div className="flex items-center gap-2">
         <Button
