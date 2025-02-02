@@ -7,7 +7,7 @@ import { useMessageHandler } from "@/features/chat/hooks/useMessageHandler";
 import AuthenticatedChatbox from "@/features/chat/components/AuthenticatedChatbox";
 import GuestChatbox from "@/features/chat/components/GuestChatbox";
 import { Chat } from "@/types/chat";
-//s
+
 const ChatboxPage = () => {
   const {
     isAuthenticated,
@@ -101,6 +101,6 @@ const ChatboxPage = () => {
     />
   );
   
-  
+};
 
 export default ChatboxPage;
