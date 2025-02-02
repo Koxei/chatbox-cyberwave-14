@@ -59,13 +59,13 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   const createNewChat = async () => {
     try {
       if (isGuest) {
-        const newGuestChat = {
+        const newGuestChat: Chat = {
           id: `chat_${Date.now()}`,
           title: 'Guest Chat',
-          messages: [],
-          isGuest: true,
+          user_id: `guest_${Date.now()}`,
+          is_guest: true,
           created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         };
         localStorage.setItem('guest_chat', JSON.stringify(newGuestChat));
         setChats([newGuestChat]);
