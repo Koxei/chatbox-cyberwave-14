@@ -54,7 +54,7 @@ const Landing = ({ onStartClick }: LandingProps) => {
   if (isChecking) return null;
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[#333333] relative overflow-hidden">
+    <div className="h-screen w-screen flex items-center justify-center bg-[#000000] relative overflow-hidden">
       <video
         ref={videoRef}
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
