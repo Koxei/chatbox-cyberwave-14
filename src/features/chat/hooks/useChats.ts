@@ -39,6 +39,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
       if (chatsError) throw chatsError;
 
+      // If no chats exist, create a new one
       if (!chatsData || chatsData.length === 0) {
         const newChat = await createNewChat();
         if (newChat) {
@@ -49,6 +50,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         return;
       }
 
+      // Otherwise load existing chats
       setChats(chatsData);
       setCurrentChat(chatsData[0]);
       await loadMessages(chatsData[0].id);
@@ -111,10 +113,15 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
     }
   };
 
-  const handleChatSelect = async (chat: Chat) => {
+  const handleChatSelect = async (chatId: string) => {
     if (isGuest) return;
-    setCurrentChat(chat);
-    await loadMessages(chat.id);
+    
+    // Find the selected chat from the chats array
+    const selectedChat = chats.find(chat => chat.id === chatId);
+    if (selectedChat) {
+      setCurrentChat(selectedChat);
+      await loadMessages(chatId);
+    }
   };
 
   return {

@@ -2,13 +2,13 @@ import { useState } from "react";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatHeader from "@/components/ChatHeader";
 import ChatContainer from "@/features/chat/components/container/ChatContainer";
-import ChatControls from "@/components/ChatControls";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useChats } from "@/features/chat/hooks/useChats";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import { useMessageHandler } from "@/features/chat/hooks/useMessageHandler";
+import { Chat } from "@/types/chat";
 
-const ChatboxPage = () => {
+const Home = () => {
   const {
     isAuthenticated,
     showAuthModal,
@@ -18,7 +18,7 @@ const ChatboxPage = () => {
     userId
   } = useAuth();
 
-  const { isGuest, initGuestSession } = useGuestSession();
+  const { isGuest, guestId, initGuestSession, clearGuestSession } = useGuestSession();
 
   const {
     chats,
@@ -27,6 +27,7 @@ const ChatboxPage = () => {
     setCurrentChat,
     messages,
     setMessages,
+    loadChats,
     createNewChat,
     handleChatSelect
   } = useChats(userId, isGuest);
@@ -79,17 +80,16 @@ const ChatboxPage = () => {
   }
 
   return (
-    <div className="relative w-full h-full">
-      <ChatControls
-        currentChat={currentChat}
-        chats={chats}
-        onChatSelect={handleChatSelect}
-        onNewChat={handleNewChat}
-        isAuthenticated={isAuthenticated}
-      />
+    <>
       <div className="relative z-10">
         <div className="chat-container">
-          <ChatHeader />
+          <ChatHeader 
+            currentChat={currentChat}
+            chats={chats}
+            onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
+            onNewChat={handleNewChat}
+            isAuthenticated={isAuthenticated}
+          />
           <ChatContainer
             currentChat={currentChat}
             messages={messages}
@@ -100,8 +100,8 @@ const ChatboxPage = () => {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
-export default ChatboxPage;
+export default Home;
