@@ -18,12 +18,13 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   }, [userId, isGuest]);
 
   const initializeGuestChat = () => {
+    const timestamp = new Date().toISOString();
     const guestChat: Chat = {
-      id: `chat_guest_${Date.now()}`,
+      id: `guest_chat_${Date.now()}`,
       title: 'Guest Chat',
-      user_id: `guest_${Date.now()}`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      user_id: 'guest',
+      created_at: timestamp,
+      updated_at: timestamp,
       is_guest: true
     };
     setChats([guestChat]);
@@ -32,9 +33,8 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   };
 
   const loadChats = async () => {
-    // Early return for guest users to prevent database queries
-    if (isGuest) {
-      initializeGuestChat();
+    // Skip database operations for guest users
+    if (isGuest || !userId) {
       return;
     }
     
@@ -79,7 +79,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   };
 
   const createNewChat = async () => {
-    if (isGuest) return null;
+    if (isGuest || !userId) return null;
 
     try {
       const { data: newChat, error: createError } = await supabase
