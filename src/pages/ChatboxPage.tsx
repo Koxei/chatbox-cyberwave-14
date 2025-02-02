@@ -1,14 +1,14 @@
 import { useState } from "react";
 import AuthModal from "@/features/auth/components/AuthModal";
+import ChatHeader from "@/components/ChatHeader";
+import ChatContainer from "@/features/chat/components/container/ChatContainer";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useChats } from "@/features/chat/hooks/useChats";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import { useMessageHandler } from "@/features/chat/hooks/useMessageHandler";
-import AuthenticatedChatbox from "@/features/chat/components/AuthenticatedChatbox";
-import GuestChatbox from "@/features/chat/components/GuestChatbox";
 import { Chat } from "@/types/chat";
 
-const ChatboxPage = () => {
+const Home = () => {
   const {
     isAuthenticated,
     showAuthModal,
@@ -18,7 +18,7 @@ const ChatboxPage = () => {
     userId
   } = useAuth();
 
-  const { isGuest, initGuestSession } = useGuestSession();
+  const { isGuest, guestId, initGuestSession, clearGuestSession } = useGuestSession();
 
   const {
     chats,
@@ -27,8 +27,9 @@ const ChatboxPage = () => {
     setCurrentChat,
     messages,
     setMessages,
-    handleChatSelect,
+    loadChats,
     createNewChat,
+    handleChatSelect
   } = useChats(userId, isGuest);
 
   const {
@@ -55,7 +56,7 @@ const ChatboxPage = () => {
     const newChat = await createNewChat();
     if (newChat) {
       setCurrentChat(newChat);
-      setMessages([]);
+      setMessages([]); // Clear messages for the new chat
       console.log("New chat created:", newChat);
     }
   };
@@ -78,29 +79,29 @@ const ChatboxPage = () => {
     );
   }
 
-  return isAuthenticated ? (
-    <AuthenticatedChatbox
-      currentChat={currentChat}
-      chats={chats}
-      messages={messages}
-      isLoading={isLoading}
-      inputMessage={inputMessage}
-      setInputMessage={setInputMessage}
-      onSubmit={handleSubmit}
-      onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
-      onNewChat={handleNewChat}
-    />
-  ) : (
-    <GuestChatbox
-      currentChat={currentChat}
-      messages={messages}
-      isLoading={isLoading}
-      inputMessage={inputMessage}
-      setInputMessage={setInputMessage}
-      onSubmit={handleSubmit}
-    />
+  return (
+    <>
+      <div className="relative z-10">
+        <div className="chat-container">
+          <ChatHeader 
+            currentChat={currentChat}
+            chats={chats}
+            onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
+            onNewChat={handleNewChat}
+            isAuthenticated={isAuthenticated}
+          />
+          <ChatContainer
+            currentChat={currentChat}
+            messages={messages}
+            isLoading={isLoading}
+            onSubmit={handleSubmit}
+            inputMessage={inputMessage}
+            setInputMessage={setInputMessage}
+          />
+        </div>
+      </div>
+    </>
   );
-  
 };
 
-export default ChatboxPage;
+export default Home;
