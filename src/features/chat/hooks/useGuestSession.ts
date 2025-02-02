@@ -17,22 +17,27 @@ export const useGuestSession = () => {
   const [isGuest, setIsGuest] = useState<boolean>(false);
   const [guestId, setGuestId] = useState<string | null>(null);
 
-  const initGuestSession = () => {
+  const initGuestSession = async () => {
+    console.log('Starting guest session initialization...');
+    
     // Check if user is already authenticated
     const authToken = localStorage.getItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
     if (authToken) {
-      clearGuestSession();
+      console.log('Auth token found, clearing guest session...');
+      await clearGuestSession();
       return;
     }
 
     const existingSessionStr = localStorage.getItem('guest_session');
     if (existingSessionStr) {
+      console.log('Existing guest session found...');
       const existingGuestSession = JSON.parse(existingSessionStr);
       setGuestId(existingGuestSession.guestId);
       setIsGuest(true);
       return;
     }
 
+    console.log('Creating new guest session...');
     const newGuestId = `guest_${Date.now()}`;
     const newGuestSession: GuestSession = {
       guestId: newGuestId,
@@ -52,9 +57,12 @@ export const useGuestSession = () => {
     
     setGuestId(newGuestId);
     setIsGuest(true);
+    
+    console.log('Guest session initialized successfully');
   };
 
-  const clearGuestSession = () => {
+  const clearGuestSession = async () => {
+    console.log('Clearing guest session...');
     localStorage.removeItem('guest_session');
     localStorage.removeItem('guest_chat');
     setGuestId(null);
