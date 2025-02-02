@@ -33,11 +33,16 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   };
 
   const loadChats = async () => {
-    // Skip database operations for guest users
-    if (isGuest || !userId) {
+    // Early return for guest users to prevent database queries
+    if (isGuest) {
       return;
     }
     
+    // Only proceed with database operations for authenticated users with valid UUID
+    if (!userId) {
+      return;
+    }
+
     try {
       const { data: chatsData, error: chatsError } = await supabase
         .from('chats')
