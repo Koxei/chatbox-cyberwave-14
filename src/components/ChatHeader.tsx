@@ -34,7 +34,6 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
 
   const handleLogout = async () => {
     try {
-      // First check if we have a session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
@@ -43,7 +42,6 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
       }
 
       if (!session) {
-        // If no session exists, just clear local state and redirect
         console.log('No active session found, clearing local state');
         localStorage.removeItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
         navigate('/');
@@ -54,7 +52,6 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
         return;
       }
 
-      // If we have a session, attempt to sign out
       const { error } = await supabase.auth.signOut({ scope: 'local' });
       if (error) {
         console.error('Logout error:', error);
@@ -74,7 +71,6 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
         variant: "destructive",
       });
       
-      // If we hit an error, attempt to clean up local state
       localStorage.removeItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
       navigate('/');
     }
