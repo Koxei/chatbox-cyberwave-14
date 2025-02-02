@@ -34,31 +34,42 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
 
   const handleLogout = async () => {
     try {
-      // First check if we have a session
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      // Get current session
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
         console.error('Session check error:', sessionError);
-        throw sessionError;
-      }
-
-      // If no session, just redirect to home
-      if (!session) {
-        navigate('/');
         toast({
-          title: "Already logged out",
-          description: "No active session found",
+          title: "Error checking session",
+          description: sessionError.message,
+          variant: "destructive",
         });
         return;
       }
 
-      // If we have a session, proceed with logout
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Logout error:', error);
-        throw error;
+      // If no active session, just redirect
+      if (!sessionData.session) {
+        navigate('/');
+        toast({
+          title: "No active session",
+          description: "You are already logged out",
+        });
+        return;
       }
 
+      // Proceed with logout if we have a session
+      const { error: signOutError } = await supabase.auth.signOut();
+      if (signOutError) {
+        console.error('Logout error:', signOutError);
+        toast({
+          title: "Logout failed",
+          description: signOutError.message,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Successfully logged out
       navigate('/');
       toast({
         title: "Logged out successfully",
@@ -68,7 +79,7 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
       console.error('Logout failed:', err);
       toast({
         title: "Logout failed",
-        description: err.message || "There was a problem logging out",
+        description: err.message || "An unexpected error occurred",
         variant: "destructive",
       });
     }
