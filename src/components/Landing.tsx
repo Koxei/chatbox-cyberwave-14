@@ -1,6 +1,7 @@
+// src/components/Landing.tsx
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface LandingProps {
@@ -10,8 +11,6 @@ interface LandingProps {
 const Landing = ({ onStartClick }: LandingProps) => {
   const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(true);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -37,39 +36,21 @@ const Landing = ({ onStartClick }: LandingProps) => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  if (isChecking) return null;
+
   const handleClick = () => {
     if (onStartClick) {
       onStartClick();
     } else {
-      setIsPlaying(true);
-      if (videoRef.current) {
-        videoRef.current.play();
-        setTimeout(() => {
-          navigate("/login");
-        }, 5000); // 5 seconds delay
-      }
+      navigate("/login");
     }
   };
 
-  if (isChecking) return null;
-
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[#000000] relative overflow-hidden">
-      <video
-        ref={videoRef}
-        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-          isPlaying ? 'opacity-100' : 'opacity-0'
-        }`}
-        muted
-      >
-        <source src="/lovable-uploads/vid.mp4" type="video/mp4" />
-      </video>
-      
+    <div className="h-screen w-screen flex items-center justify-center bg-[#333333]">
       <Button 
         onClick={handleClick}
-        className={`px-8 py-6 text-lg z-10 transition-opacity duration-500 ${
-          isPlaying ? 'opacity-0' : 'opacity-100'
-        }`}
+        className="px-8 py-6 text-lg"
       >
         Start
       </Button>
