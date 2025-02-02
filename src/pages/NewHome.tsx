@@ -9,7 +9,9 @@ const NewHome = () => {
   const { isGuest, initGuestSession } = useGuestSession();
 
   const handleGuestLogin = () => {
+    console.log('Guest login initiated');
     initGuestSession();
+    setShowAuthModal(false); // Ensure modal is hidden
     navigate('/home', { replace: true });
   };
 
@@ -17,7 +19,8 @@ const NewHome = () => {
     return (
       <div className="fixed inset-0 bg-black/80">
         <AuthModal 
-          isOpen={true}
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
           onPasswordResetStart={() => setIsResettingPassword(true)}
           onPasswordResetComplete={() => {
             setIsResettingPassword(false);
