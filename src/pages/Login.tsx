@@ -15,19 +15,31 @@ const Login = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80">
-      <AuthModal 
-        isOpen={true}
-        onPasswordResetStart={() => setIsResettingPassword(true)}
-        onPasswordResetComplete={() => {
-          setIsResettingPassword(false);
-          if (isAuthenticated) {
-            setShowAuthModal(false);
-          }
-        }}
-        onGuestLogin={handleGuestLogin}
-      />
-    </div>
+    <>
+      <video
+        id="video-background"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="fixed inset-0 w-full h-full object-cover -z-10"
+      >
+        <source src="/lovable-uploads/vid2.mp4" type="video/mp4" />
+      </video>
+      <div className="fixed inset-0 bg-black/80">
+        <AuthModal 
+          isOpen={true}
+          onPasswordResetStart={() => setIsResettingPassword(true)}
+          onPasswordResetComplete={() => {
+            setIsResettingPassword(false);
+            if (isAuthenticated) {
+              setShowAuthModal(false);
+            }
+          }}
+          onGuestLogin={handleGuestLogin}
+        />
+      </div>
+    </>
   );
 };
 
