@@ -15,7 +15,7 @@ const ChatHistory = ({ chats, onChatSelect }: ChatHistoryProps) => {
           <div
             key={chat.id}
             onClick={() => onChatSelect(chat)}
-            className="rounded-lg hover:bg-black/10 transition-colors cursor-pointer text-left"
+            className="rounded-lg transition-transform hover:scale-105 cursor-pointer text-left"
           >
             <h3 className="text-aiMessage mt-4 font-arcade text-sm truncate">
               {chat.title}
