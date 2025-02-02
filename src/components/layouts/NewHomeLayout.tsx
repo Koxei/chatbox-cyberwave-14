@@ -8,18 +8,7 @@ const NewHomeLayout = () => {
   const isAppOpen = location.pathname.includes('/chatbox') || location.pathname.includes('/terminal');
 
   return (
-    <div className="fixed inset-0 bg-deep-sea-blue overflow-hidden">
-      {/* Video background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover"
-      >
-        <source src="/lovable-uploads/vid2.mp4" type="video/mp4" />
-      </video>
-
+    <div className="fixed inset-0 overflow-hidden">
       {/* Content overlay with proper opacity and transition */}
       <div 
         className={`absolute inset-0 bg-black/50 transition-all duration-300 ease-in-out ${

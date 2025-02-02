@@ -18,19 +18,35 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
+        {/* Persistent video background */}
+        <div className="fixed inset-0 w-full h-full -z-10">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src="/lovable-uploads/vid2.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-black/50" />
+        </div>
+        
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<NewHomeLayout />}>
-              <Route index element={<NewHome />} />
-              <Route path="chatbox" element={<AppOverlay><ChatboxPage /></AppOverlay>} />
-              <Route path="terminal" element={<AppOverlay><TerminalPage /></AppOverlay>} />
-            </Route>
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          <div className="relative z-10">
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/home" element={<NewHomeLayout />}>
+                <Route index element={<NewHome />} />
+                <Route path="chatbox" element={<AppOverlay><ChatboxPage /></AppOverlay>} />
+                <Route path="terminal" element={<AppOverlay><TerminalPage /></AppOverlay>} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </div>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
