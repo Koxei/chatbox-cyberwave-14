@@ -18,6 +18,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import ChatHistory from "./ChatHistory";
+import { useState } from "react";
 
 interface ChatHeaderProps {
   currentChat: Chat | null;
@@ -29,6 +30,7 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticated }: ChatHeaderProps) => {
   const navigate = useNavigate();
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -54,6 +56,11 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
 
   const handleClose = () => {
     navigate('/home');
+  };
+
+  const handleChatSelect = (chat: Chat) => {
+    onChatSelect(chat);
+    setIsHistoryOpen(false);
   };
 
   return (
@@ -83,7 +90,7 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
                 <MessageCirclePlus className="mr-2 h-4 w-4" />
                 <span>New Chat</span>
               </DropdownMenuItem>
-              <Sheet>
+              <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
                 <SheetTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                     <History className="mr-2 h-4 w-4" />
@@ -94,7 +101,7 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
                   <SheetHeader>
                     <SheetTitle className="text-aiMessage font-arcade px-4 mt-5">Chat History</SheetTitle>
                   </SheetHeader>
-                  <ChatHistory chats={chats} onChatSelect={onChatSelect} />
+                  <ChatHistory chats={chats} onChatSelect={handleChatSelect} />
                 </SheetContent>
               </Sheet>
               <DropdownMenuItem onClick={handleLogout}>
