@@ -43,8 +43,8 @@ setInputMessage,
 return (
 
 <div className="relative z-30 flex flex-col h-full">
-  {/* New wrapper div to contain header, main content and form */}
-  <div className="flex flex-col h-full max-w-3xl mx-auto w-full">
+  {/* New wrapper div with red border for development */}
+  <div className="flex flex-col h-full max-w-3xl mx-auto w-full border-2 border-red-500">
     <main className="flex-1 overflow-y-auto px-4 pb-4">
       <ChatMessages 
         messages={messages} 
