@@ -100,7 +100,13 @@ const Index = () => {
 
   return (
     <div className="chat-container p-4">
-      <ChatHeader />
+      <ChatHeader 
+        currentChat={currentChat}
+        chats={chats}
+        onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
+        onNewChat={createNewChat}
+        isAuthenticated={isAuthenticated}
+      />
       <ChatContainer
         currentChat={currentChat}
         messages={messages}
