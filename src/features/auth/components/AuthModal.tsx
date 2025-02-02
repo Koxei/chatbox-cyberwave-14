@@ -1,3 +1,4 @@
+// src/features/auth/components/AuthModal.tsx
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { AuthHeader } from "./auth/AuthHeader";
@@ -72,13 +73,8 @@ const AuthModal = ({
   };
 
   const handleGuestLogin = () => {
-    console.log('Guest login clicked in modal');
-    if (onGuestLogin) {
-      onGuestLogin();
-    }
-    if (onClose) {
-      onClose();
-    }
+    console.log('Guest login clicked');
+    onGuestLogin?.();
   };
 
   const handleAuthToggle = () => {

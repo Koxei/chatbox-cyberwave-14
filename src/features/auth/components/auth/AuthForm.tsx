@@ -79,7 +79,6 @@ export const AuthForm = ({
     e.preventDefault();
     if (onGuestLogin) {
       onGuestLogin();
-      navigate('/home', { replace: true });
     }
   };
 
