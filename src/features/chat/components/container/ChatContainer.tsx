@@ -42,32 +42,33 @@ setInputMessage,
 
 return (
 
-// Added flex and h-full to ensure proper layout
 <div className="relative z-30 flex flex-col h-full">
-  {/* Added flex-1 and overflow-y-auto for scrolling */}
-  <main className="flex-1 overflow-y-auto px-4 pb-4">
-    <ChatMessages 
-      messages={messages} 
-      isLoading={isLoading} 
-    />
-    {!currentChat && (
-      <div className="flex flex-col items-center justify-center h-full text-userMessage">
-        <PlusCircle className="w-12 h-12 mb-4" />
-        <p className="text-lg">Start a new chat</p>
+  {/* New wrapper div to contain header, main content and form */}
+  <div className="flex flex-col h-full max-w-3xl mx-auto w-full">
+    <main className="flex-1 overflow-y-auto px-4 pb-4">
+      <ChatMessages 
+        messages={messages} 
+        isLoading={isLoading} 
+      />
+      {!currentChat && (
+        <div className="flex flex-col items-center justify-center h-full text-userMessage">
+          <PlusCircle className="w-12 h-12 mb-4" />
+          <p className="text-lg">Start a new chat</p>
+        </div>
+      )}
+    </main>
+    {/* Input section stays fixed at bottom */}
+    {currentChat && (
+      <div className="sticky bottom-0 bg-transparent pt-2">
+        <ChatInput
+          inputMessage={inputMessage}
+          setInputMessage={setInputMessage}
+          onSubmit={onSubmit}
+          isLoading={isLoading}
+        />
       </div>
     )}
-  </main>
-  {/* Input section now stays fixed at bottom */}
-  {currentChat && (
-    <div className="sticky bottom-0 bg-transparent pt-2">
-      <ChatInput
-        inputMessage={inputMessage}
-        setInputMessage={setInputMessage}
-        onSubmit={onSubmit}
-        isLoading={isLoading}
-      />
-    </div>
-  )}
+  </div>
 </div>
 );
 
