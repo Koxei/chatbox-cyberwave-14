@@ -8,10 +8,6 @@
 @layer base {
   body {
     @apply bg-[#333333] text-white min-h-screen overflow-hidden flex items-center justify-center;
-    background-image: url('/lovable-uploads/73e97728-d0f0-4a4f-8e49-34667bc28380.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     backdrop-filter: blur(1rem);
   }
 }
