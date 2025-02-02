@@ -98,7 +98,7 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
                 </SheetTrigger>
                 <SheetContent className="backdrop-blur-sm">
                   <SheetHeader>
-                    <SheetTitle className="text-aiMessage font-arcade">Chat History</SheetTitle>
+                    <SheetTitle className="text-aiMessage font-arcade px-4 mt-5">Chat History</SheetTitle>
                   </SheetHeader>
                   <ChatHistory chats={chats} onChatSelect={onChatSelect} />
                 </SheetContent>
