@@ -42,15 +42,12 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         .order('updated_at', { ascending: false });
 
       if (chatsError) {
-        // Only show error toast for authenticated users
-        if (!isGuest) {
-          console.error('Error loading chats:', chatsError);
-          toast({
-            title: "Error",
-            description: "Failed to load chats. Please try again.",
-            variant: "destructive",
-          });
-        }
+        console.error('Error loading chats:', chatsError);
+        toast({
+          title: "Error",
+          description: "Failed to load chats. Please try again.",
+          variant: "destructive",
+        });
         return;
       }
 
@@ -70,9 +67,8 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
       setCurrentChat(chatsData[0]);
       await loadMessages(chatsData[0].id);
     } catch (error) {
-      // Only show error toast for authenticated users
+      console.error('Error in loadChats:', error);
       if (!isGuest) {
-        console.error('Error in loadChats:', error);
         toast({
           title: "Error",
           description: "Failed to load chats. Please try again.",
@@ -93,8 +89,8 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         .single();
 
       if (createError) {
+        console.error('Error creating new chat:', createError);
         if (!isGuest) {
-          console.error('Error creating new chat:', createError);
           toast({
             title: "Error",
             description: "Failed to create new chat. Please try again.",
@@ -106,8 +102,8 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
       return newChat;
     } catch (error) {
+      console.error('Error in createNewChat:', error);
       if (!isGuest) {
-        console.error('Error in createNewChat:', error);
         toast({
           title: "Error",
           description: "Failed to create new chat. Please try again.",
@@ -129,8 +125,8 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         .order('created_at', { ascending: true });
 
       if (messagesError) {
+        console.error('Error loading messages:', messagesError);
         if (!isGuest) {
-          console.error('Error loading messages:', messagesError);
           toast({
             title: "Error",
             description: "Failed to load messages. Please try again.",
@@ -147,8 +143,8 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
       
       setMessages(typedMessages);
     } catch (error) {
+      console.error('Error in loadMessages:', error);
       if (!isGuest) {
-        console.error('Error in loadMessages:', error);
         toast({
           title: "Error",
           description: "Failed to load messages. Please try again.",
