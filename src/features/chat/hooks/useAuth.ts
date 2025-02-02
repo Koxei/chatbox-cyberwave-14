@@ -30,12 +30,21 @@ export const useAuth = () => {
     // Check initial session
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+      const guestSession = localStorage.getItem('guest_session');
+      
       if (session) {
         setUserId(session.user.id);
         setIsAuthenticated(true);
+        setShowAuthModal(false);
         // Clear any guest session data on initial auth check
         localStorage.removeItem('guest_session');
         localStorage.removeItem('guest_chat');
+      } else if (guestSession) {
+        // Consider guest sessions as authenticated
+        const parsedSession = JSON.parse(guestSession);
+        setUserId(parsedSession.guestId);
+        setIsAuthenticated(true);
+        setShowAuthModal(false);
       }
     };
     checkSession();

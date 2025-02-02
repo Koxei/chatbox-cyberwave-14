@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from "@/integrations/supabase/client";
 
 interface GuestSession {
   guestId: string;
@@ -17,10 +18,10 @@ export const useGuestSession = () => {
   const [isGuest, setIsGuest] = useState<boolean>(false);
   const [guestId, setGuestId] = useState<string | null>(null);
 
-  const initGuestSession = () => {
+  const initGuestSession = async () => {
     // Check if user is already authenticated
-    const authToken = localStorage.getItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
-    if (authToken) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
       clearGuestSession();
       return;
     }
@@ -52,6 +53,9 @@ export const useGuestSession = () => {
     
     setGuestId(newGuestId);
     setIsGuest(true);
+
+    // Force a refresh of the auth state to update useAuth hook
+    await supabase.auth.refreshSession();
   };
 
   const clearGuestSession = () => {
@@ -79,21 +83,24 @@ export const useGuestSession = () => {
 
   useEffect(() => {
     // Check if user is authenticated
-    const authToken = localStorage.getItem('sb-pqzhnpgwhcuxaduvxans-auth-token');
-    if (authToken) {
-      clearGuestSession();
-      return;
-    }
-
-    const sessionStr = localStorage.getItem('guest_session');
-    if (sessionStr) {
-      const guestSession: GuestSession = JSON.parse(sessionStr);
-      if (checkSessionExpiry()) {
-        setGuestId(guestSession.guestId);
-        setIsGuest(true);
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        clearGuestSession();
+        return;
       }
-    }
 
+      const sessionStr = localStorage.getItem('guest_session');
+      if (sessionStr) {
+        const guestSession: GuestSession = JSON.parse(sessionStr);
+        if (checkSessionExpiry()) {
+          setGuestId(guestSession.guestId);
+          setIsGuest(true);
+        }
+      }
+    };
+    
+    checkAuth();
     const interval = setInterval(checkSessionExpiry, 60000); // Check every minute
     return () => clearInterval(interval);
   }, []);
