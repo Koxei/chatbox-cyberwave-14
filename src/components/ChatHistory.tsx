@@ -10,7 +10,7 @@ interface ChatHistoryProps {
 const ChatHistory = ({ chats, onChatSelect }: ChatHistoryProps) => {
   return (
     <ScrollArea className="h-[80vh]">
-      <div className="space-y-4 mt-4 px-4 mt-10">
+      <div className="space-y-6 mt-4 px-4 mt-10">
         {chats.map((chat) => (
           <div
             key={chat.id}
