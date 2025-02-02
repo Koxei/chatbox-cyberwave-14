@@ -2,13 +2,13 @@ import { useState } from "react";
 import AuthModal from "@/features/auth/components/AuthModal";
 import ChatHeader from "@/components/ChatHeader";
 import ChatContainer from "@/features/chat/components/container/ChatContainer";
+import ChatControls from "@/components/ChatControls";
 import { useAuth } from "@/features/chat/hooks/useAuth";
 import { useChats } from "@/features/chat/hooks/useChats";
 import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
 import { useMessageHandler } from "@/features/chat/hooks/useMessageHandler";
-import { Chat } from "@/types/chat";
 
-const Home = () => {
+const ChatboxPage = () => {
   const {
     isAuthenticated,
     showAuthModal,
@@ -18,7 +18,7 @@ const Home = () => {
     userId
   } = useAuth();
 
-  const { isGuest, guestId, initGuestSession, clearGuestSession } = useGuestSession();
+  const { isGuest, initGuestSession } = useGuestSession();
 
   const {
     chats,
@@ -27,7 +27,6 @@ const Home = () => {
     setCurrentChat,
     messages,
     setMessages,
-    loadChats,
     createNewChat,
     handleChatSelect
   } = useChats(userId, isGuest);
@@ -81,15 +80,16 @@ const Home = () => {
 
   return (
     <>
+      <ChatControls
+        currentChat={currentChat}
+        chats={chats}
+        onChatSelect={handleChatSelect}
+        onNewChat={handleNewChat}
+        isAuthenticated={isAuthenticated}
+      />
       <div className="relative z-10">
         <div className="chat-container">
-          <ChatHeader 
-            currentChat={currentChat}
-            chats={chats}
-            onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
-            onNewChat={handleNewChat}
-            isAuthenticated={isAuthenticated}
-          />
+          <ChatHeader />
           <ChatContainer
             currentChat={currentChat}
             messages={messages}
@@ -104,4 +104,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default ChatboxPage;
