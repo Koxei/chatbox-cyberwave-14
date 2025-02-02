@@ -1,4 +1,3 @@
-// src/features/auth/components/AuthModal.tsx
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { AuthHeader } from "./auth/AuthHeader";
@@ -72,9 +71,11 @@ const AuthModal = ({
     setShowPasswordReset(true);
   };
 
-  const handleGuestLogin = () => {
+  const handleGuestLogin = async () => {
     console.log('Guest login clicked');
-    onGuestLogin?.();
+    if (onGuestLogin) {
+      await onGuestLogin();
+    }
   };
 
   const handleAuthToggle = () => {
@@ -88,7 +89,7 @@ const AuthModal = ({
 
   return (
     <Dialog open={keepOpen} modal>
-      <DialogContent className="sm:max-w-[425px] bg-white/90 text-black p-6">
+      <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm text-black p-6">
         <DialogTitle className="sr-only">{getDialogTitle()}</DialogTitle>
         <div className="space-y-6">
           <AuthHeader 

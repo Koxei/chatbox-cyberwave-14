@@ -8,8 +8,9 @@ const NewHome = () => {
   const { isAuthenticated, showAuthModal, setShowAuthModal, isResettingPassword, setIsResettingPassword } = useAuth();
   const { isGuest, initGuestSession } = useGuestSession();
 
-  const handleGuestLogin = () => {
-    initGuestSession();
+  const handleGuestLogin = async () => {
+    await initGuestSession();
+    setShowAuthModal(false);
     navigate('/home', { replace: true });
   };
 
@@ -31,7 +32,7 @@ const NewHome = () => {
     );
   }
 
-  return null; // The layout will handle rendering the apps
+  return null;
 };
 
 export default NewHome;
