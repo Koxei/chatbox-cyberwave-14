@@ -1,4 +1,3 @@
-// src/components/ChatHeader.tsx
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +10,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Chat } from "@/types/chat";
 import { toast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import ChatHistory from "./ChatHistory";
 
 interface ChatHeaderProps {
   currentChat: Chat | null;
@@ -82,22 +89,20 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
-              <DropdownMenuItem>
-                <History className="mr-2 h-4 w-4" />
-                <span>History</span>
-                <DropdownMenu>
-                  <DropdownMenuContent>
-                    {chats.map((chat) => (
-                      <DropdownMenuItem
-                        key={chat.id}
-                        onClick={() => onChatSelect(chat)}
-                      >
-                        {chat.title}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </DropdownMenuItem>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <History className="mr-2 h-4 w-4" />
+                    <span>History</span>
+                  </DropdownMenuItem>
+                </SheetTrigger>
+                <SheetContent className="bg-black/50 border-aiMessage backdrop-blur-md">
+                  <SheetHeader>
+                    <SheetTitle className="text-aiMessage font-arcade">Chat History</SheetTitle>
+                  </SheetHeader>
+                  <ChatHistory chats={chats} onChatSelect={onChatSelect} />
+                </SheetContent>
+              </Sheet>
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
