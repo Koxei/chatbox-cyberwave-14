@@ -42,18 +42,28 @@
 }
 
 .chat-container {
-  @apply w-full h-screen flex flex-col;
-  background: transparent;
-  overflow: hidden;
-}
 
-.chat-content {
-  @apply w-full mx-auto flex flex-col;
-  max-width: 62.5rem; /* 1000px */
-  height: 90vh;
-  position: relative;
+  @apply w-full h-screen flex flex-col;
+  
   background: transparent;
-}
+  
+  overflow: hidden;
+  
+  }
+
+  .chat-content {
+
+    @apply w-full mx-auto flex flex-col;
+    
+    max-width: 62.5rem; /* 1000px */
+    
+    height: 90vh;
+    
+    position: relative;
+    
+    background: transparent;
+    
+    }
 
 .message {
   width: 70%;
