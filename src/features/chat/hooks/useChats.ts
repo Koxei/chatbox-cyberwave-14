@@ -32,7 +32,11 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   };
 
   const loadChats = async () => {
-    if (isGuest) return;
+    // Early return for guest users to prevent database queries
+    if (isGuest) {
+      initializeGuestChat();
+      return;
+    }
     
     try {
       const { data: chatsData, error: chatsError } = await supabase
@@ -51,7 +55,6 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         return;
       }
 
-      // If no chats exist, create a new one
       if (!chatsData || chatsData.length === 0) {
         const newChat = await createNewChat();
         if (newChat) {
@@ -62,24 +65,21 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         return;
       }
 
-      // Otherwise load existing chats
       setChats(chatsData);
       setCurrentChat(chatsData[0]);
       await loadMessages(chatsData[0].id);
     } catch (error) {
       console.error('Error in loadChats:', error);
-      if (!isGuest) {
-        toast({
-          title: "Error",
-          description: "Failed to load chats. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to load chats. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const createNewChat = async () => {
-    if (isGuest || !userId) return null;
+    if (isGuest) return null;
 
     try {
       const { data: newChat, error: createError } = await supabase
@@ -90,26 +90,22 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
       if (createError) {
         console.error('Error creating new chat:', createError);
-        if (!isGuest) {
-          toast({
-            title: "Error",
-            description: "Failed to create new chat. Please try again.",
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Error",
+          description: "Failed to create new chat. Please try again.",
+          variant: "destructive",
+        });
         return null;
       }
 
       return newChat;
     } catch (error) {
       console.error('Error in createNewChat:', error);
-      if (!isGuest) {
-        toast({
-          title: "Error",
-          description: "Failed to create new chat. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to create new chat. Please try again.",
+        variant: "destructive",
+      });
       return null;
     }
   };
@@ -126,13 +122,11 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
       if (messagesError) {
         console.error('Error loading messages:', messagesError);
-        if (!isGuest) {
-          toast({
-            title: "Error",
-            description: "Failed to load messages. Please try again.",
-            variant: "destructive",
-          });
-        }
+        toast({
+          title: "Error",
+          description: "Failed to load messages. Please try again.",
+          variant: "destructive",
+        });
         return;
       }
       
@@ -144,20 +138,17 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
       setMessages(typedMessages);
     } catch (error) {
       console.error('Error in loadMessages:', error);
-      if (!isGuest) {
-        toast({
-          title: "Error",
-          description: "Failed to load messages. Please try again.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "Error",
+        description: "Failed to load messages. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
   const handleChatSelect = async (chatId: string) => {
     if (isGuest) return;
     
-    // Find the selected chat from the chats array
     const selectedChat = chats.find(chat => chat.id === chatId);
     if (selectedChat) {
       setCurrentChat(selectedChat);
