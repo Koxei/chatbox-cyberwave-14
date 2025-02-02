@@ -20,7 +20,7 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
   const initializeGuestChat = () => {
     const timestamp = new Date().toISOString();
     const guestChat: Chat = {
-      id: `guest_chat_${Date.now()}`,
+      id: 'guest-chat',
       title: 'Guest Chat',
       user_id: 'guest',
       created_at: timestamp,
