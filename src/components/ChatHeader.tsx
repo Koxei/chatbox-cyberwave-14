@@ -4,7 +4,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { History, LogOut, X } from "lucide-react";
+import { History, LogOut, MessageCirclePlus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { Chat } from "@/types/chat";
@@ -79,6 +79,10 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuItem onClick={onNewChat}>
+                <MessageCirclePlus className="mr-2 h-4 w-4" />
+                <span>New Chat</span>
+              </DropdownMenuItem>
               <Sheet>
                 <SheetTrigger asChild>
                   <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
