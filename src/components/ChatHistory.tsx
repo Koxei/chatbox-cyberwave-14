@@ -15,12 +15,12 @@ const ChatHistory = ({ chats, onChatSelect }: ChatHistoryProps) => {
           <div
             key={chat.id}
             onClick={() => onChatSelect(chat)}
-            className="rounded-lg cursor-pointer text-left"
+            className="rounded-lg cursor-pointer text-left transition-opacity hover:opacity-100 opacity-75"
           >
-            <h3 className="text-aiMessage font-arcade text-sm truncate transition-opacity hover:opacity-100 opacity-75">
+            <h3 className="text-aiMessage font-arcade text-sm truncate">
               {chat.title}
             </h3>
-            <p className="text-gray-400 text-xs mt-2 transition-opacity hover:opacity-100 opacity-75">
+            <p className="text-gray-400 text-xs mt-2">
               {new Date(chat.created_at).toLocaleDateString()}
             </p>
           </div>
