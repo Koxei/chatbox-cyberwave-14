@@ -11,21 +11,25 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
 
   useEffect(() => {
     if (isGuest) {
-      const guestChat: Chat = {
-        id: `chat_guest_${Date.now()}`,
-        title: 'Guest Chat',
-        user_id: `guest_${Date.now()}`,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        is_guest: true
-      };
-      setChats([guestChat]);
-      setCurrentChat(guestChat);
-      setMessages([]);
+      initializeGuestChat();
     } else if (userId) {
       loadChats();
     }
   }, [userId, isGuest]);
+
+  const initializeGuestChat = () => {
+    const guestChat: Chat = {
+      id: `chat_guest_${Date.now()}`,
+      title: 'Guest Chat',
+      user_id: `guest_${Date.now()}`,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      is_guest: true
+    };
+    setChats([guestChat]);
+    setCurrentChat(guestChat);
+    setMessages([]);
+  };
 
   const loadChats = async () => {
     if (isGuest) return;
@@ -37,7 +41,18 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         .eq('user_id', userId)
         .order('updated_at', { ascending: false });
 
-      if (chatsError) throw chatsError;
+      if (chatsError) {
+        // Only show error toast for authenticated users
+        if (!isGuest) {
+          console.error('Error loading chats:', chatsError);
+          toast({
+            title: "Error",
+            description: "Failed to load chats. Please try again.",
+            variant: "destructive",
+          });
+        }
+        return;
+      }
 
       // If no chats exist, create a new one
       if (!chatsData || chatsData.length === 0) {
@@ -55,11 +70,15 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
       setCurrentChat(chatsData[0]);
       await loadMessages(chatsData[0].id);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load chats. Please try again.",
-        variant: "destructive",
-      });
+      // Only show error toast for authenticated users
+      if (!isGuest) {
+        console.error('Error in loadChats:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load chats. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -73,15 +92,28 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         .select()
         .single();
 
-      if (createError) throw createError;
+      if (createError) {
+        if (!isGuest) {
+          console.error('Error creating new chat:', createError);
+          toast({
+            title: "Error",
+            description: "Failed to create new chat. Please try again.",
+            variant: "destructive",
+          });
+        }
+        return null;
+      }
 
       return newChat;
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create new chat. Please try again.",
-        variant: "destructive",
-      });
+      if (!isGuest) {
+        console.error('Error in createNewChat:', error);
+        toast({
+          title: "Error",
+          description: "Failed to create new chat. Please try again.",
+          variant: "destructive",
+        });
+      }
       return null;
     }
   };
@@ -96,7 +128,17 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
         .eq('chat_id', chatId)
         .order('created_at', { ascending: true });
 
-      if (messagesError) throw messagesError;
+      if (messagesError) {
+        if (!isGuest) {
+          console.error('Error loading messages:', messagesError);
+          toast({
+            title: "Error",
+            description: "Failed to load messages. Please try again.",
+            variant: "destructive",
+          });
+        }
+        return;
+      }
       
       const typedMessages: Message[] = (messagesData || []).map(msg => ({
         ...msg,
@@ -105,11 +147,14 @@ export const useChats = (userId: string | null, isGuest: boolean) => {
       
       setMessages(typedMessages);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to load messages. Please try again.",
-        variant: "destructive",
-      });
+      if (!isGuest) {
+        console.error('Error in loadMessages:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load messages. Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
