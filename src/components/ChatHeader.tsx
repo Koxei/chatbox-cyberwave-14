@@ -34,8 +34,8 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
 
   const handleLogout = async () => {
     try {
-      // Get current session
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      // First, get the current session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError) {
         console.error('Session check error:', sessionError);
@@ -47,18 +47,22 @@ const ChatHeader = ({ currentChat, chats, onChatSelect, onNewChat, isAuthenticat
         return;
       }
 
-      // If no active session, just redirect
-      if (!sessionData.session) {
+      // If no active session, clear local state and redirect
+      if (!session) {
+        localStorage.removeItem('supabase.auth.token');
         navigate('/');
         toast({
-          title: "No active session",
-          description: "You are already logged out",
+          title: "Already logged out",
+          description: "No active session found",
         });
         return;
       }
 
-      // Proceed with logout if we have a session
-      const { error: signOutError } = await supabase.auth.signOut();
+      // We have a valid session, proceed with logout
+      const { error: signOutError } = await supabase.auth.signOut({
+        scope: 'local'  // Only clear the current tab's session
+      });
+
       if (signOutError) {
         console.error('Logout error:', signOutError);
         toast({
