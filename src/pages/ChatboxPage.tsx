@@ -100,6 +100,7 @@ const ChatboxPage = () => {
       onSubmit={handleSubmit}
     />
   );
-};
+  
+  
 
 export default ChatboxPage;
