@@ -9,13 +9,24 @@ const NewHomeLayout = () => {
 
   return (
     <div className="fixed inset-0 bg-deep-sea-blue overflow-hidden">
-      {/* Background image with proper opacity and transition */}
+      {/* Video background */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+      >
+        <source src="/lovable-uploads/vid2.mp4" type="video/mp4" />
+      </video>
+
+      {/* Content overlay with proper opacity and transition */}
       <div 
-        className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-300 ease-in-out ${
+        className={`absolute inset-0 bg-black/50 transition-all duration-300 ease-in-out ${
           isAppOpen ? 'blur brightness-50' : ''
         }`}
-        style={{ backgroundImage: "url('/lovable-uploads/73e97728-d0f0-4a4f-8e49-34667bc28380.png')" }}
       />
+
       {/* Content container with transition */}
       <div className={`relative z-10 min-h-screen flex flex-col justify-end pb-16 transition-all duration-300 ease-in-out ${
         isAppOpen ? 'opacity-0 pointer-events-none' : ''
