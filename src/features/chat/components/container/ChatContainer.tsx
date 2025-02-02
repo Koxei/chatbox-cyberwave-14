@@ -42,35 +42,32 @@ setInputMessage,
 
 return (
 
-// Updated container to fill viewport
-<div className="chat-container h-screen w-screen">
-  {/* New wrapper div to maintain original chatbox dimensions */}
-  <div className="max-w-[62.5rem] mx-auto h-[90vh] flex flex-col">
-    <div className="chat-content">
-      <main className="flex-1 overflow-y-auto px-4 pb-4">
-        <ChatMessages 
-          messages={messages} 
-          isLoading={isLoading} 
-        />
-        {!currentChat && (
-          <div className="flex flex-col items-center justify-center h-full text-userMessage">
-            <PlusCircle className="w-12 h-12 mb-4" />
-            <p className="text-lg">Start a new chat</p>
-          </div>
-        )}
-      </main>
-      {currentChat && (
-        <div className="sticky bottom-0 bg-transparent pt-2">
-          <ChatInput
-            inputMessage={inputMessage}
-            setInputMessage={setInputMessage}
-            onSubmit={onSubmit}
-            isLoading={isLoading}
-          />
-        </div>
-      )}
+// Added flex and h-full to ensure proper layout
+<div className="relative z-30 flex flex-col h-full">
+  {/* Added flex-1 and overflow-y-auto for scrolling */}
+  <main className="flex-1 overflow-y-auto px-4 pb-4">
+    <ChatMessages 
+      messages={messages} 
+      isLoading={isLoading} 
+    />
+    {!currentChat && (
+      <div className="flex flex-col items-center justify-center h-full text-userMessage">
+        <PlusCircle className="w-12 h-12 mb-4" />
+        <p className="text-lg">Start a new chat</p>
+      </div>
+    )}
+  </main>
+  {/* Input section now stays fixed at bottom */}
+  {currentChat && (
+    <div className="sticky bottom-0 bg-transparent pt-2">
+      <ChatInput
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+        onSubmit={onSubmit}
+        isLoading={isLoading}
+      />
     </div>
-  </div>
+  )}
 </div>
 );
 

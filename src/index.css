@@ -18,55 +18,41 @@
 
 /* Custom scrollbar styling */
 ::-webkit-scrollbar {
-  width: 2px;
+  width: 2px; /* Thin scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: transparent; /* Transparent track */
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.3);
-  border-radius: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.3); /* Black with 30% opacity */
+  border-radius: 0.75rem; /* Soft rounded edges */
 }
 
 ::-webkit-scrollbar-button {
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: rgba(0, 0, 0, 0.3); /* Match thumb style */
   border-radius: 0.25rem;
-  height: 0.25rem;
+  height: 0.25rem; /* Small buttons */
 }
 
+/* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
 }
 
 .chat-container {
-
-  @apply w-full h-screen flex flex-col;
-  
+  @apply w-full mx-auto flex flex-col;
+  max-width: 62.5rem;
+  height: 90vh;
+  position: relative;
   background: transparent;
-  
-  overflow: hidden;
-  
-  }
-
-  .chat-content {
-
-    @apply w-full mx-auto flex flex-col;
-    
-    max-width: 62.5rem; /* 1000px */
-    
-    height: 90vh;
-    
-    position: relative;
-    
-    background: transparent;
-    
-    }
+  overflow: hidden; /* Prevent outer scrolling */
+}
 
 .message {
-  width: 70%;
+  width: 70%; /* Set message width to 70% */
   padding: 1rem;
   margin-bottom: 1rem;
   position: relative;
@@ -77,13 +63,13 @@
 
 .message-ai {
   @apply border-aiMessage text-aiMessage;
-  margin-right: auto;
+  margin-right: auto; /* Push AI messages to the left */
   margin-left: 0;
 }
 
 .message-user {
   @apply border-userMessage text-userMessage;
-  margin-left: auto;
+  margin-left: auto; /* Push user messages to the right */
   margin-right: 0;
 }
 
