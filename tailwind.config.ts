@@ -18,6 +18,9 @@ export default {
       },
     },
     extend: {
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+      },
       colors: {
         background: "#000000",
         container: "#0000001a",

@@ -34,9 +34,9 @@ const GuestChatHeader = () => {
     <div className="absolute top-0 left-0 right-0 z-50">
       <div className="relative flex justify-between items-center p-4">
         <div className="absolute inset-x-0 flex justify-center items-center">
-        <div className="border border-userMessage px-5 py-3 rounded-3xl backdrop-blur-sm bg-white/5 overflow-hidden">
-<h1 className="text-xl font-bold">Chat</h1>
-</div>
+          <div className="border border-userMessage px-5 py-3 rounded-3xl overflow-hidden bg-gradient-radial from-white/10 via-white/5 to-transparent backdrop-blur-sm">
+            <h1 className="text-xl font-bold">Chat</h1>
+          </div>
         </div>
         <div className="relative z-10 flex items-center gap-2 ml-auto">
           <Button
