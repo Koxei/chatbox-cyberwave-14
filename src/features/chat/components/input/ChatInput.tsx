@@ -30,7 +30,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         />
         <button
           type="submit"
-          className="p-2 border border-userMessage text-userMessage rounded hover:bg-black/40 transition-colors disabled:opacity-50"
+          className="p-2 text-userMessage rounded hover:bg-black/40 transition-colors disabled:opacity-50"
           disabled={isLoading}
         >
           <Send size={24} />
