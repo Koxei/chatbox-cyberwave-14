@@ -41,7 +41,7 @@ const GuestChatHeader = () => {
           variant="ghost"
           size="lg"
           onClick={handleClose}
-          className="text-userMessage hover:text-white transition-colors p-2 h-20 w-20"
+          className="text-userMessage hover:text-white transition-colors p-2 "
         >
           <X className="h-20 w-20" />
         </Button>
@@ -49,9 +49,9 @@ const GuestChatHeader = () => {
           variant="ghost"
           size="lg"
           onClick={handleLogout}
-          className="text-userMessage hover:text-white transition-colors p-2 h-20 w-20"
+          className="text-userMessage hover:text-white transition-colors p-2"
         >
-          <LogOut className="h-20 w-20" />
+          <LogOut className="h-6 w-6" />
         </Button>
       </div>
     </div>
