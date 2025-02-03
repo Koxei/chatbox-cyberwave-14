@@ -16,7 +16,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <form 
       onSubmit={onSubmit}
-      className="p-4 border-t border-userMessage"
+      className="p-4"
     >
       <div className="max-w-3xl mx-auto flex gap-2">
         <input
