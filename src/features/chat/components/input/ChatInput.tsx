@@ -1,4 +1,5 @@
 import React from 'react';
+import { Send } from 'lucide-react';
 
 interface ChatInputProps {
   inputMessage: string;
@@ -16,23 +17,23 @@ const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <form 
       onSubmit={onSubmit}
-      className="p-4"
+      className="p-4 border-t border-userMessage"
     >
       <div className="max-w-3xl mx-auto flex gap-2">
         <input
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Message..."
-          className="flex-1 p-2 border-b border-userMessage text-white bg-transparent"
+          placeholder="Write something c:"
+          className="flex-1 p-2 rounded border-b border-userMessage text-white font-arcade bg-transparent"
           disabled={isLoading}
         />
         <button
           type="submit"
-          className="px-4 py-2 border border-userMessage text-userMessage rounded font-arcade hover:bg-black/40 transition-colors disabled:opacity-50"
+          className="p-2 border border-userMessage text-userMessage rounded hover:bg-black/40 transition-colors disabled:opacity-50"
           disabled={isLoading}
         >
-          Send
+          <Send size={24} />
         </button>
       </div>
     </form>
