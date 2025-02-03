@@ -68,14 +68,14 @@ const Landing = ({ onStartClick }: LandingProps) => {
         <source src="/lovable-uploads/vid.mp4" type="video/mp4" />
       </video>
       
-      <Button 
+      <button 
         onClick={handleClick}
-        className={`px-8 py-6 text-lg z-10 transition-opacity duration-500 ${
+        className={`btnfos-5 z-10 transition-opacity duration-500 ${
           isPlaying ? 'opacity-0' : 'opacity-100'
         }`}
       >
         Start
-      </Button>
+      </button>
     </div>
   );
 };
