@@ -29,6 +29,8 @@ export default {
       fontFamily: {
         arcade: ['"Press Start 2P"', "cursive"],
         sans: ["Inter", "sans-serif"],
+        noto: ["Noto Sans", "sans-serif"],
+        marck: ["Marck Script", "cursive"],
       },
       animation: {
         "fade-in": "fadeIn 0.3s ease-out",
