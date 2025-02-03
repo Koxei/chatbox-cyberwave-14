@@ -74,7 +74,7 @@ const Landing = ({ onStartClick }: LandingProps) => {
           isPlaying ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        Start
+        Initialize
       </button>
     </div>
   );
