@@ -94,9 +94,9 @@ const AuthenticatedChatHeader = ({
           variant="ghost"
           size="lg"
           onClick={handleClose}
-          className="text-userMessage hover:text-white transition-colors p-2"
+          className="text-userMessage hover:text-white transition-colors p-2 w-12 h-12"
         >
-          <X className="h-6 w-6" />
+          <X className="h-12 w-12" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
