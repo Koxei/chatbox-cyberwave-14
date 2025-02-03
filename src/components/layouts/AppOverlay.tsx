@@ -18,7 +18,7 @@ const AppOverlay = ({ children }: AppOverlayProps) => {
   if (!isChatboxRoute && !isTerminalRoute) return null;
 
   // Set border color based on route
- 
+  const borderColorClass = isChatboxRoute ? 'border-green-500' : 'border-red-500';
 
   return (
     <div className={`animate-fade-in rounded-lg border ${borderColorClass} overflow-hidden relative`}>
