@@ -39,19 +39,19 @@ const GuestChatHeader = () => {
       <div className="relative z-10 flex items-center gap-2 ml-auto">
         <Button
           variant="ghost"
-          size="icon"
+          size="lg"
           onClick={handleClose}
-          className="text-userMessage hover:text-white transition-colors"
+          className="text-userMessage hover:text-white transition-colors p-2"
         >
-          <X className="h-5 w-5" />
+          <X className="h-6 w-6" />
         </Button>
         <Button
           variant="ghost"
-          size="icon"
+          size="lg"
           onClick={handleLogout}
-          className="text-userMessage hover:text-white transition-colors"
+          className="text-userMessage hover:text-white transition-colors p-2"
         >
-          <LogOut className="h-5 w-5" />
+          <LogOut className="h-6 w-6" />
         </Button>
       </div>
     </div>

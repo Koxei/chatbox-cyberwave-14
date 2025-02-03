@@ -92,28 +92,28 @@ const AuthenticatedChatHeader = ({
       <div className="relative z-10 flex items-center gap-2 ml-auto">
         <Button
           variant="ghost"
-          size="icon"
+          size="lg"
           onClick={handleClose}
-          className="text-userMessage hover:text-white transition-colors"
+          className="text-userMessage hover:text-white transition-colors p-2"
         >
-          <X className="h-5 w-5" />
+          <X className="h-6 w-6" />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="lg" className="p-2">
               <span className="sr-only">Open menu</span>
               •••
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuItem onClick={onNewChat}>
-              <MessageCirclePlus className="mr-2 h-4 w-4" />
+              <MessageCirclePlus className="mr-2 h-5 w-5" />
               <span>New Chat</span>
             </DropdownMenuItem>
             <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
               <SheetTrigger asChild>
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <History className="mr-2 h-4 w-4" />
+                  <History className="mr-2 h-5 w-5" />
                   <span>History</span>
                 </DropdownMenuItem>
               </SheetTrigger>
@@ -125,7 +125,7 @@ const AuthenticatedChatHeader = ({
               </SheetContent>
             </Sheet>
             <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
+              <LogOut className="mr-2 h-5 w-5" />
               <span>Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
