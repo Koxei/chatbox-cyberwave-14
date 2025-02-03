@@ -34,7 +34,7 @@ const GuestChatHeader = () => {
     <div className="absolute top-0 left-0 right-0 z-50">
       <div className="relative flex justify-between items-center p-4">
         <div className="absolute inset-x-0 flex justify-center items-center">
-          <div className="border border-userMessage px-5 py-3 rounded">
+          <div className="border border-userMessage px-5 py-3 rounded backdrop-blur-lg">
             <h1 className="text-xl font-bold">Chat</h1>
           </div>
         </div>
