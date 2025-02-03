@@ -85,10 +85,10 @@ const AuthenticatedChatHeader = ({
   };
 
   return (
-    <div className="absolute top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
+    <div className="absolute top-0 left-0 right-0 z-50 bg-background/80">
       <div className="relative flex justify-between items-center p-4">
         <div className="absolute inset-x-0 flex justify-center items-center">
-          <div className="px-5 py-3 rounded-3xl overflow-hidden bg-gradient-radial from-white/10 via-white/5 to-transparent backdrop-blur-sm">
+          <div className="px-5 py-3 rounded-3xl overflow-hidden bg-gradient-radial from-white/10 via-white/5 to-transparent">
             <h1 className="text-xl font-bold">Chat</h1>
           </div>
         </div>
