@@ -41,7 +41,7 @@ setInputMessage,
 return (
 
 <div className="relative z-30 flex flex-col h-full">
-  <div className="flex flex-col h-full max-w-2xl mx-auto w-full border-2 border-red-500">
+  <div className="flex flex-col h-full max-w-2xl mx-auto w-full">
     {/* Messages container with padding-top to account for header space */}
     <main className="flex-1 overflow-y-auto px-4 pb-4 pt-16">
       <ChatMessages 
