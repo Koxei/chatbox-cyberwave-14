@@ -9,10 +9,10 @@ const NewHomeLayout = () => {
 
   return (
     <div className="fixed inset-0 overflow-hidden">
-      {/* Content overlay with proper opacity and transition */}
+      {/* Background overlay with blur effect when app is open */}
       <div 
-        className={`absolute inset-0 bg-black/50 transition-all duration-300 ease-in-out ${
-          isAppOpen ? 'blur brightness-50' : ''
+        className={`fixed inset-0 transition-all duration-300 ease-in-out ${
+          isAppOpen ? 'backdrop-blur-sm bg-black/50' : 'bg-black/30'
         }`}
       />
 
@@ -43,7 +43,7 @@ const NewHomeLayout = () => {
           </div>
         </div>
       </div>
-      {/* App overlay container - increased z-index */}
+      {/* App overlay container */}
       <div className={`fixed inset-0 ${isAppOpen ? 'z-50' : 'pointer-events-none'}`}>
         <div className="container mx-auto h-full flex items-center justify-center">
           <div className="pointer-events-auto w-full">
