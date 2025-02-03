@@ -17,15 +17,15 @@ const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <form 
       onSubmit={onSubmit}
-      className="p-4 border-t border-userMessage"
+      className="p-4"
     >
       <div className="max-w-3xl mx-auto flex gap-2">
         <input
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Write something c:"
-          className="flex-1 p-2 rounded border-b border-userMessage text-white font-arcade bg-transparent"
+          placeholder="Message..."
+          className="flex-1 p-2border-b border-userMessage text-white bg-transparent"
           disabled={isLoading}
         />
         <button
