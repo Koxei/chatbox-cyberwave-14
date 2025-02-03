@@ -32,27 +32,29 @@ const GuestChatHeader = () => {
   };
 
   return (
-    <div className="relative flex justify-between items-center p-4">
-      <div className="absolute inset-x-0 flex justify-center items-center">
-        <h1 className="text-xl font-bold">Chat</h1>
-      </div>
-      <div className="relative z-10 flex items-center gap-2 ml-auto">
-        <Button
-          variant="ghost"
-          size="lg"
-          onClick={handleClose}
-          className="text-userMessage hover:text-white transition-colors p-2 "
-        >
-          <X className="h-8 w-8" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="lg"
-          onClick={handleLogout}
-          className="text-userMessage hover:text-white transition-colors p-2"
-        >
-          <LogOut className="h-7 w-7" />
-        </Button>
+    <div className="absolute top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
+      <div className="relative flex justify-between items-center p-4">
+        <div className="absolute inset-x-0 flex justify-center items-center">
+          <h1 className="text-xl font-bold">Chat</h1>
+        </div>
+        <div className="relative z-10 flex items-center gap-2 ml-auto">
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={handleClose}
+            className="text-userMessage hover:text-white transition-colors p-2"
+          >
+            <X className="h-8 w-8" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={handleLogout}
+            className="text-userMessage hover:text-white transition-colors p-2"
+          >
+            <LogOut className="h-7 w-7" />
+          </Button>
+        </div>
       </div>
     </div>
   );

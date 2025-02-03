@@ -85,51 +85,53 @@ const AuthenticatedChatHeader = ({
   };
 
   return (
-    <div className="relative flex justify-between items-center p-4">
-      <div className="absolute inset-x-0 flex justify-center items-center">
-        <h1 className="text-xl font-bold">Chat</h1>
-      </div>
-      <div className="relative z-10 flex items-center gap-2 ml-auto">
-        <Button
-          variant="ghost"
-          size="lg"
-          onClick={handleClose}
-          className="text-userMessage hover:text-white transition-colors p-2"
-        >
-          <X className="h-6 w-6" />
-        </Button>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="lg" className="p-2">
-              <span className="sr-only">Open menu</span>
-              •••
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
-            <DropdownMenuItem onClick={onNewChat}>
-              <MessageCirclePlus className="mr-2 h-5 w-5" />
-              <span>New Chat</span>
-            </DropdownMenuItem>
-            <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
-              <SheetTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <History className="mr-2 h-5 w-5" />
-                  <span>History</span>
-                </DropdownMenuItem>
-              </SheetTrigger>
-              <SheetContent>
-                <SheetHeader>
-                  <SheetTitle className="text-aiMessage font-arcade px-4 mt-5">Chat History</SheetTitle>
-                </SheetHeader>
-                <ChatHistory chats={chats} onChatSelect={handleChatSelect} />
-              </SheetContent>
-            </Sheet>
-            <DropdownMenuItem onClick={handleLogout}>
-              <LogOut className="mr-2 h-5 w-5" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+    <div className="absolute top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm">
+      <div className="relative flex justify-between items-center p-4">
+        <div className="absolute inset-x-0 flex justify-center items-center">
+          <h1 className="text-xl font-bold">Chat</h1>
+        </div>
+        <div className="relative z-10 flex items-center gap-2 ml-auto">
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={handleClose}
+            className="text-userMessage hover:text-white transition-colors p-2"
+          >
+            <X className="h-6 w-6" />
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="lg" className="p-2">
+                <span className="sr-only">Open menu</span>
+                •••
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuItem onClick={onNewChat}>
+                <MessageCirclePlus className="mr-2 h-5 w-5" />
+                <span>New Chat</span>
+              </DropdownMenuItem>
+              <Sheet open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
+                <SheetTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <History className="mr-2 h-5 w-5" />
+                    <span>History</span>
+                  </DropdownMenuItem>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle className="text-aiMessage font-arcade px-4 mt-5">Chat History</SheetTitle>
+                  </SheetHeader>
+                  <ChatHistory chats={chats} onChatSelect={handleChatSelect} />
+                </SheetContent>
+              </Sheet>
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="mr-2 h-5 w-5" />
+                <span>Log out</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
     </div>
   );
