@@ -1,12 +1,120 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from "react";
+import Landing from "@/components/Landing";
+import AuthModal from "@/features/auth/components/AuthModal";
+import ChatHeader from "@/components/ChatHeader";
+import ChatContainer from "@/features/chat/components/container/ChatContainer";
+import { useAuth } from "@/features/chat/hooks/useAuth";
+import { useChats } from "@/features/chat/hooks/useChats";
+import { useGuestSession } from "@/features/chat/hooks/useGuestSession";
+import { useMessageSubmission } from "@/features/chat/hooks/message/useMessageSubmission";
+import { useAIResponse } from "@/features/chat/hooks/message/useAIResponse";
+import { Chat } from "@/types/chat";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+  const navigate = useNavigate();
+  const [showStartButton, setShowStartButton] = useState(true);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isGuestInitialized, setIsGuestInitialized] = useState(false);
+
+  const {
+    isAuthenticated,
+    showAuthModal,
+    setShowAuthModal,
+    isResettingPassword,
+    setIsResettingPassword,
+    userId
+  } = useAuth();
+
+  const { isGuest, guestId, initGuestSession, clearGuestSession } = useGuestSession();
+
+  const {
+    chats,
+    currentChat,
+    messages,
+    setMessages,
+    loadChats,
+    createNewChat,
+    handleChatSelect
+  } = useChats(userId, isGuest);
+
+  const { submitMessage } = useMessageSubmission(userId, currentChat?.id ?? null, setMessages);
+  const { getAIResponse } = useAIResponse(userId, currentChat?.id ?? null, setMessages);
+
+  useEffect(() => {
+    const sessionStr = localStorage.getItem('guest_session');
+    setIsGuestInitialized(!!sessionStr);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputMessage.trim() || isLoading || !currentChat) return;
+    const userMessage = inputMessage.trim();
+    setInputMessage("");
+    setIsLoading(true);
+    try {
+      const savedMessage = await submitMessage(userMessage);
+      if (savedMessage) {
+        await getAIResponse(userMessage);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStartClick = () => {
+    setShowStartButton(false);
+    setShowAuthModal(true);
+  };
+
+  const handleGuestLogin = () => {
+    initGuestSession();
+    setIsGuestInitialized(true);
+    setShowAuthModal(false);
+    setShowStartButton(false);
+    navigate('/home');
+  };
+
+  if (showStartButton) {
+    return <Landing onStartClick={handleStartClick} />;
+  }
+
+  if (!isAuthenticated && !isGuest) {
+    return (
+      <div className="fixed inset-0 bg-black/80">
+        <AuthModal 
+          isOpen={true}
+          onPasswordResetStart={() => setIsResettingPassword(true)}
+          onPasswordResetComplete={() => {
+            setIsResettingPassword(false);
+            if (isAuthenticated) {
+              setShowAuthModal(false);
+            }
+          }}
+          onGuestLogin={handleGuestLogin}
+        />
       </div>
+    );
+  }
+
+  return (
+    <div className="chat-container p-4">
+      <ChatHeader 
+        currentChat={currentChat}
+        chats={chats}
+        onChatSelect={(chat: Chat) => handleChatSelect(chat.id)}
+        onNewChat={createNewChat}
+        isAuthenticated={isAuthenticated}
+      />
+      <ChatContainer
+        currentChat={currentChat}
+        messages={messages}
+        isLoading={isLoading}
+        onSubmit={handleSubmit}
+        inputMessage={inputMessage}
+        setInputMessage={setInputMessage}
+      />
     </div>
   );
 };
