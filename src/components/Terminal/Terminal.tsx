@@ -1,4 +1,3 @@
-// src/components/Terminal/Terminal.tsx
 import { useState, useRef, useEffect } from "react";
 import { Terminal as TerminalIcon, X } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
@@ -53,9 +52,20 @@ export const Terminal = () => {
         }
         break;
       case "C":
+        const contractAddress = "aWnf38ANf8nj39NJRF";
         setLines(prev => [...prev, 
-          { content: "Contract Address: aWnf38ANf8nj39NJRF" }
+          { content: `Contract Address: ${contractAddress}` }
         ]);
+        try {
+          await navigator.clipboard.writeText(contractAddress);
+          setLines(prev => [...prev, { content: "(Clipped to clipboard!)" }]);
+          toast({
+            title: "Success",
+            description: "Contract address copied to clipboard!",
+          });
+        } catch (err) {
+          console.error("Failed to copy to clipboard:", err);
+        }
         break;
       default:
         setLines(prev => [...prev, 
