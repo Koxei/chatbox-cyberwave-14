@@ -36,7 +36,7 @@ export const Terminal = () => {
 
     switch (upperCommand) {
       case "Q":
-        const socialLink = "https://x.com/home";
+        const socialLink = "https://x.com/UmiOS_";
         setLines(prev => [...prev, 
           { content: "Social Links:" },
           { content: `- ${socialLink}` }
@@ -77,7 +77,7 @@ export const Terminal = () => {
       <div className="flex items-center justify-between p-2 border-b border-cyan-500/30">
         <div className="flex items-center gap-2">
           <TerminalIcon className="w-4 h-4 text-cyan-500" />
-          <span className="text-cyan-500 font-arcade text-sm">CYBERPUNK TERMINAL</span>
+          <span className="text-cyan-500 font-arcade text-sm">TERMINAL</span>
         </div>
         <button
           onClick={handleClose}
