@@ -35,7 +35,7 @@ export const Terminal = () => {
 
     switch (upperCommand) {
       case "Q":
-        const socialLink = "https://x.com/UmiOS_";
+        const socialLink = "https://x.com/os_umi_";
         setLines(prev => [...prev, 
           { content: "Social Links:" },
           { content: `- ${socialLink}` }
